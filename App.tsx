@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import * as Notifications from 'expo-notifications'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { ThemeProvider } from 'styled-components'
 
-import * as LocalNotification from './utils/notification/LocalNotification'
 import * as NativeNotifs from './utils/notification/NotificationManager'
+import Stack from './components/layout/Routes'
+import theme from './config/theme'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -25,19 +26,8 @@ export default function App() {
   }, [])
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={LocalNotification.registerForAngelus}>
-        <Text>Angélus tous les jours à midi !</Text>
-      </TouchableOpacity>
-    </View>
+    <ThemeProvider theme={theme} >
+      <Stack />
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
