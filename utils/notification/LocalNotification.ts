@@ -29,3 +29,10 @@ export const registerForAngelus = () => {
     trigger: midday
   })
 }
+
+/**
+ * Unsubscribe to all notifications
+ */
+export const unsubToAll = async () => {
+  await Notifications.cancelAllScheduledNotificationsAsync()
+}

@@ -2,27 +2,35 @@
   "expo": {
     "name": "Prayer Notification App",
     "description": "Get notifications for prayer",
-    "slug": "prayernotificationapp",
+    "slug": "prayer-notification-app",
     "version": "0.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "privacy": "public",
+    "icon": "./assets/icon-large.png",
+    "privacy": "unlisted",
+    "backgroundColor": "#EBEBEB",
+    "primaryColor": "#35415A",
+    "scheme": "prayernotification",
+    "githubUrl": "https://github.com/awalshy/PrayerNotificationsApp",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#35415A"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "./assets/*"
     ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "package": "com.prayernotifs.app"
+    },
+    "notification": {
+      "icon": "./assets/icon-tiny.png",
+      "color": "#35415A"
     }
   }
 }
