@@ -7,6 +7,7 @@ import { Image } from 'react-native'
 
 // Screens
 import Home from '../../screens/Home'
+import ManageNotificationsSubs from '../../screens/ManageNotificationsSubs'
 
 // Parameters Type
 type MainStack = {
@@ -37,6 +38,11 @@ const Stack = () => (
         <MainStack.Screen
           name="Home"
           component={Home}
+          />
+        <MainStack.Screen
+          name="ManageNotifs"
+          component={ManageNotificationsSubs}
+          options={{ title: "Manage Notifications"}}
           />
     </MainStack.Navigator>
   </NavigationContainer>
