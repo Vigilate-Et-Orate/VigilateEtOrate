@@ -5,6 +5,7 @@ import { ThemeProvider } from 'styled-components'
 import * as NativeNotifs from './utils/notification/NotificationManager'
 import Stack from './components/layout/Routes'
 import theme from './config/theme'
+import { AsyncStorage } from 'react-native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -16,13 +17,14 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   useEffect(() => {
-    const subcription = Notifications.addPushTokenListener(NativeNotifs.registerForNotificationsAsync)
+    const token = NativeNotifs.registerForNotificationsAsync();
+    // const subscription = Notifications.addPushTokenListener()
     Notifications.addNotificationReceivedListener(notification => {
       console.log('Notification', notification)
     })
-    return () => {
-      Notifications.removeAllNotificationListeners()
-    }
+    // return () => {
+    //   subscription.remove()
+    // }
   }, [])
 
   return (

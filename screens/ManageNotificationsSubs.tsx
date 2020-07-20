@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { View } from 'react-native'
+import { View, ScrollView } from 'react-native'
 
 import * as LocalNotification from '../utils/notification/LocalNotification'
 import * as Storage from '../utils/storage/StorageManager'
@@ -10,24 +9,20 @@ import Text from '../elements/text/Text'
 import HorizontalRule from '../elements/layout/HorizontalRule'
 import Screen from '../elements/layout/Screen'
 import LineElement from '../elements/ui/LineElement'
-import * as Grid from '../elements/layout/Grid'
 import Button from '../elements/buttons/BaseButton'
 
-const getData = async (setData: Function) => {
-  let data = await Storage.getDataAsync(Storage.Stored.SUBS)
-  if (!data) return
-  setData(JSON.parse(data))
-}
-
-type Data = {
-  [key: string]: boolean
-}
-
 const ManageNotificationsSubs = () => {
-  let [data, setData] = useState({} as Data)
+  let [data, setData] = useState([] as LocalNotification.Sub[])
   useEffect(() => {
-    getData(setData)
-  }, [])
+    Storage.getDataAsync(Storage.Stored.SUBS).then(res => {
+      if (!res) {
+        setData([])
+        return
+      }
+      setData(JSON.parse(res))
+    })
+  }, [data])
+
 
   return (
     <Screen>
@@ -37,11 +32,11 @@ const ManageNotificationsSubs = () => {
         <Button title="Unsub from all" onPress={LocalNotification.unsubToAll} />
       </View>
       <HorizontalRule />
-      <View style={{ flex: 1 }}>
-        {data && Object.keys(data).map((key: string) => {
-          return (<LineElement key={key} title={key} activeInitial={data[key]} />)
+      <ScrollView style={{ flex: 1 }}>
+        {data && data.map((elem: LocalNotification.Sub) => {
+          return (<LineElement key={elem.name} title={elem.name} activeInitial={elem.active} />)
         })}
-      </View>
+      </ScrollView>
     </Screen>
   )
 }
