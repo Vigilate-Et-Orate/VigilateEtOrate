@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from 'react'
 import * as Notifications from 'expo-notifications'
 import { ThemeProvider } from 'styled-components'
 
 import * as NativeNotifs from './utils/notification/NotificationManager'
 import Stack from './components/layout/Routes'
 import theme from './config/theme'
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage } from 'react-native'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -17,9 +17,9 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   useEffect(() => {
-    const token = NativeNotifs.registerForNotificationsAsync();
+    const token = NativeNotifs.registerForNotificationsAsync()
     // const subscription = Notifications.addPushTokenListener()
-    Notifications.addNotificationReceivedListener(notification => {
+    Notifications.addNotificationReceivedListener((notification) => {
       console.log('Notification', notification)
     })
     // return () => {
@@ -28,8 +28,8 @@ export default function App() {
   }, [])
 
   return (
-    <ThemeProvider theme={theme} >
+    <ThemeProvider theme={theme}>
       <Stack />
     </ThemeProvider>
-  );
+  )
 }

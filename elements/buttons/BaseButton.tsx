@@ -3,7 +3,7 @@ import { Text, Touchable, View } from 'react-primitives'
 import styled from 'styled-components'
 
 const ButtonView = styled(View)`
-  background-color: #35415A;
+  background-color: #35415a;
   border-radius: 4px;
   height: 45px;
   margin-bottom: 15px;

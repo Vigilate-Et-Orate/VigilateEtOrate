@@ -7,7 +7,7 @@ import Text from '../text/Text'
 const StyledView = styled(View)`
   height: 1px;
   width: 100%;
-  background-color: ${props => props.theme.colors.ultraLightGrey};
+  background-color: ${(props) => props.theme.colors.ultraLightGrey};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,7 +17,7 @@ const StyledView = styled(View)`
 const StyledAbsoluteView = styled(View)`
   padding: 0 10px;
   height: 30px;
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
 `
 
 const StyledText = styled(Text)`
@@ -25,7 +25,7 @@ const StyledText = styled(Text)`
 `
 
 const TextSeparator = ({ children }: any) => {
-  <StyledView>
+  ;<StyledView>
     <StyledAbsoluteView>
       <StyledText color="white">{children}</StyledText>
     </StyledAbsoluteView>

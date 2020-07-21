@@ -18,7 +18,8 @@ function Logo() {
   return (
     <Image
       style={{ width: 40, height: 40, marginRight: 5 }}
-      source={require('../../assets/icon-tiny.png')} />
+      source={require('../../assets/icon-tiny.png')}
+    />
   )
 }
 
@@ -34,16 +35,14 @@ const Stack = () => (
         },
         headerTintColor: '#EBEBEB',
         headerRight: (props: any) => <Logo {...props} />
-      }}>
-        <MainStack.Screen
-          name="Home"
-          component={Home}
-          />
-        <MainStack.Screen
-          name="ManageNotifs"
-          component={ManageNotificationsSubs}
-          options={{ title: "Manage Notifications"}}
-          />
+      }}
+    >
+      <MainStack.Screen name="Home" component={Home} />
+      <MainStack.Screen
+        name="ManageNotifs"
+        component={ManageNotificationsSubs}
+        options={{ title: 'Manage Notifications' }}
+      />
     </MainStack.Navigator>
   </NavigationContainer>
 )
