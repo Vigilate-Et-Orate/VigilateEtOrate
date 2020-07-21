@@ -2,12 +2,12 @@ import styled from 'styled-components'
 import { Text as BaseText } from 'react-primitives'
 
 interface ITextProps {
-  color?: string,
+  color?: string
   bold?: boolean
 }
 
 const Text = styled(BaseText)<ITextProps>`
-  color: black
+  color: black;
 `
 
 Text.defaultProps = {

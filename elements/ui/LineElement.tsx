@@ -2,7 +2,6 @@ import { View, Text, Touchable } from 'react-primitives'
 import styled from 'styled-components'
 import React, { useState } from 'react'
 
-
 const StyledText = styled(Text)`
   font-size: 24px;
   color: black;
@@ -15,7 +14,7 @@ type ButtonSwitch = {
 }
 
 const ButtonView = styled(View)<ButtonSwitch>`
-  background-color: ${props => props.active ? '#CA2D02' : '#35415A'};
+  background-color: ${(props) => (props.active ? '#CA2D02' : '#35415A')};
   border-radius: 15px;
   height: 45px;
   margin-bottom: 15px;
@@ -47,7 +46,7 @@ const capitalise = (str: string): string => {
 }
 
 type Props = {
-  title: string,
+  title: string
   activeInitial: boolean
 }
 
@@ -55,7 +54,7 @@ const LineElement = ({ title, activeInitial }: Props) => {
   let [active, setActive] = useState(activeInitial)
 
   return (
-    <View style={{ flex: 1, flexDirection: 'row'}}>
+    <View style={{ flex: 1, flexDirection: 'row' }}>
       <View style={{ width: '60%' }}>
         <StyledText>{capitalise(title)}</StyledText>
       </View>
@@ -63,10 +62,11 @@ const LineElement = ({ title, activeInitial }: Props) => {
         <Button
           title={active ? 'Deactivate' : 'Register'}
           onPress={() => setActive(!active)}
-          active={active} />
+          active={active}
+        />
       </View>
     </View>
   )
 }
 
-export default LineElement 
+export default LineElement

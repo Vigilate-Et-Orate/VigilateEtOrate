@@ -14,7 +14,7 @@ import Button from '../elements/buttons/BaseButton'
 const ManageNotificationsSubs = () => {
   let [data, setData] = useState([] as LocalNotification.Sub[])
   useEffect(() => {
-    Storage.getDataAsync(Storage.Stored.SUBS).then(res => {
+    Storage.getDataAsync(Storage.Stored.SUBS).then((res) => {
       if (!res) {
         setData([])
         return
@@ -22,7 +22,6 @@ const ManageNotificationsSubs = () => {
       setData(JSON.parse(res))
     })
   }, [data])
-
 
   return (
     <Screen>
@@ -33,9 +32,16 @@ const ManageNotificationsSubs = () => {
       </View>
       <HorizontalRule />
       <ScrollView style={{ flex: 1 }}>
-        {data && data.map((elem: LocalNotification.Sub) => {
-          return (<LineElement key={elem.name} title={elem.name} activeInitial={elem.active} />)
-        })}
+        {data &&
+          data.map((elem: LocalNotification.Sub) => {
+            return (
+              <LineElement
+                key={elem.name}
+                title={elem.name}
+                activeInitial={elem.active}
+              />
+            )
+          })}
       </ScrollView>
     </Screen>
   )

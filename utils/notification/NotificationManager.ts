@@ -2,17 +2,15 @@
  * Notification Manager
  */
 import Constants from 'expo-constants'
-import * as Permissions from 'expo-permissions'
 import * as Notifications from 'expo-notifications'
-import { Platform } from 'react-native'
 
 /**
  * Notification Peermission
  */
-export const isNotificationPermittedAsync = async () => {
+export const isNotificationPermittedAsync = async (): Promise<boolean> => {
   if (Constants.isDevice) {
-    const status = await Notifications.getPermissionsAsync();
-    console.log("Notification Status: ", status)
+    const status = await Notifications.getPermissionsAsync()
+    console.log('Notification Status: ', status)
     if (!status) return true
     return false
   }
@@ -21,26 +19,26 @@ export const isNotificationPermittedAsync = async () => {
 
 /**
  * Register For Notifications
- * 
+ *
  * @returns {string} - ExpoPushToken
  */
-export const registerForNotificationsAsync =  async () => {
-  console.log('Register For Notifications async');
+export const registerForNotificationsAsync = async (): Promise<string> => {
+  console.log('Register For Notifications async')
   if (!(await isNotificationPermittedAsync())) {
     const res = await Notifications.requestPermissionsAsync({
       ios: {
         allowAlert: true,
         allowBadge: true,
         allowSound: true,
-        allowAnnouncements: true,
+        allowAnnouncements: true
       }
     })
-    console.log('Current permission for notifications is: ', res);
+    console.log('Current permission for notifications is: ', res)
     // const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
     // if (status !== Permissions.PermissionStatus.GRANTED) throw new Error('Notifications not allowed...')
   }
 
-  let token = (await Notifications.getExpoPushTokenAsync()).data
+  const token = (await Notifications.getExpoPushTokenAsync()).data
   console.log(token)
 
   // if (Platform.OS === 'android') {
