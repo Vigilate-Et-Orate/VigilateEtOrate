@@ -8,7 +8,7 @@ import { Image } from 'react-native'
 // Screens
 import Home from 'screens/HomeScreen'
 import ManageNotificationsSubs from 'screens/ManageNotificationsSubs'
-import PrayersScreen from 'screens/PrayersScreen'
+import Angelus from 'screens/Prayers/Angelus'
 
 // Parameters Type
 type MainStack = {
@@ -44,6 +44,7 @@ const Stack = () => (
         component={ManageNotificationsSubs}
         options={{ title: 'Manage Notifications' }}
       />
+      <MainStack.Screen name="Angelus" component={Angelus} />
     </MainStack.Navigator>
   </NavigationContainer>
 )
