@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { View, ScrollView } from 'react-native'
 
-import * as LocalNotification from '../utils/notification/LocalNotification'
-import * as Storage from '../utils/storage/StorageManager'
+import * as LocalNotification from 'utils/notification/LocalNotification'
+import * as Storage from 'utils/storage/StorageManager'
 
-import Title from '../elements/text/Title'
-import Text from '../elements/text/Text'
-import HorizontalRule from '../elements/layout/HorizontalRule'
-import Screen from '../elements/layout/Screen'
-import LineElement from '../elements/ui/LineElement'
-import Button from '../elements/buttons/BaseButton'
+import Title from 'elements/text/Title'
+import HorizontalRule from 'elements/layout/HorizontalRule'
+import Screen from 'elements/layout/Screen'
+import LineElement from 'elements/ui/LineElement'
+import Button from 'elements/buttons/BaseButton'
 
 const ManageNotificationsSubs = () => {
   let [data, setData] = useState([] as LocalNotification.Sub[])

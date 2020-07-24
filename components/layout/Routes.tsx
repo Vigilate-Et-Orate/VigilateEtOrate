@@ -6,8 +6,9 @@ enableScreens()
 import { Image } from 'react-native'
 
 // Screens
-import Home from '../../screens/Home'
-import ManageNotificationsSubs from '../../screens/ManageNotificationsSubs'
+import Home from 'screens/HomeScreen'
+import ManageNotificationsSubs from 'screens/ManageNotificationsSubs'
+import PrayersScreen from 'screens/PrayersScreen'
 
 // Parameters Type
 type MainStack = {
