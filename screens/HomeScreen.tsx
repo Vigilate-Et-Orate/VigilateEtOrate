@@ -19,7 +19,10 @@ const Home = () => {
       />
       <Button
         title="Arrêter toutes les notifs"
-        onPress={() => { console.log('Click'); navigation.navigate('ManageNotifs')}}
+        onPress={() => {
+          console.log('Click')
+          navigation.navigate('ManageNotifs')
+        }}
       />
     </Screen>
   )

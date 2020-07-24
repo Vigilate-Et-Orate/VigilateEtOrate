@@ -17,9 +17,17 @@ const Angelus = () => {
       <Text>Et le verbe s'est fait cher, conçu du saint esprit</Text>
       <Text style={{ color: 'gray' }}>Et il a habité parmis nous</Text>
       <Text>Priez pour nous Sainte Mère de Dieu</Text>
-      <Text style={{ color: 'gray' }}>Afin que nous soyons rendus dignes des promesses de notre Seigneur Jésus Christ</Text>
+      <Text style={{ color: 'gray' }}>
+        Afin que nous soyons rendus dignes des promesses de notre Seigneur Jésus
+        Christ
+      </Text>
       <Text>Prions</Text>
-      <Text style={{ color: 'gray' }}>Répendez s'il vous plaît Seigneur votre grâce en nos âmes afin qu'ayant connu par le message de l'ange, l'incarnation de Jésus Christ votre fils, nous arrivions par sa passion et par sa croix, à la gloire de sa resurection, par le même Jésus Christ notre Seigneur</Text>
+      <Text style={{ color: 'gray' }}>
+        Répendez s'il vous plaît Seigneur votre grâce en nos âmes afin qu'ayant
+        connu par le message de l'ange, l'incarnation de Jésus Christ votre
+        fils, nous arrivions par sa passion et par sa croix, à la gloire de sa
+        resurection, par le même Jésus Christ notre Seigneur
+      </Text>
       <Text>Amen</Text>
     </Screen>
   )
