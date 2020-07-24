@@ -5,7 +5,7 @@
     "slug": "prayer-notification-app",
     "version": "0.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon-large.png",
+    "icon": "./assets/icon.png",
     "privacy": "unlisted",
     "backgroundColor": "#EBEBEB",
     "primaryColor": "#35415A",
@@ -26,7 +26,13 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.prayernotifs.app"
+      "package": "com.prayernotifs.app",
+      "icon": "./assets/icon-medium.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon-adaptive.png",
+        "backgroundImage": "./assets/icon.png",
+        "backgroundColor": "#35415A"
+      }
     },
     "notification": {
       "icon": "./assets/icon-tiny.png",
