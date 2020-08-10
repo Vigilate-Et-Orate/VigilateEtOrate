@@ -22,6 +22,12 @@ import theme from 'config/theme'
 import { Prayer } from 'config/types/Prayer'
 import RegisterNotification from 'components/list/RegisterNotification'
 import prayers from 'data/prayers.json'
+import {
+  LectureAelf,
+  InformationAelf,
+  getDailyGospel,
+  getDailySaint
+} from 'utils/aelf/fetchAelf'
 
 const defaultValues: {
   title: string
@@ -50,6 +56,8 @@ const Home = () => {
   const navigation = useNavigation()
   const [myPrayer, setPrayer] = useState(defaultValues)
   const [availablePrayers, setAvailablePrayers] = useState(prayers)
+  const [evangile, setEvangile] = useState<LectureAelf>()
+  const [saint, setSaint] = useState<InformationAelf>()
 
   useEffect(() => {
     Storage.getDataAsync('my-prayer').then((data) => {
@@ -64,15 +72,22 @@ const Home = () => {
       res.filter((e: any) => tmpData.includes(e as Prayer))
       setAvailablePrayers(res)
     })
+    getDailyGospel().then((gospel: LectureAelf | undefined) => {
+      if (!gospel) return
+      setEvangile(gospel)
+    })
+    getDailySaint().then((saint: InformationAelf | undefined) => {
+      if (!saint) return
+      setSaint(saint)
+    })
   }, [availablePrayers])
 
   return (
     <ScrollView style={baseStyle.view}>
       <Title>Bonjour !</Title>
       <WelcomeCard
-        saint="Saint Thomas d'Aquin"
-        evangile="Et le coq chanta pour la troisieme fois"
-        onPress={() => console.log('Pressed card !')}
+        saint={saint?.jour_liturgique_nom || 'Erreur de reseau'}
+        evangile={evangile?.titre || 'Erreur de reseau'}
       />
       <Header>Prière Personnelle</Header>
       <Card

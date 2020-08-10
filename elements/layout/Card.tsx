@@ -19,7 +19,6 @@ type CardProps = {
 type WelcomeCardProps = {
   saint: string
   evangile: string
-  onPress: (ev: GestureResponderEvent) => void | null
 }
 
 const Card = ({ title, body, onPress }: CardProps) => {
@@ -33,7 +32,7 @@ const Card = ({ title, body, onPress }: CardProps) => {
   )
 }
 
-export const WelcomeCard = ({ saint, evangile, onPress }: WelcomeCardProps) => {
+export const WelcomeCard = ({ saint, evangile }: WelcomeCardProps) => {
   const navigation = useNavigation()
   return (
     <View style={styles.card}>
@@ -42,12 +41,10 @@ export const WelcomeCard = ({ saint, evangile, onPress }: WelcomeCardProps) => {
       <Text style={styles.Title}>Phrase de l'Evangile du Jour</Text>
       <Text style={styles.description}>{evangile}</Text>
       <TouchableOpacity
-        style={{ alignSelf: 'flex-end' }}
+        style={{ alignSelf: 'flex-end', padding: 10 }}
         onPress={() => navigation.navigate('PersonnalPrayer')}
       >
-        <Text style={styles.see} onPress={onPress}>
-          Voir l'Evangile
-        </Text>
+        <Text style={styles.see}>Voir l'Evangile</Text>
       </TouchableOpacity>
     </View>
   )
@@ -73,7 +70,7 @@ const styles = StyleSheet.create({
     color: theme.colors.blue
   },
   see: {
-    marginVertical: 15,
+    marginVertical: 5,
     alignItems: 'flex-end',
     color: theme.colors.red
   },
