@@ -12,6 +12,7 @@ export type Prayer = {
   description: string
   active: boolean
   subscription: string
+  content: string
   notifContent: NotificationContent
   times: NotifTime[]
 }

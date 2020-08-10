@@ -16,7 +16,7 @@ import { Title, Header } from 'elements/text/Text'
 import baseStyle from 'config/style'
 import * as Storage from 'utils/storage/StorageManager'
 
-import PrayerScreen from 'screens/PrayersScreen'
+import PrayersScreen from 'screens/PrayersScreen'
 import ProfileScreen from 'screens/ProfileScreen'
 import theme from 'config/theme'
 import { Prayer } from 'config/types/Prayer'
@@ -150,7 +150,7 @@ class HomeScreen extends React.Component {
         }}
       >
         <Tabs.Screen name="Home" component={Home} />
-        <Tabs.Screen name="Prayers" component={PrayerScreen} />
+        <Tabs.Screen name="Prayers" component={PrayersScreen} />
         <Tabs.Screen name="Profile" component={ProfileScreen} />
       </Tabs.Navigator>
     )

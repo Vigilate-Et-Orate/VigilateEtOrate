@@ -42,7 +42,7 @@ export const WelcomeCard = ({ saint, evangile }: WelcomeCardProps) => {
       <Text style={styles.description}>{evangile}</Text>
       <TouchableOpacity
         style={{ alignSelf: 'flex-end', padding: 10 }}
-        onPress={() => navigation.navigate('PersonnalPrayer')}
+        onPress={() => navigation.navigate('Evangile')}
       >
         <Text style={styles.see}>Voir l'Evangile</Text>
       </TouchableOpacity>
