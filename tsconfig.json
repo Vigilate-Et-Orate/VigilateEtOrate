@@ -14,7 +14,9 @@
       "screens/*": ["screens/*"],
       "elements/*": ["elements/*"],
       "utils/*": ["utils/*"],
-      "components/*": ["components/*"]
+      "components/*": ["components/*"],
+      "config/*": ["config/*"],
+      "data/*": ["data/*"]
     }
   }
 }

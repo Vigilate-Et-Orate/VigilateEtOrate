@@ -1,15 +1,12 @@
 import React from 'react'
 import { ScrollView, Text } from 'react-native'
 
-import Title from 'elements/text/Title'
-import Screen from 'elements/layout/Screen'
-import HorizontalRule from 'elements/layout/HorizontalRule'
+import { Title } from 'elements/text/Text'
 
 const Angelus = () => {
   return (
-    <Screen>
+    <ScrollView>
       <Title>Angelus</Title>
-      <HorizontalRule />
       <Text>L'ange du Seigneur porta l'annonce à Marie</Text>
       <Text style={{ color: 'gray' }}>Qu'elle serait la mère du Sauveur</Text>
       <Text>Me voici dit Marie, je suis la servante du Seigneur</Text>
@@ -29,7 +26,7 @@ const Angelus = () => {
         resurection, par le même Jésus Christ notre Seigneur
       </Text>
       <Text>Amen</Text>
-    </Screen>
+    </ScrollView>
   )
 }
 

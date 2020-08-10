@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import * as Notifications from 'expo-notifications'
-import { ThemeProvider } from 'styled-components'
 
 import * as NativeNotifs from './utils/notification/NotificationManager'
 import Stack from './components/layout/Routes'
@@ -27,9 +26,5 @@ export default function App() {
     // }
   }, [])
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Stack />
-    </ThemeProvider>
-  )
+  return <Stack />
 }

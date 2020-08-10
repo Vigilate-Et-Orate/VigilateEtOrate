@@ -37,3 +37,10 @@ export const getDataAsync = async (
 ): Promise<string | null> => {
   return await AsyncStorage.getItem(key)
 }
+
+/**
+ * Clear all Stored keys and values
+ */
+export const clear = async (): Promise<void> => {
+  await AsyncStorage.clear()
+}

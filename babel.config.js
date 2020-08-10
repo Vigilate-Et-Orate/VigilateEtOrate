@@ -6,10 +6,12 @@ module.exports = function(api) {
     {
       root: ['.'],
       alias: {
+        'config': './config',
         'elements': './elements',
         'screens': './screens',
         'utils': './utils',
-        'components': './components'
+        'components': './components',
+        'data': './data'
       }
     }
   ]];

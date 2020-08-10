@@ -1,29 +1,23 @@
 import React from 'react'
-import { Text, Touchable, View } from 'react-primitives'
-import styled from 'styled-components'
+import {
+  Button as BaseButton,
+  NativeSyntheticEvent,
+  NativeTouchEvent
+} from 'react-native'
 
-const ButtonView = styled(View)`
-  background-color: #35415a;
-  border-radius: 4px;
-  height: 45px;
-  margin-bottom: 15px;
-  padding: 12px;
-  margin-right: 20px;
-  margin-left: 20px;
-`
+import theme from 'config/theme'
 
-const ButtonText = styled(Text)`
-  color: white;
-  text-align: center;
-  font-size: 16px;
-`
+type ButtonProps = {
+  title: string
+  onPress: (ev: NativeSyntheticEvent<NativeTouchEvent>) => void
+}
 
-const Button = ({ title, onPress }: any) => (
-  <Touchable onPress={onPress}>
-    <ButtonView>
-      <ButtonText>{title}</ButtonText>
-    </ButtonView>
-  </Touchable>
+const Button = ({ title, onPress }: ButtonProps) => (
+  <BaseButton title={title} onPress={onPress} color={theme.colors.blue} />
+)
+
+const AccentButton = ({ title, onPress }: ButtonProps) => (
+  <BaseButton title={title} onPress={onPress} color={theme.colors.red} />
 )
 
 export default Button

@@ -1,6 +1,10 @@
 const theme = {
   colors: {
-    ultraLightGrey: '#DDDDDD'
+    ultraLightGrey: '#DDDDDD',
+    gray: '#808080',
+    yellow: '#EEB14F',
+    red: '#CA2D02',
+    blue: '#35415A'
   }
 }
 
