@@ -44,9 +44,7 @@ export const WelcomeCard = ({ saint, evangile }: WelcomeCardProps) => {
         style={{ alignSelf: 'flex-end', padding: 10 }}
         onPress={() => navigation.navigate('PersonnalPrayer')}
       >
-        <Text style={styles.see}>
-          Voir l'Evangile
-        </Text>
+        <Text style={styles.see}>Voir l'Evangile</Text>
       </TouchableOpacity>
     </View>
   )

@@ -22,7 +22,12 @@ import theme from 'config/theme'
 import { Prayer } from 'config/types/Prayer'
 import RegisterNotification from 'components/list/RegisterNotification'
 import prayers from 'data/prayers.json'
-import { LectureAelf, InformationAelf, getDailyGospel, getDailySaint } from 'utils/aelf/fetchAelf'
+import {
+  LectureAelf,
+  InformationAelf,
+  getDailyGospel,
+  getDailySaint
+} from 'utils/aelf/fetchAelf'
 
 const defaultValues: {
   title: string
