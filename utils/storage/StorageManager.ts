@@ -5,7 +5,10 @@
 import { AsyncStorage } from 'react-native'
 
 export enum Stored {
-  SUBS = 'subscriptions'
+  SUBS = 'subscriptions',
+  EVANGILE = 'evangile',
+  MY_PRAYER = 'my-prayer',
+  DAY_INFO = 'day-info'
 }
 
 /**
