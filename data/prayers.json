@@ -1,0 +1,54 @@
+[
+  {
+    "displayName": "Angélus",
+    "name": "angelus",
+    "description": "Prière de l'ange Gabriel à Marie",
+    "active": false,
+    "subscription": "",
+    "notifContent": {
+      "title": "Annnnngélus !!",
+      "body": "Il est l'heure de chanter l'angélus"
+    },
+    "times": [
+      {
+        "hour": 7,
+        "minute": 0,
+        "repeats": true
+      },
+      {
+        "hour": 12,
+        "minute": 0,
+        "repeats": true
+      },
+      {
+        "hour": 19,
+        "minute": 0,
+        "repeats": true
+      }
+    ]
+  },
+  {
+    "displayName": "Consécration à Marie",
+    "name": "consecration",
+    "description": "Prère de consécration à Marie de saint Louis-Marie Grignion de Montfort",
+    "active": false,
+    "subscription": "",
+    "notifContent": {
+      "title": "Consécration à Marie",
+      "body": "Offrons notre journée à notre Mère"
+    },
+    "times": []
+  },
+  {
+    "displayName": "Prière avant l'étude",
+    "name": "avant-letude",
+    "description": "prière à réciter avant de travailler",
+    "active": false,
+    "subscription": "",
+    "notifContent": {
+      "title": "Prière avant l'étude",
+      "body": "L'heure est à l'étude, prions"
+    },
+    "times": []
+  }
+]

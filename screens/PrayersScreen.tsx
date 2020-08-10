@@ -1,24 +1,28 @@
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { StyleSheet, Button, View } from 'react-native'
 
-import Screen from 'elements/layout/Screen'
-import HorizontalRule from 'elements/layout/HorizontalRule'
-import Title from 'elements/text/Title'
-import Text from 'elements/text/Text'
-import { TouchableOpacity } from 'react-native'
+import { Title } from 'elements/text/Text'
 
 const PrayersScreen = () => {
   const navigation = useNavigation()
 
   return (
-    <Screen>
+    <View>
       <Title>Prayers</Title>
-      <HorizontalRule />
-      <TouchableOpacity onPress={() => navigation.navigate('Angelus')}>
-        <Text>Angelus</Text>
-      </TouchableOpacity>
-    </Screen>
+      <Button
+        color={styles.button.color}
+        title="Angelus"
+        onPress={() => navigation.navigate('Angelus')}
+      />
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  button: {
+    color: '#35415A'
+  }
+})
 
 export default PrayersScreen

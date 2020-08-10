@@ -1,45 +1,6 @@
-import { View, Text, Touchable } from 'react-primitives'
-import styled from 'styled-components'
+import { View, Switch, Text, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
-
-const StyledText = styled(Text)`
-  font-size: 24px;
-  color: black;
-  margin-left: 10px;
-  margin-right: 10px;
-`
-
-type ButtonSwitch = {
-  active: boolean
-}
-
-const ButtonView = styled(View)<ButtonSwitch>`
-  background-color: ${(props) => (props.active ? '#CA2D02' : '#35415A')};
-  border-radius: 15px;
-  height: 45px;
-  margin-bottom: 15px;
-  padding: 12px;
-`
-
-const ButtonText = styled(Text)`
-  color: white;
-  text-align: center;
-  font-size: 16px;
-`
-
-const StyledTouchable = styled(Touchable)`
-  border: 2px solid red;
-`
-
-const Button = ({ title, onPress, active }: any) => {
-  return (
-    <StyledTouchable onPress={onPress} style={{ flex: 1 }}>
-      <ButtonView active={active}>
-        <ButtonText>{title}</ButtonText>
-      </ButtonView>
-    </StyledTouchable>
-  )
-}
+import theme from 'config/theme'
 
 const capitalise = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1)
@@ -50,23 +11,50 @@ type Props = {
   activeInitial: boolean
 }
 
+export const PrayerHome = ({ title }: { title: string }) => {
+  return (
+    <View style={styles.row}>
+      <View style={{ width: '60%' }}>
+        <Text style={{ fontSize: 25 }}>{title}</Text>
+        <Text style={{ fontSize: 18 }}>Description future</Text>
+      </View>
+      <View style={{ width: '40%' }}></View>
+    </View>
+  )
+}
+
 const LineElement = ({ title, activeInitial }: Props) => {
   let [active, setActive] = useState(activeInitial)
+  const toggleSwitch = () => setActive((prev) => !prev)
 
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
       <View style={{ width: '60%' }}>
-        <StyledText>{capitalise(title)}</StyledText>
+        <Text style={styles.text}>{capitalise(title)}</Text>
       </View>
       <View style={{ width: '40%' }}>
-        <Button
-          title={active ? 'Deactivate' : 'Register'}
-          onPress={() => setActive(!active)}
-          active={active}
+        <Switch
+          onValueChange={toggleSwitch}
+          value={active}
+          trackColor={{ false: theme.colors.gray, true: theme.colors.red }}
         />
       </View>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 15,
+    borderRadius: 15,
+    backgroundColor: '#ffffff',
+    margin: 10
+  },
+  text: {
+    fontSize: 30
+  }
+})
 
 export default LineElement

@@ -4,9 +4,7 @@ import { View, ScrollView } from 'react-native'
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import * as Storage from 'utils/storage/StorageManager'
 
-import Title from 'elements/text/Title'
-import HorizontalRule from 'elements/layout/HorizontalRule'
-import Screen from 'elements/layout/Screen'
+import { Title } from 'elements/text/Text'
 import LineElement from 'elements/ui/LineElement'
 import Button from 'elements/buttons/BaseButton'
 
@@ -23,13 +21,11 @@ const ManageNotificationsSubs = () => {
   }, [data])
 
   return (
-    <Screen>
+    <View>
       <Title>Notifications</Title>
-      <HorizontalRule />
       <View>
         <Button title="Unsub from all" onPress={LocalNotification.unsubToAll} />
       </View>
-      <HorizontalRule />
       <ScrollView style={{ flex: 1 }}>
         {data &&
           data.map((elem: LocalNotification.Sub) => {
@@ -42,7 +38,7 @@ const ManageNotificationsSubs = () => {
             )
           })}
       </ScrollView>
-    </Screen>
+    </View>
   )
 }
 

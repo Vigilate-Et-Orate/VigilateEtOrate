@@ -1,19 +1,10 @@
-/**
- * Local Notification
- */
+import { ToastAndroid } from 'react-native'
 import * as Notifications from 'expo-notifications'
 
 import * as Storage from '../storage/StorageManager'
-
-type NotificationContent = {
-  title: string
-  body: string
-}
-
-export type Sub = {
-  name: string
-  active: boolean
-}
+import { Prayer } from 'config/types/Prayer'
+import { NotificationContent } from 'config/types/NotificationTypes'
+import prayers from 'data/prayers.json'
 
 /**
  * Send Notification
@@ -28,6 +19,40 @@ const sendNotification = async (
 }
 
 /**
+ * Register for notification
+ */
+export const registerForPrayer = async (
+  name: string,
+  date: Date
+): Promise<void> => {
+  const prayer = prayers.find((e) => e.name === name)
+  const timeToRemind = {
+    hour: date.getHours(),
+    minute: date.getMinutes(),
+    repeat: true
+  }
+  // Create notification response
+  const content: NotificationContent = {
+    title: 'Tout est bon !',
+    body: `Rappels pour '${prayer?.displayName}'`
+  }
+
+  // Store data
+  let data = await Storage.getDataAsync(Storage.Stored.SUBS)
+  if (!data) {
+    // Create data array
+    data = JSON.stringify([prayer])
+  } else {
+    // Upd8 subs
+    const parsed: Prayer[] = JSON.parse(data)
+    const storedPrayer = parsed.find((e) => e.name === name)
+    if (!storedPrayer) {
+      // Add prayer to list
+    }
+  }
+}
+
+/**
  * Register for Angelus daily notification
  */
 export const registerForAngelusAsync = async (): Promise<void> => {
@@ -36,14 +61,15 @@ export const registerForAngelusAsync = async (): Promise<void> => {
     minute: 0,
     repeats: true
   }
+  // Create notification content
   const content = {
     title: 'Tout est bon!',
     body: "Vous avez souscrit aux rappels quotidients pour l'Angelus"
   } as NotificationContent
 
+  // Store prayer
   let data = await Storage.getDataAsync(Storage.Stored.SUBS)
   if (!data) {
-    console.log('Creating data')
     data = JSON.stringify([
       {
         name: 'angelus',
@@ -59,14 +85,14 @@ export const registerForAngelusAsync = async (): Promise<void> => {
           parsedData.findIndex((elem: Sub) => elem.name === 'angelus')
         ].active = true
       else {
-        sendNotification({
-          title: 'Errr',
-          body: 'Vous avez deja souscris a ces notifications'
-        })
+        ToastAndroid.showWithGravity(
+          'Vous avez deja souscris a ces notifications',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        )
         return
       }
     } else {
-      console.log('Adding Angelus')
       parsedData.push({ name: 'angelus', active: true } as Sub)
     }
     data = JSON.stringify(parsedData)
@@ -82,7 +108,6 @@ export const registerForAngelusAsync = async (): Promise<void> => {
     },
     trigger: midday
   })
-  console.log('Subscriptions returned:', subs)
 }
 
 /**
