@@ -10,6 +10,7 @@ import Home from 'screens/HomeScreen'
 import ManageNotificationsSubs from 'screens/ManageNotificationsSubs'
 import Angelus from 'screens/Prayers/Angelus'
 import GospelScreen from 'screens/GospelScreen'
+import PrayerScreen from 'screens/PrayerScreen'
 
 // Parameters Type
 type MainStack = {
@@ -47,6 +48,7 @@ const Stack = () => (
       />
       <MainStack.Screen name="Angelus" component={Angelus} />
       <MainStack.Screen name="Evangile" component={GospelScreen} />
+      <MainStack.Screen name="Prayer" component={PrayerScreen} />
     </MainStack.Navigator>
   </NavigationContainer>
 )

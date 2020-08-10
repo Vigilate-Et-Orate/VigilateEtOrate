@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, View, Text} from 'react-native'
+import { ScrollView, View, Text } from 'react-native'
 
 import * as Storage from 'utils/storage/StorageManager'
 import { LectureAelf, getDailyGospel } from 'utils/aelf/fetchAelf'
@@ -16,7 +16,7 @@ const GospelScreen = () => {
     //   let res: LectureAelf = JSON.parse(data)
     //   res.
     // })
-    getDailyGospel().then(data => {
+    getDailyGospel().then((data) => {
       if (!data) return
       let html = data.contenu
       html = html.replace(/<\/p>/gi, '\n')
@@ -29,7 +29,9 @@ const GospelScreen = () => {
   return (
     <ScrollView style={{ paddingTop: 25, paddingHorizontal: 20 }}>
       <Header>{evangile?.titre}</Header>
-      <Text style={{ justifyContent: 'flex-end', marginBottom: 15 }}>{evangile?.ref}</Text>
+      <Text style={{ justifyContent: 'flex-end', marginBottom: 15 }}>
+        {evangile?.ref}
+      </Text>
       <Text>{evangile?.contenu}</Text>
     </ScrollView>
   )
