@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Text,
-  ScrollView
-} from 'react-native'
+import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
-import Button from 'elements/buttons/BaseButton'
 import Card, { WelcomeCard } from 'elements/layout/Card'
 import { Title, Header } from 'elements/text/Text'
 import baseStyle from 'config/style'

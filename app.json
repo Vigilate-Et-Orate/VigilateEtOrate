@@ -37,8 +37,7 @@
       }
     },
     "notification": {
-      "icon": "./assets/icon-tiny.png",
-      "color": "#35415A"
+      "icon": "./assets/icon-notif.png"
     }
   }
 }

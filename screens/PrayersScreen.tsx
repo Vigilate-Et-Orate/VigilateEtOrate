@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
   StyleSheet,
@@ -19,9 +19,6 @@ type PrayerLineProps = {
 
 const PrayerLine = ({ prayer }: PrayerLineProps) => {
   const navigation = useNavigation()
-  const [isEnabled, setEnabled] = useState(prayer.active)
-  const toggleSwitch = () => setEnabled((prevState: boolean) => !prevState)
-
   return (
     <TouchableOpacity
       style={styles.card}
@@ -36,8 +33,6 @@ const PrayerLine = ({ prayer }: PrayerLineProps) => {
 }
 
 const PrayersScreen = () => {
-  const navigation = useNavigation()
-
   return (
     <ScrollView style={{ paddingHorizontal: 20 }}>
       <Title>Prières</Title>

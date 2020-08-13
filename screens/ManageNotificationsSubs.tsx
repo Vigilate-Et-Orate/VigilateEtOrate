@@ -11,9 +11,7 @@ import * as LocalNotification from 'utils/notification/LocalNotification'
 import * as Storage from 'utils/storage/StorageManager'
 
 import { Title } from 'elements/text/Text'
-import Button from 'elements/buttons/BaseButton'
 import { Prayer } from 'config/types/Prayer'
-import prayers from 'data/prayers.json'
 import { Switch } from 'react-native-gesture-handler'
 import theme from 'config/theme'
 

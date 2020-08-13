@@ -5,7 +5,7 @@ import * as Storage from '../storage/StorageManager'
 import { Prayer } from 'config/types/Prayer'
 import { NotificationContent } from 'config/types/NotificationTypes'
 import prayers from 'data/prayers.json'
-import { DailyTriggerInput } from 'expo-notifications'
+import { DailyTriggerInput, NotificationContentInput } from 'expo-notifications'
 
 /**
  * Send Notification
@@ -41,14 +41,16 @@ export const registerForPrayer = async (
   // Create notification response
   const content: NotificationContent = {
     title: 'Tout est bon !',
-    body: `Rappels pour '${prayer?.displayName}'`
+    body: `Rappels pour '${prayer?.displayName}'`,
+    sound: true
   }
 
   // Get Subscription
   const sub = await Notifications.scheduleNotificationAsync({
     content: prayer?.notifContent || {
       title: 'Merci Seigneur',
-      body: 'Offrons lui 5 minutes de notre journée'
+      body: 'Offrons lui 5 minutes de notre journée',
+      sound: true
     },
     trigger: timeToRemind
   })
@@ -110,7 +112,8 @@ export const unsubFromPrayer = async (name: string): Promise<void> => {
 
   const content: NotificationContent = {
     title: 'Succès ! Vous avez été désinscrit',
-    body: `Plus de notificaions pour ${prayer?.displayName}`
+    body: `Plus de notificaions pour ${prayer?.displayName}`,
+    sound: true
   }
   const data = await Storage.getDataAsync(Storage.Stored.SUBS)
   if (!data) return
@@ -131,10 +134,11 @@ export const unsubFromPrayer = async (name: string): Promise<void> => {
  * Unsubscribe to all notifications
  */
 export const unsubToAll = async (): Promise<void> => {
-  const content = {
+  const content: NotificationContent = {
     title: 'Succès !',
-    body: 'Vous avez été désinscrit de toutes les notifications'
-  } as NotificationContent
+    body: 'Vous avez été désinscrit de toutes les notifications',
+    sound: true
+  }
   const data = await Storage.getDataAsync(Storage.Stored.SUBS)
   if (!data) return
   const parsed = JSON.parse(data)
