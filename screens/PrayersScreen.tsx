@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
   StyleSheet,
@@ -14,13 +14,13 @@ import prayers from 'data/prayers.json'
 import theme from 'config/theme'
 
 type PrayerLineProps = {
-  title: string
-  name: string
-  description: string
+  prayer: Prayer
 }
 
-const PrayerLine = ({ title, name, description }: PrayerLineProps) => {
+const PrayerLine = ({ prayer }: PrayerLineProps) => {
   const navigation = useNavigation()
+  const [isEnabled, setEnabled] = useState(prayer.active)
+  const toggleSwitch = () => setEnabled((prevState: boolean) => !prevState)
 
   return (
     <TouchableOpacity
@@ -28,8 +28,8 @@ const PrayerLine = ({ title, name, description }: PrayerLineProps) => {
       onPress={() => navigation.navigate('Prayer', { name })}
     >
       <View style={{ width: '80%' }}>
-        <Text style={styles.title}>{title}</Text>
-        <Text>{description}</Text>
+        <Text style={styles.title}>{prayer.displayName}</Text>
+        <Text>{prayer.description}</Text>
       </View>
     </TouchableOpacity>
   )
@@ -43,12 +43,7 @@ const PrayersScreen = () => {
       <Title>Prières</Title>
       {prayers &&
         prayers.map((prayer: Prayer) => (
-          <PrayerLine
-            key={prayer.name}
-            title={prayer.displayName}
-            name={prayer.name}
-            description={prayer.description}
-          />
+          <PrayerLine key={prayer.name} prayer={prayer} />
         ))}
     </ScrollView>
   )
@@ -59,16 +54,21 @@ const styles = StyleSheet.create({
     color: '#35415A'
   },
   card: {
-    backgroundColor: '#ffffff',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     borderRadius: 15,
-    padding: 12,
-    marginBottom: 15,
+    backgroundColor: '#ffffff',
+    margin: 10,
     flexDirection: 'row'
   },
   title: {
-    fontSize: 20,
-    color: theme.colors.blue,
-    marginBottom: 4
+    fontSize: 24,
+    marginBottom: 6,
+    color: theme.colors.blue
+  },
+  description: {
+    fontSize: 14,
+    color: theme.colors.gray
   }
 })
 

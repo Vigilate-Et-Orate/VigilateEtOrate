@@ -45,13 +45,6 @@ Amen.
 `
 }
 
-const getData = async () => {
-  let result = await Storage.getDataAsync('my-prayer')
-
-  if (result) result = JSON.parse(result)
-  return result
-}
-
 const Home = () => {
   const navigation = useNavigation()
   const [myPrayer, setPrayer] = useState(defaultValues)
@@ -67,9 +60,10 @@ const Home = () => {
     })
     Storage.getDataAsync(Storage.Stored.SUBS).then((data) => {
       if (!data) return
+      let res: Prayer[] = prayers
       let tmpData: Prayer[] = JSON.parse(data)
-      const res: Prayer[] = prayers
-      res.filter((e: any) => tmpData.includes(e as Prayer))
+      let values = tmpData.map((e) => e.name)
+      res = res.filter((e: Prayer) => !values.includes(e.name))
       setAvailablePrayers(res)
     })
     getDailyGospel().then((gospel: LectureAelf | undefined) => {
@@ -80,7 +74,7 @@ const Home = () => {
       if (!saint) return
       setSaint(saint)
     })
-  }, [availablePrayers])
+  }, [])
 
   return (
     <ScrollView style={baseStyle.view}>
@@ -116,7 +110,12 @@ const Home = () => {
         availablePrayers.map((p: Prayer) => (
           <RegisterNotification
             prayer={p}
-            onPress={() => console.log('Register:', p.displayName)}
+            onPress={() => {
+              setAvailablePrayers(
+                availablePrayers.filter((e) => e.name !== p.name)
+              )
+              LocalNotification.registerForPrayer(p.name, new Date(Date.now()))
+            }}
             key={p.name}
           />
         ))}
@@ -156,14 +155,5 @@ class HomeScreen extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 10
-  },
-  manage: {
-    color: theme.colors.red
-  }
-})
 
 export default HomeScreen
