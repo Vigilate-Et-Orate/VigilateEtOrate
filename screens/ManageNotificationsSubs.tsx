@@ -45,14 +45,13 @@ const PrayerLine = ({ prayer }: PrayerLineProps) => {
 }
 
 const ManageNotificationsSubs = () => {
-  let [data, setData] = useState<Prayer[]>()
+  const [data, setData] = useState<Prayer[]>()
   useEffect(() => {
     Storage.getDataAsync(Storage.Stored.SUBS).then((res) => {
       if (!res) {
         setData([])
         return
       }
-      console.log('Res:', res)
       setData(JSON.parse(res))
     })
   }, [])

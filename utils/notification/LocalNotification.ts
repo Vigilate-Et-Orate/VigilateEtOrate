@@ -5,7 +5,7 @@ import * as Storage from '../storage/StorageManager'
 import { Prayer } from 'config/types/Prayer'
 import { NotificationContent } from 'config/types/NotificationTypes'
 import prayers from 'data/prayers.json'
-import { DailyTriggerInput, NotificationContentInput } from 'expo-notifications'
+import { DailyTriggerInput } from 'expo-notifications'
 
 /**
  * Send Notification
@@ -27,14 +27,10 @@ export const registerForPrayer = async (
   date: Date
 ): Promise<void> => {
   const prayer = prayers.find((e) => e.name === name)
-  // const timeToRemind = {
-  //   hour: date.getHours(),
-  //   minute: date.getMinutes(),
-  //   repeat: true
-  // }
+
   const timeToRemind: DailyTriggerInput = {
-    hour: 11,
-    minute: 58,
+    hour: date.getHours(),
+    minute: date.getMinutes(),
     repeats: true
   }
 

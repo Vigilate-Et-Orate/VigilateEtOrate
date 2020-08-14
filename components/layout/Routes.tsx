@@ -14,7 +14,7 @@ import PrayerScreen from 'screens/PrayerScreen'
 
 // Parameters Type
 type MainStack = {
-  Home: {}
+  Home: unknown
 }
 
 function Logo() {

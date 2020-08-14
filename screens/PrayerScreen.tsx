@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { ScrollView, View, Text } from 'react-native'
 import { PinchGestureHandler } from 'react-native-gesture-handler'
 import { Title } from 'elements/text/Text'
-import theme from 'config/theme'
 import prayers from 'data/prayers.json'
 
 type Route = {
@@ -15,7 +14,7 @@ type Route = {
 
 const PrayerScreen = ({ route }: { route: Route }) => {
   const prayer = prayers.find((p) => p.name === route.params.name)
-  let [size, setSize] = useState(16)
+  const [size, setSize] = useState(16)
   const onGestureChange = (event: any) => {
     const newSize = size * event.nativeEvent.scale
     if (newSize < 72 && newSize > 8) setSize(size * event.nativeEvent.scale)
