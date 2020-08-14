@@ -9,8 +9,10 @@ import { Title, Header } from 'elements/text/Text'
 
 const GospelScreen = () => {
   const [evangile, setEvangile] = useState<LectureAelf>()
+  let _isMounted: boolean
 
   useEffect(() => {
+    _isMounted = true
     // Storage.getDataAsync(Storage.Stored.EVANGILE).then((data: string | null) => {
     //   if (!data) return
     //   let res: LectureAelf = JSON.parse(data)
@@ -24,6 +26,9 @@ const GospelScreen = () => {
       data.contenu = html
       setEvangile(data)
     })
+    return () => {
+      _isMounted = false
+    }
   })
 
   return (
@@ -32,7 +37,7 @@ const GospelScreen = () => {
       <Text style={{ justifyContent: 'flex-end', marginBottom: 15 }}>
         {evangile?.ref}
       </Text>
-      <Text>{evangile?.contenu}</Text>
+      <Text style={{ marginBottom: 15 }}>{evangile?.contenu}</Text>
     </ScrollView>
   )
 }
