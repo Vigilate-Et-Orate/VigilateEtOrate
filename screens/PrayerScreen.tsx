@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ScrollView, View, Text } from 'react-native'
+import { ScrollView, Text } from 'react-native'
 import { PinchGestureHandler } from 'react-native-gesture-handler'
 import { Title } from 'elements/text/Text'
 import prayers from 'data/prayers.json'
@@ -12,7 +12,7 @@ type Route = {
   }
 }
 
-const PrayerScreen = ({ route }: { route: Route }) => {
+const PrayerScreen = ({ route }: { route: Route }): JSX.Element => {
   const prayer = prayers.find((p) => p.name === route.params.name)
   const [size, setSize] = useState(16)
   const onGestureChange = (event: any) => {

@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, View, Text } from 'react-native'
+import { ScrollView, Text } from 'react-native'
 
-import * as Storage from 'utils/storage/StorageManager'
 import { LectureAelf, getDailyGospel } from 'utils/aelf/fetchAelf'
-import baseStyle from 'config/style'
 
-import { Title, Header } from 'elements/text/Text'
+import { Header } from 'elements/text/Text'
 
-const GospelScreen = () => {
+const GospelScreen = (): JSX.Element => {
   const [evangile, setEvangile] = useState<LectureAelf>()
   let _isMounted: boolean
 
@@ -27,7 +25,7 @@ const GospelScreen = () => {
       setEvangile(data)
     })
     return () => {
-      _isMounted = false
+      if (_isMounted) _isMounted = false
     }
   })
 

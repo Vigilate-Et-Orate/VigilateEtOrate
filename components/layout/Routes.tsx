@@ -17,18 +17,21 @@ type MainStack = {
   Home: unknown
 }
 
-function Logo() {
-  return (
-    <Image
-      style={{ width: 40, height: 40, marginRight: 5 }}
-      source={require('../../assets/icon-tiny.png')}
-    />
-  )
+type LogoProps = {
+  width: number
+  height: number
 }
+
+const Logo = ({ width, height }: LogoProps): JSX.Element => (
+  <Image
+    style={{ width, height, marginRight: 5 }}
+    source={require('../../assets/icon-tiny.png')}
+  />
+)
 
 const MainStack = createNativeStackNavigator()
 
-const Stack = () => (
+const Stack = (): JSX.Element => (
   <NavigationContainer>
     <MainStack.Navigator
       initialRouteName="Home"
@@ -37,18 +40,34 @@ const Stack = () => (
           backgroundColor: '#35415A'
         },
         headerTintColor: '#EBEBEB',
-        headerRight: (props: any) => <Logo {...props} />
+        headerRight: () => <Logo width={40} height={40} />
       }}
     >
-      <MainStack.Screen name="Home" component={Home} />
+      <MainStack.Screen
+        name="Home"
+        component={Home}
+        options={{ title: 'Acceuil' }}
+      />
       <MainStack.Screen
         name="ManageNotifs"
         component={ManageNotificationsSubs}
-        options={{ title: 'Manage Notifications' }}
+        options={{ title: 'Gérer les Notifications' }}
       />
-      <MainStack.Screen name="Evangile" component={GospelScreen} />
-      <MainStack.Screen name="Prayer" component={PrayerScreen} />
-      <MainStack.Screen name="MyPrayer" component={MyPrayerScreen} />
+      <MainStack.Screen
+        name="Evangile"
+        component={GospelScreen}
+        options={{ title: 'Evangile' }}
+      />
+      <MainStack.Screen
+        name="Prayer"
+        component={PrayerScreen}
+        options={{ title: 'Prière' }}
+      />
+      <MainStack.Screen
+        name="MyPrayer"
+        component={MyPrayerScreen}
+        options={{ title: 'Ma Prière' }}
+      />
     </MainStack.Navigator>
   </NavigationContainer>
 )

@@ -36,7 +36,7 @@ Amen.
 `
 }
 
-const Home = () => {
+const Home = (): JSX.Element => {
   const navigation = useNavigation()
   const [myPrayer, setPrayer] = useState(defaultValues)
   const [firstname, setFirstName] = useState('')
@@ -48,6 +48,7 @@ const Home = () => {
   const [currentPrayer, setCurrentPrayer] = useState('')
 
   const onDateChange = (event: any, selectedDate?: Date | undefined) => {
+    if (!event) return
     const currentDate = selectedDate || date
     setDate(currentDate)
     setShow(false)
@@ -167,7 +168,7 @@ class HomeScreen extends React.Component {
   //   }, 5000)
   // }
 
-  render() {
+  render(): JSX.Element {
     return (
       <Tabs.Navigator
         tabBarOptions={{

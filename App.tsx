@@ -3,8 +3,6 @@ import * as Notifications from 'expo-notifications'
 
 import * as NativeNotifs from './utils/notification/NotificationManager'
 import Stack from './components/layout/Routes'
-import theme from './config/theme'
-import { AsyncStorage } from 'react-native'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -14,12 +12,12 @@ Notifications.setNotificationHandler({
   })
 })
 
-export default function App() {
+const App = (): JSX.Element => {
   useEffect(() => {
-    const token = NativeNotifs.registerForNotificationsAsync()
+    NativeNotifs.registerForNotificationsAsync()
     // const subscription = Notifications.addPushTokenListener()
     Notifications.addNotificationReceivedListener((notification) => {
-      console.log('Notification', notification)
+      if (!notification.request.content.title) return
     })
     // return () => {
     //   subscription.remove()
@@ -28,3 +26,5 @@ export default function App() {
 
   return <Stack />
 }
+
+export default App

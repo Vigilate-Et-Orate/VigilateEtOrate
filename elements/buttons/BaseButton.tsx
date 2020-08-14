@@ -12,11 +12,11 @@ type ButtonProps = {
   onPress: (ev: NativeSyntheticEvent<NativeTouchEvent>) => void
 }
 
-const Button = ({ title, onPress }: ButtonProps) => (
+const Button = ({ title, onPress }: ButtonProps): JSX.Element => (
   <BaseButton title={title} onPress={onPress} color={theme.colors.blue} />
 )
 
-const AccentButton = ({ title, onPress }: ButtonProps) => (
+export const AccentButton = ({ title, onPress }: ButtonProps): JSX.Element => (
   <BaseButton title={title} onPress={onPress} color={theme.colors.red} />
 )
 
