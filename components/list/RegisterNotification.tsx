@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from 'react'
+import React from 'react'
 import { Prayer } from 'config/types/Prayer'
 import {
   Text,
@@ -17,7 +17,7 @@ type RegisterNotificationProps = {
 const RegisterNotification = ({
   prayer,
   onPress
-}: RegisterNotificationProps) => {
+}: RegisterNotificationProps): JSX.Element => {
   return (
     <View style={styles.card}>
       <View style={{ width: '70%' }}>
@@ -26,7 +26,7 @@ const RegisterNotification = ({
       </View>
       <View style={{ width: '30%', flexDirection: 'column-reverse' }}>
         <TouchableOpacity onPress={onPress} style={styles.roundedButton}>
-          <Text style={{ color: '#ffffff' }}>S'inscrire</Text>
+          <Text style={{ color: '#ffffff' }}>S&apos;inscrire</Text>
         </TouchableOpacity>
       </View>
     </View>

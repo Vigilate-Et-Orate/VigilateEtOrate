@@ -50,7 +50,7 @@ const PrayerLine = ({ prayer, onReactivate }: PrayerLineProps) => {
   )
 }
 
-const ManageNotificationsSubs = () => {
+const ManageNotificationsSubs = (): JSX.Element => {
   const [data, setData] = useState<Prayer[]>()
   const [date, setDate] = useState(new Date(Date.now()))
   const [show, setShow] = useState(false)
@@ -58,6 +58,7 @@ const ManageNotificationsSubs = () => {
   let _isMounted: boolean
 
   const onDateChange = (event: any, selectedDate?: Date | undefined) => {
+    if (!event) return
     const currentDate = selectedDate || date
     setDate(currentDate)
     setShow(false)
@@ -80,7 +81,7 @@ const ManageNotificationsSubs = () => {
       setData(JSON.parse(res))
     })
     return () => {
-      _isMounted = false
+      if (_isMounted) _isMounted = false
     }
   }, [])
 

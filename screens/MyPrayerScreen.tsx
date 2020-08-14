@@ -5,7 +5,7 @@ import * as Storage from 'utils/storage/StorageManager'
 import { Header } from 'elements/text/Text'
 import { MyPrayer } from 'config/types/Prayer'
 
-const MyPrayerPage = () => {
+const MyPrayerPage = (): JSX.Element => {
   const [myPrayer, setMyPrayer] = useState<MyPrayer>()
   let _isMounted: boolean
 
@@ -17,7 +17,7 @@ const MyPrayerPage = () => {
       setMyPrayer(parsed)
     })
     return () => {
-      _isMounted = false
+      if (_isMounted) _isMounted = false
     }
   })
 

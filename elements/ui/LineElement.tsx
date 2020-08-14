@@ -11,7 +11,7 @@ type Props = {
   activeInitial: boolean
 }
 
-export const PrayerHome = ({ title }: { title: string }) => {
+export const PrayerHome = ({ title }: { title: string }): JSX.Element => {
   return (
     <View style={styles.row}>
       <View style={{ width: '60%' }}>
@@ -23,7 +23,7 @@ export const PrayerHome = ({ title }: { title: string }) => {
   )
 }
 
-const LineElement = ({ title, activeInitial }: Props) => {
+const LineElement = ({ title, activeInitial }: Props): JSX.Element => {
   const [active, setActive] = useState(activeInitial)
   const toggleSwitch = () => setActive((prev) => !prev)
 

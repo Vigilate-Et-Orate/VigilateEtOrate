@@ -17,7 +17,7 @@ type PrayerLineProps = {
   prayer: Prayer
 }
 
-const PrayerLine = ({ prayer }: PrayerLineProps) => {
+const PrayerLine = ({ prayer }: PrayerLineProps): JSX.Element => {
   const navigation = useNavigation()
   return (
     <TouchableOpacity
@@ -32,7 +32,7 @@ const PrayerLine = ({ prayer }: PrayerLineProps) => {
   )
 }
 
-const PrayersScreen = () => {
+const PrayersScreen = (): JSX.Element => {
   return (
     <ScrollView style={{ paddingHorizontal: 20 }}>
       <Title>Prières</Title>
