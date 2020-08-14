@@ -107,7 +107,7 @@ const Home = () => {
       <Card
         title={myPrayer.title}
         body={myPrayer.content}
-        onPress={() => console.log('Voila')}
+        onPress={() => navigation.navigate('MyPrayer')}
       />
       <View
         style={{

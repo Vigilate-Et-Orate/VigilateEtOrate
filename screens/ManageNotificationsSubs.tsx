@@ -55,6 +55,7 @@ const ManageNotificationsSubs = () => {
   const [date, setDate] = useState(new Date(Date.now()))
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState('')
+  let _isMounted: boolean
 
   const onDateChange = (event: any, selectedDate?: Date | undefined) => {
     const currentDate = selectedDate || date
@@ -70,6 +71,7 @@ const ManageNotificationsSubs = () => {
   }
 
   useEffect(() => {
+    _isMounted = true
     Storage.getDataAsync(Storage.Stored.SUBS).then((res) => {
       if (!res) {
         setData([])
@@ -77,6 +79,9 @@ const ManageNotificationsSubs = () => {
       }
       setData(JSON.parse(res))
     })
+    return () => {
+      _isMounted = false
+    }
   }, [])
 
   return (
