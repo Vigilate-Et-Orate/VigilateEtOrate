@@ -53,8 +53,8 @@ const Home = () => {
     const currentDate = selectedDate || date
     setDate(currentDate)
     setShow(false)
-    if (currentPrayer && currentPrayer.length > 0 && selectedDate) {
-      LocalNotification.registerForPrayer(currentPrayer, selectedDate)
+    if (currentPrayer && currentPrayer.length > 0) {
+      LocalNotification.registerForPrayer(currentPrayer, currentDate)
       setCurrentPrayer('')
     }
   }
@@ -127,8 +127,14 @@ const Home = () => {
           <RegisterNotification
             prayer={p}
             onPress={async () => {
-              setShow(true)
-              setCurrentPrayer(p.name)
+              if (p.times && p.times.length == 0) {
+                setShow(true)
+                setCurrentPrayer(p.name)
+              } else
+                LocalNotification.registerForPrayer(
+                  p.name,
+                  new Date(Date.now())
+                )
               setAvailablePrayers(
                 availablePrayers.filter((e) => e.name !== p.name)
               )
