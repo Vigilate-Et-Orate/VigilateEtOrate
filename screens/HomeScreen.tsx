@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import React, { useState, useCallback } from 'react'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -13,7 +13,7 @@ import * as Storage from 'utils/storage/StorageManager'
 import PrayersScreen from 'screens/PrayersScreen'
 import ProfileScreen from 'screens/ProfileScreen'
 import theme from 'config/theme'
-import { Prayer } from 'config/types/Prayer'
+import { Prayer, MyPrayer } from 'config/types/Prayer'
 import RegisterNotification from 'components/list/RegisterNotification'
 import prayers from 'data/prayers.json'
 import {
@@ -23,12 +23,9 @@ import {
   getDailySaint
 } from 'utils/aelf/fetchAelf'
 
-const defaultValues: {
-  title: string
-  prayer: string
-} = {
+const defaultValues: MyPrayer = {
   title: 'Je vous salue Marie',
-  prayer: `Je vous salue Marie, pleine de grâces
+  content: `Je vous salue Marie, pleine de grâces
 Le Seigneur est avec vous
 vous êtes bénie entre toutes les femmes
 et Jésus le fruit de vos entrailles est beni
@@ -42,6 +39,7 @@ Amen.
 const Home = () => {
   const navigation = useNavigation()
   const [myPrayer, setPrayer] = useState(defaultValues)
+  const [firstname, setFirstName] = useState('')
   const [availablePrayers, setAvailablePrayers] = useState(prayers)
   const [evangile, setEvangile] = useState<LectureAelf>()
   const [saint, setSaint] = useState<InformationAelf>()
@@ -59,11 +57,15 @@ const Home = () => {
     }
   }
 
-  useEffect(() => {
-    Storage.getDataAsync('my-prayer').then((data) => {
+  const effectCallback = () => {
+    Storage.getDataAsync(Storage.Stored.MY_PRAYER).then((data) => {
       if (!data) return
       const res = JSON.parse(data)
       setPrayer(res)
+    })
+    Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
+      if (!data) return
+      setFirstName(data)
     })
     Storage.getDataAsync(Storage.Stored.SUBS).then((data) => {
       if (!data) return
@@ -81,7 +83,9 @@ const Home = () => {
       if (!saint) return
       setSaint(saint)
     })
-  }, [])
+  }
+
+  useFocusEffect(useCallback(effectCallback, []))
 
   return (
     <ScrollView style={baseStyle.view}>
@@ -94,7 +98,7 @@ const Home = () => {
           onChange={onDateChange}
         />
       )}
-      <Title>Bonjour !</Title>
+      <Title>Bonjour {firstname} !</Title>
       <WelcomeCard
         saint={saint?.jour_liturgique_nom || 'Erreur de reseau'}
         evangile={evangile?.titre || 'Erreur de reseau'}
@@ -102,7 +106,7 @@ const Home = () => {
       <Header>Prière Personnelle</Header>
       <Card
         title={myPrayer.title}
-        body={myPrayer.prayer}
+        body={myPrayer.content}
         onPress={() => console.log('Voila')}
       />
       <View
