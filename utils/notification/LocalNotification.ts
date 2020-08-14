@@ -1,19 +1,18 @@
-/**
- * Local Notification
- */
+import { ToastAndroid } from 'react-native'
 import * as Notifications from 'expo-notifications'
 
 import * as Storage from '../storage/StorageManager'
-
-type Content = {
-  title: string,
-  body: string
-}
+import { Prayer, NotifTime } from 'config/types/Prayer'
+import { NotificationContent } from 'config/types/NotificationTypes'
+import prayers from 'data/prayers.json'
+import { DailyTriggerInput } from 'expo-notifications'
 
 /**
  * Send Notification
  */
-const sendNotification = async (content: Content) => {
+const sendNotification = async (
+  content: NotificationContent
+): Promise<void> => {
   Notifications.scheduleNotificationAsync({
     content,
     trigger: null
@@ -21,75 +20,151 @@ const sendNotification = async (content: Content) => {
 }
 
 /**
- * Register for Angelus daily notification
+ * Register for notification
  */
-export const registerForAngelusAsync = async () => {
-  const midday = {
-    hour: 12,
-    minute: 0,
-    repeats: true
-  }
-  let content = {
-    title: 'Tout est bon!',
-    body: 'Vous avez souscrit aux rappels quotidients pour l\'Angelus'
-  } as Content
+export const registerForPrayer = async (
+  name: string,
+  date: Date
+): Promise<void> => {
+  const prayer = prayers.find((e) => e.name === name)
 
-  let data = await Storage.getDataAsync(Storage.Stored.SUBS)
-  if (!data) {
-    console.log('Creating data')
-    data = JSON.stringify({
-      angelus: true,
-    })
-  } else {
-    let parsedData = JSON.parse(data)
-    if (parsedData?.angelus && parsedData?.angelus === false) {
-      console.log('Enable Angelus')
-      parsedData.angelus = true
-    } else if (parsedData.angelus === true) {
-      sendNotification({title: 'Errr', body: 'Vous avez deja souscris a ces notifications'})
-      return
-    } else {
-      console.log('Adding Angelus')
-      parsedData.angelus = true
+  let times: NotifTime[] = []
+
+  if (prayer && prayer.times && prayer?.times.length > 0) times = prayer?.times
+  else {
+    const timeToRemind: DailyTriggerInput = {
+      hour: date.getHours(),
+      minute: date.getMinutes(),
+      repeats: true
     }
-    data = parsedData
+    times.push(timeToRemind)
   }
-  
-  await Storage.setDataAsync(Storage.Stored.SUBS, JSON.stringify(data))
-  sendNotification(content)
 
-  let subs = await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "Angeluuuuus",
-      body: "Il est l'heure de chanter l'Angélus"
-    },
-    trigger: midday
+  const subs: string[] = []
+  const contents: NotificationContent[] = []
+
+  times.forEach(async (e) => {
+    // Create notification response
+    const content: NotificationContent = {
+      title: 'Tout est bon !',
+      body: `Rappels pour '${prayer?.displayName}' à ${e.hour}:${e.minute}`,
+      sound: true
+    }
+    contents.push(content)
+
+    // Get sub
+    const sub = await Notifications.scheduleNotificationAsync({
+      content: prayer?.notifContent || {
+        title: 'Merci Seigneur',
+        body: 'Offrons lui 5 minutes de notre journée',
+        sound: true
+      },
+      trigger: e
+    })
+    subs.push(sub)
   })
-  console.log('Subscriptions returned:', subs);
+
+  // Get prayer from storage
+  let data = await Storage.getDataAsync(Storage.Stored.SUBS)
+  let finalData: string
+  if (!data) {
+    // Create data array
+    if (!prayer) return
+    prayer.active = true
+    prayer.subscription = subs
+    data = JSON.stringify([prayer])
+    finalData = data
+  } else {
+    // Upd8 subs
+    const parsed: Prayer[] = JSON.parse(data)
+    const storedPrayer = parsed.find((e) => e.name === name)
+    if (storedPrayer) {
+      if (
+        storedPrayer.active &&
+        storedPrayer.subscription &&
+        storedPrayer.subscription[0].length > 0
+      ) {
+        // Already stored a subscription
+        ToastAndroid.showWithGravity(
+          'Vous avez déjà souscris à ces notifications',
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        )
+        subs.forEach(
+          async (sub) =>
+            await Notifications.cancelScheduledNotificationAsync(sub)
+        )
+        return
+      } else {
+        // Add or update the subscription
+        parsed.map((e) => {
+          if (e.name === name) {
+            e.active = true
+            e.subscription = subs
+            return e
+          }
+        })
+        finalData = JSON.stringify(parsed)
+      }
+    } else {
+      // Add a subscription for this prayer
+      if (!prayer) return
+      prayer.active = true
+      prayer.subscription = subs
+      parsed.push(prayer)
+      finalData = JSON.stringify(parsed)
+    }
+  }
+
+  await Storage.setDataAsync(Storage.Stored.SUBS, finalData)
+  contents.forEach((content) => sendNotification(content))
 }
 
 /**
- * Unregister from angelus
+ * Unsub from a notifications subscription
  */
+export const unsubFromPrayer = async (name: string): Promise<void> => {
+  const prayer = prayers.find((e) => e.name === name)
 
+  const content: NotificationContent = {
+    title: 'Succès ! Vous avez été désinscrit',
+    body: `Plus de notificaions pour ${prayer?.displayName}`,
+    sound: true
+  }
+  const data = await Storage.getDataAsync(Storage.Stored.SUBS)
+  if (!data) return
+  const parsed = JSON.parse(data)
+  parsed.map(async (element: Prayer) => {
+    if (element.name === name && element.subscription && element.active) {
+      element.subscription.forEach(
+        async (sub) => await Notifications.cancelScheduledNotificationAsync(sub)
+      )
+      element.active = false
+      element.subscription = ['']
+      sendNotification(content)
+      return element
+    }
+  })
+  await Storage.setDataAsync(Storage.Stored.SUBS, JSON.stringify(parsed))
+}
 
 /**
  * Unsubscribe to all notifications
  */
-export const unsubToAll = async () => {
-  const content = {
-    title: 'Successfully unsubscribed from all',
-    body: 'You will not receive otifications anymore'
+export const unsubToAll = async (): Promise<void> => {
+  const content: NotificationContent = {
+    title: 'Succès !',
+    body: 'Vous avez été désinscrit de toutes les notifications',
+    sound: true
   }
-  sendNotification(content)
-  let data = JSON.parse(await Storage.getDataAsync(Storage.Stored.SUBS) || '');
+  const data = await Storage.getDataAsync(Storage.Stored.SUBS)
   if (!data) return
-  console.log('Unsub got:', data);
-  Object.keys(data).map((key: string) => {
-    data[key] = false
+  const parsed = JSON.parse(data)
+  parsed.map((e: Prayer) => {
+    e.active = false
+    e.subscription = ['']
   })
-  console.log('Unsub:', data)
-  await Storage.setDataAsync(Storage.Stored.SUBS, JSON.stringify(data))
-
   await Notifications.cancelAllScheduledNotificationsAsync()
+  await Storage.setDataAsync(Storage.Stored.SUBS, JSON.stringify(parsed))
+  sendNotification(content)
 }

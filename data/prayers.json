@@ -1,0 +1,88 @@
+[
+  {
+    "displayName": "Angélus",
+    "name": "angelus",
+    "description": "Prière de l'ange Gabriel à Marie",
+    "active": false,
+    "subscription": [""],
+    "content": "L’ ange du Seigneur l 'annonça à Marie,\nEt elle conçut du Saint-Esprit.\n\nJe vous salue Marie...\n\nVoici la Servante du Seigneur,\nQu’ il me soit fait selon votre parole.\n\nJe vous salue Marie...\n\nEt le Verbe s’ est fait chair\nEt il a habité parmi nous.\n\nJe vous salue Marie...\n\nPriez pour nous, sainte Mère de Dieu,\nAfin que nous soyons rendus dignes des promesses du Christ.\n\nPrions.Daignez, Seigneur, répandre votre grâce dans nos âmes, afin qu 'ayant connu par la voix de l'Ange l 'Incarnation de Votre Fils Jésus Christ, nous puissions parvenir par sa Passion et par sa Croix,à la gloire de sa Résurrection, par le même Jésus Christ Votre Fils, notre Seigneur.",
+    "notifContent": {
+      "title": "Annnnngélus !!",
+      "body": "Il est l'heure de chanter l'angélus",
+      "sound": true
+    },
+    "times": [
+      {
+        "hour": 7,
+        "minute": 0,
+        "repeats": true
+      },
+      {
+        "hour": 12,
+        "minute": 0,
+        "repeats": true
+      },
+      {
+        "hour": 19,
+        "minute": 0,
+        "repeats": true
+      }
+    ]
+  },
+  {
+    "displayName": "Consécration à Marie",
+    "name": "consecration",
+    "description": "Prère de consécration à Marie de saint Louis-Marie Grignion de Montfort",
+    "active": false,
+    "subscription": [""],
+    "content": "Je vous choisis, aujourd'hui ô Marie,\nEn présence de toute la cour céleste,\nPour ma Mère et ma Reine.\nJe vous livre et consacre,\nEn toute soumission et amour,\nMon corps et mon âme,\nMes biens intérieurs et extérieurs,\nEt la valeur même de mes bonnes actions\nPassées, présentes et futures,\nVous laissant un entier et plein droit\nDe disposer de moi,\nEt de tout ce qui m 'appartient,\nSans exception,\nSelon votre bon plaisir,\nAla plus grande Gloire de Dieu,\nDans le temps et l 'éternité.",
+    "notifContent": {
+      "title": "Consécration à Marie",
+      "body": "Offrons notre journée à notre Mère",
+      "sound": true
+    },
+    "times": []
+  },
+  {
+    "displayName": "Prière avant l'étude",
+    "name": "avant-letude",
+    "description": "prière à réciter avant de travailler",
+    "active": false,
+    "subscription": [""],
+    "content": "Créateur ineffable, Vous êtes la vraie source de la lumière et de la sagesse.\nDaignez répandre Votre clarté sur l’obscurité de mon intelligence ;\nChassez de moi les ténèbres du péché et de l’ignorance.\nDonnez-moi: La pénétration pour comprendre, La mémoire pour retenir, La méthode et la facilité pour apprendre, La lucidité pour interpréter,\nUne grâce abondante pour m’exprimer,\nAidez le commencement de mon travail, Dirigez en le progrès, Couronnez en la fin,\nPar Jésus Christ Notre Seigneur.",
+    "notifContent": {
+      "title": "Prière avant l'étude",
+      "body": "L'heure est à l'étude, prions",
+      "sound": true
+    },
+    "times": []
+  },
+  {
+    "displayName": "Notre Père",
+    "name": "notre-pere",
+    "description": "Prière du Notre Père",
+    "active": false,
+    "subscription": [""],
+    "content": "Notre Père, qui es aux cieux,\nQue ton nom soit sanctifié,\nQue ton règne vienne,\nQue ta volonté soit faite sur la terre comme au ciel.\nDonne-nous aujourd’hui notre pain de ce jour.\nPardonne-nous nos offenses,\nComme nous pardonnons aussi à ceux qui nous ont offensés.\nEt ne nous laisse pas entrer en tentation\nMais délivre-nous du Mal.",
+    "notifContent": {
+      "title": "Notre Père",
+      "body": "Avez vous fait votre Notre Père de la journée ?",
+      "sound": true
+    },
+    "times": []
+  },
+  {
+    "displayName": "Je vous salue Marie",
+    "name": "je-vous-salue-marie",
+    "description": "Prière à Marie notre Mère",
+    "active": false,
+    "subscription": [""],
+    "content": "Je vous salue, Marie pleine de grâce;\nLe Seigneur est avec vous.\nVous êtes bénie entre toutes les femmes\nEt Jésus, le fruit de vos entrailles, est béni.\nSainte Marie, Mère de Dieu,\nPriez pour nous pauvres pécheurs,\nMaintenant et à l’ heure de notre mort.",
+    "notifContent": {
+      "title": "Je Vous Salue Marie",
+      "body": "Confions une intention à la très Sainte Vierge Marie",
+      "sound": true
+    },
+    "times": []
+  }
+]
