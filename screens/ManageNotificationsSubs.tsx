@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity
 } from 'react-native'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import * as Storage from 'utils/storage/StorageManager'
@@ -17,13 +18,18 @@ import theme from 'config/theme'
 
 type PrayerLineProps = {
   prayer: Prayer
+  onReactivate: (name: string) => void
 }
 
-const PrayerLine = ({ prayer }: PrayerLineProps) => {
+const PrayerLine = ({ prayer, onReactivate }: PrayerLineProps) => {
   const [enabled, setEnabled] = useState(prayer.active)
+
   const toggleSwitch = () => {
     if (enabled) LocalNotification.unsubFromPrayer(prayer.name)
-    else LocalNotification.registerForPrayer(prayer.name, new Date())
+    else {
+      if (prayer.times && prayer.times.length == 0) onReactivate(prayer.name)
+      LocalNotification.registerForPrayer(prayer.name, new Date(Date.now()))
+    }
     setEnabled((prevState: boolean) => !prevState)
   }
 
@@ -45,14 +51,30 @@ const PrayerLine = ({ prayer }: PrayerLineProps) => {
 }
 
 const ManageNotificationsSubs = () => {
-  let [data, setData] = useState<Prayer[]>()
+  const [data, setData] = useState<Prayer[]>()
+  const [date, setDate] = useState(new Date(Date.now()))
+  const [show, setShow] = useState(false)
+  const [currentPrayer, setCurrentPrayer] = useState('')
+
+  const onDateChange = (event: any, selectedDate?: Date | undefined) => {
+    const currentDate = selectedDate || date
+    setDate(currentDate)
+    setShow(false)
+    LocalNotification.registerForPrayer(currentPrayer, currentDate)
+    setCurrentPrayer('')
+  }
+
+  const onReactivate = (name: string) => {
+    setCurrentPrayer(name)
+    setShow(true)
+  }
+
   useEffect(() => {
     Storage.getDataAsync(Storage.Stored.SUBS).then((res) => {
       if (!res) {
         setData([])
         return
       }
-      console.log('Res:', res)
       setData(JSON.parse(res))
     })
   }, [])
@@ -66,6 +88,15 @@ const ManageNotificationsSubs = () => {
           justifyContent: 'space-between'
         }}
       >
+        {show && (
+          <DateTimePicker
+            mode="time"
+            value={date}
+            is24Hour={true}
+            display="default"
+            onChange={onDateChange}
+          />
+        )}
         <Title>Notifications</Title>
         <TouchableOpacity
           onPress={() => LocalNotification.unsubToAll}
@@ -78,7 +109,9 @@ const ManageNotificationsSubs = () => {
       </View>
       <ScrollView>
         {data &&
-          data.map((p: Prayer) => <PrayerLine prayer={p} key={p.name} />)}
+          data.map((p: Prayer) => (
+            <PrayerLine onReactivate={onReactivate} prayer={p} key={p.name} />
+          ))}
       </ScrollView>
     </View>
   )

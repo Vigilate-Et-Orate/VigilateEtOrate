@@ -24,7 +24,7 @@ export const PrayerHome = ({ title }: { title: string }) => {
 }
 
 const LineElement = ({ title, activeInitial }: Props) => {
-  let [active, setActive] = useState(activeInitial)
+  const [active, setActive] = useState(activeInitial)
   const toggleSwitch = () => setActive((prev) => !prev)
 
   return (

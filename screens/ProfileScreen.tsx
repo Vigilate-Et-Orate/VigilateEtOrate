@@ -16,14 +16,7 @@ const Profile = () => {
 
   return (
     <View style={{ paddingHorizontal: '20%', marginTop: 20 }}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          console.log('Closing Modal')
-        }}
-      >
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TouchableOpacity

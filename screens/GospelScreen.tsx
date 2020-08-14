@@ -8,7 +8,7 @@ import baseStyle from 'config/style'
 import { Title, Header } from 'elements/text/Text'
 
 const GospelScreen = () => {
-  let [evangile, setEvangile] = useState<LectureAelf>()
+  const [evangile, setEvangile] = useState<LectureAelf>()
 
   useEffect(() => {
     // Storage.getDataAsync(Storage.Stored.EVANGILE).then((data: string | null) => {

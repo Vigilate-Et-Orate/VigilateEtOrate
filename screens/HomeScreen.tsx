@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
@@ -44,6 +45,19 @@ const Home = () => {
   const [availablePrayers, setAvailablePrayers] = useState(prayers)
   const [evangile, setEvangile] = useState<LectureAelf>()
   const [saint, setSaint] = useState<InformationAelf>()
+  const [date, setDate] = useState(new Date(Date.now()))
+  const [show, setShow] = useState(false)
+  const [currentPrayer, setCurrentPrayer] = useState('')
+
+  const onDateChange = (event: any, selectedDate?: Date | undefined) => {
+    const currentDate = selectedDate || date
+    setDate(currentDate)
+    setShow(false)
+    if (currentPrayer && currentPrayer.length > 0) {
+      LocalNotification.registerForPrayer(currentPrayer, currentDate)
+      setCurrentPrayer('')
+    }
+  }
 
   useEffect(() => {
     Storage.getDataAsync('my-prayer').then((data) => {
@@ -54,8 +68,8 @@ const Home = () => {
     Storage.getDataAsync(Storage.Stored.SUBS).then((data) => {
       if (!data) return
       let res: Prayer[] = prayers
-      let tmpData: Prayer[] = JSON.parse(data)
-      let values = tmpData.map((e) => e.name)
+      const tmpData: Prayer[] = JSON.parse(data)
+      const values = tmpData.map((e) => e.name)
       res = res.filter((e: Prayer) => !values.includes(e.name))
       setAvailablePrayers(res)
     })
@@ -71,6 +85,15 @@ const Home = () => {
 
   return (
     <ScrollView style={baseStyle.view}>
+      {show && (
+        <DateTimePicker
+          mode="time"
+          value={date}
+          is24Hour={true}
+          display="default"
+          onChange={onDateChange}
+        />
+      )}
       <Title>Bonjour !</Title>
       <WelcomeCard
         saint={saint?.jour_liturgique_nom || 'Erreur de reseau'}
@@ -103,11 +126,18 @@ const Home = () => {
         availablePrayers.map((p: Prayer) => (
           <RegisterNotification
             prayer={p}
-            onPress={() => {
+            onPress={async () => {
+              if (p.times && p.times.length == 0) {
+                setShow(true)
+                setCurrentPrayer(p.name)
+              } else
+                LocalNotification.registerForPrayer(
+                  p.name,
+                  new Date(Date.now())
+                )
               setAvailablePrayers(
                 availablePrayers.filter((e) => e.name !== p.name)
               )
-              LocalNotification.registerForPrayer(p.name, new Date(Date.now()))
             }}
             key={p.name}
           />

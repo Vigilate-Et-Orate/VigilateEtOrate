@@ -22,7 +22,7 @@ const PrayerLine = ({ prayer }: PrayerLineProps) => {
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('Prayer', { name })}
+      onPress={() => navigation.navigate('Prayer', { name: prayer.name })}
     >
       <View style={{ width: '80%' }}>
         <Text style={styles.title}>{prayer.displayName}</Text>

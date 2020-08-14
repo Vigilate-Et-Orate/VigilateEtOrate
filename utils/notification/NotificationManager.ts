@@ -23,7 +23,7 @@ export const isNotificationPermittedAsync = async (): Promise<boolean> => {
  */
 export const registerForNotificationsAsync = async (): Promise<string> => {
   if (!(await isNotificationPermittedAsync())) {
-    const res = await Notifications.requestPermissionsAsync({
+    await Notifications.requestPermissionsAsync({
       ios: {
         allowAlert: true,
         allowBadge: true,

@@ -2,10 +2,10 @@ import { ToastAndroid } from 'react-native'
 import * as Notifications from 'expo-notifications'
 
 import * as Storage from '../storage/StorageManager'
-import { Prayer } from 'config/types/Prayer'
+import { Prayer, NotifTime } from 'config/types/Prayer'
 import { NotificationContent } from 'config/types/NotificationTypes'
 import prayers from 'data/prayers.json'
-import { DailyTriggerInput, NotificationContentInput } from 'expo-notifications'
+import { DailyTriggerInput } from 'expo-notifications'
 
 /**
  * Send Notification
@@ -27,32 +27,41 @@ export const registerForPrayer = async (
   date: Date
 ): Promise<void> => {
   const prayer = prayers.find((e) => e.name === name)
-  // const timeToRemind = {
-  //   hour: date.getHours(),
-  //   minute: date.getMinutes(),
-  //   repeat: true
-  // }
-  const timeToRemind: DailyTriggerInput = {
-    hour: 11,
-    minute: 58,
-    repeats: true
+
+  let times: NotifTime[] = []
+
+  if (prayer && prayer.times && prayer?.times.length > 0) times = prayer?.times
+  else {
+    const timeToRemind: DailyTriggerInput = {
+      hour: date.getHours(),
+      minute: date.getMinutes(),
+      repeats: true
+    }
+    times.push(timeToRemind)
   }
 
-  // Create notification response
-  const content: NotificationContent = {
-    title: 'Tout est bon !',
-    body: `Rappels pour '${prayer?.displayName}'`,
-    sound: true
-  }
+  const subs: string[] = []
+  const contents: NotificationContent[] = []
 
-  // Get Subscription
-  const sub = await Notifications.scheduleNotificationAsync({
-    content: prayer?.notifContent || {
-      title: 'Merci Seigneur',
-      body: 'Offrons lui 5 minutes de notre journée',
+  times.forEach(async (e) => {
+    // Create notification response
+    const content: NotificationContent = {
+      title: 'Tout est bon !',
+      body: `Rappels pour '${prayer?.displayName}' à ${e.hour}:${e.minute}`,
       sound: true
-    },
-    trigger: timeToRemind
+    }
+    contents.push(content)
+
+    // Get sub
+    const sub = await Notifications.scheduleNotificationAsync({
+      content: prayer?.notifContent || {
+        title: 'Merci Seigneur',
+        body: 'Offrons lui 5 minutes de notre journée',
+        sound: true
+      },
+      trigger: e
+    })
+    subs.push(sub)
   })
 
   // Get prayer from storage
@@ -62,7 +71,7 @@ export const registerForPrayer = async (
     // Create data array
     if (!prayer) return
     prayer.active = true
-    prayer.subscription = sub
+    prayer.subscription = subs
     data = JSON.stringify([prayer])
     finalData = data
   } else {
@@ -70,21 +79,28 @@ export const registerForPrayer = async (
     const parsed: Prayer[] = JSON.parse(data)
     const storedPrayer = parsed.find((e) => e.name === name)
     if (storedPrayer) {
-      if (storedPrayer.active && storedPrayer.subscription) {
+      if (
+        storedPrayer.active &&
+        storedPrayer.subscription &&
+        storedPrayer.subscription[0].length > 0
+      ) {
         // Already stored a subscription
         ToastAndroid.showWithGravity(
           'Vous avez déjà souscris à ces notifications',
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         )
-        await Notifications.cancelScheduledNotificationAsync(sub)
+        subs.forEach(
+          async (sub) =>
+            await Notifications.cancelScheduledNotificationAsync(sub)
+        )
         return
       } else {
         // Add or update the subscription
         parsed.map((e) => {
           if (e.name === name) {
             e.active = true
-            e.subscription = sub
+            e.subscription = subs
             return e
           }
         })
@@ -94,14 +110,14 @@ export const registerForPrayer = async (
       // Add a subscription for this prayer
       if (!prayer) return
       prayer.active = true
-      prayer.subscription = sub
+      prayer.subscription = subs
       parsed.push(prayer)
       finalData = JSON.stringify(parsed)
     }
   }
 
   await Storage.setDataAsync(Storage.Stored.SUBS, finalData)
-  sendNotification(content)
+  contents.forEach((content) => sendNotification(content))
 }
 
 /**
@@ -120,9 +136,11 @@ export const unsubFromPrayer = async (name: string): Promise<void> => {
   const parsed = JSON.parse(data)
   parsed.map(async (element: Prayer) => {
     if (element.name === name && element.subscription && element.active) {
-      await Notifications.cancelScheduledNotificationAsync(element.subscription)
+      element.subscription.forEach(
+        async (sub) => await Notifications.cancelScheduledNotificationAsync(sub)
+      )
       element.active = false
-      element.subscription = ''
+      element.subscription = ['']
       sendNotification(content)
       return element
     }
@@ -144,7 +162,7 @@ export const unsubToAll = async (): Promise<void> => {
   const parsed = JSON.parse(data)
   parsed.map((e: Prayer) => {
     e.active = false
-    e.subscription = ''
+    e.subscription = ['']
   })
   await Notifications.cancelAllScheduledNotificationsAsync()
   await Storage.setDataAsync(Storage.Stored.SUBS, JSON.stringify(parsed))
