@@ -8,7 +8,8 @@ export enum Stored {
   SUBS = 'subscriptions',
   EVANGILE = 'evangile',
   MY_PRAYER = 'my-prayer',
-  DAY_INFO = 'day-info'
+  DAY_INFO = 'day-info',
+  FIRSTNAME = 'firstname'
 }
 
 /**

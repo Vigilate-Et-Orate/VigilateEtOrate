@@ -16,3 +16,8 @@ export type Prayer = {
   notifContent: NotificationContent
   times: NotifTime[]
 }
+
+export type MyPrayer = {
+  title: string
+  content: string
+}
