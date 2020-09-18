@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
+import { useNavigation } from '@react-navigation/native'
 import * as Notifications from 'expo-notifications'
 
 import * as NativeNotifs from './utils/notification/NotificationManager'
 import Stack from './components/layout/Routes'
-import theme from './config/theme'
-import { AsyncStorage } from 'react-native'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -18,12 +17,15 @@ export default function App() {
   useEffect(() => {
     const token = NativeNotifs.registerForNotificationsAsync()
     // const subscription = Notifications.addPushTokenListener()
-    Notifications.addNotificationReceivedListener((notification) => {
-      console.log('Notification', notification)
-    })
-    // return () => {
-    //   subscription.remove()
-    // }
+    const subReceived = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log('Notification RECEIVED', notification)
+      }
+    )
+
+    return () => {
+      subReceived.remove()
+    }
   }, [])
 
   return <Stack />

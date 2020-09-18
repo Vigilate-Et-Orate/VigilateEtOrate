@@ -10,7 +10,7 @@ import { DailyTriggerInput } from 'expo-notifications'
 /**
  * Send Notification
  */
-const sendNotification = async (
+export const sendNotification = async (
   content: NotificationContent
 ): Promise<void> => {
   Notifications.scheduleNotificationAsync({

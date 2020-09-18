@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import * as Notifications from 'expo-notifications'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
@@ -40,7 +41,7 @@ const Home = () => {
   const navigation = useNavigation()
   const [myPrayer, setPrayer] = useState(defaultValues)
   const [firstname, setFirstName] = useState('')
-  const [availablePrayers, setAvailablePrayers] = useState(prayers)
+  const [availablePrayers, setAvailablePrayers] = useState(prayers as Prayer[])
   const [evangile, setEvangile] = useState<LectureAelf>()
   const [saint, setSaint] = useState<InformationAelf>()
   const [date, setDate] = useState(new Date(Date.now()))
@@ -152,35 +153,36 @@ const Home = () => {
 
 const Tabs = createMaterialTopTabNavigator()
 
-class HomeScreen extends React.Component {
-  state = {
-    isReady: false
-  }
+const HomeScreen = () => {
+  const navigation = useNavigation()
 
-  // async componentDidMount() {
-  //   await SplashScreen.preventAutoHideAsync();
-  //   console.log('Waiting');
-  //   setTimeout(async () => {
-  //     console.log('Showing Screen')
-  //     this.setState({ isReady: true })
-  //     await SplashScreen.hideAsync()
-  //   }, 5000)
-  // }
-
-  render() {
-    return (
-      <Tabs.Navigator
-        tabBarOptions={{
-          activeTintColor: theme.colors.red,
-          inactiveTintColor: theme.colors.gray
-        }}
-      >
-        <Tabs.Screen name="Home" component={Home} />
-        <Tabs.Screen name="Prayers" component={PrayersScreen} />
-        <Tabs.Screen name="Profile" component={ProfileScreen} />
-      </Tabs.Navigator>
+  useEffect(() => {
+    const subRes = Notifications.addNotificationResponseReceivedListener(
+      (event) => {
+        const data = event.notification.request.content.data
+        if (data && (data.prayerName as string)) {
+          navigation.navigate('Prayer', {
+            name: data.prayerName as string
+          })
+        }
+      }
     )
-  }
+
+    return () => subRes.remove()
+  }, [])
+
+  return (
+    <Tabs.Navigator
+      tabBarOptions={{
+        activeTintColor: theme.colors.red,
+        inactiveTintColor: theme.colors.gray
+      }}
+    >
+      <Tabs.Screen name="Home" component={Home} />
+      <Tabs.Screen name="Prayers" component={PrayersScreen} />
+      <Tabs.Screen name="Profile" component={ProfileScreen} />
+    </Tabs.Navigator>
+  )
 }
 
 export default HomeScreen
