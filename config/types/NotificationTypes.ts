@@ -1,5 +1,8 @@
 export type NotificationContent = {
   title: string
+  subtitle?: string
   body: string
-  sound: boolean
+  sound?: boolean
+  data?: any
+  autoDismiss?: boolean
 }

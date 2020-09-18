@@ -1,6 +1,14 @@
 module.exports = function(api) {
   api.cache(true);
-  const presets = ['babel-preset-expo'];
+  const presets = [
+    'babel-preset-expo',
+    '@babel/preset-typescript',
+    ['@babel/preset-env', {
+      targets: {
+        node: 'current'
+      }
+    }]
+  ];
   const plugins = [[
     require.resolve('babel-plugin-module-resolver'),
     {
