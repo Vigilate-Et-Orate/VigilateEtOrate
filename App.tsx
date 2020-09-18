@@ -13,9 +13,9 @@ Notifications.setNotificationHandler({
   })
 })
 
-export default function App() {
+const App = (): JSX.Element => {
   useEffect(() => {
-    const token = NativeNotifs.registerForNotificationsAsync()
+    NativeNotifs.registerForNotificationsAsync()
     // const subscription = Notifications.addPushTokenListener()
     const subReceived = Notifications.addNotificationReceivedListener(
       (notification) => {
@@ -30,3 +30,5 @@ export default function App() {
 
   return <Stack />
 }
+
+export default App

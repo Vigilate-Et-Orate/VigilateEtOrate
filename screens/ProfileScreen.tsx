@@ -16,7 +16,7 @@ import { MyPrayer } from 'config/types/Prayer'
 import { Header } from 'elements/text/Text'
 import theme from 'config/theme'
 
-const Profile = () => {
+const Profile = (): JSX.Element => {
   const [modalVisible, setModalVisible] = useState(false)
   const [firstName, onFirstNameChange] = useState('')
   const [prayerTitle, onPrayerTitleChange] = useState('')

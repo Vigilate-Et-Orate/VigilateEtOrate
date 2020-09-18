@@ -7,15 +7,15 @@ type Props = {
   children: any
 }
 
-const Text = ({ children }: Props) => (
+const Text = ({ children }: Props): JSX.Element => (
   <BaseText style={styles.Text}>{children}</BaseText>
 )
 
-const Title = ({ children }: Props) => (
+const Title = ({ children }: Props): JSX.Element => (
   <BaseText style={styles.Title}>{children}</BaseText>
 )
 
-const Header = ({ children }: Props) => (
+const Header = ({ children }: Props): JSX.Element => (
   <BaseText style={styles.Header}>{children}</BaseText>
 )
 

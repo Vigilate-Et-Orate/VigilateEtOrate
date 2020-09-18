@@ -21,7 +21,7 @@ type WelcomeCardProps = {
   evangile: string
 }
 
-const Card = ({ title, body, onPress }: CardProps) => {
+const Card = ({ title, body, onPress }: CardProps): JSX.Element => {
   return (
     <View>
       <TouchableOpacity style={styles.card} onPress={onPress}>
@@ -32,19 +32,22 @@ const Card = ({ title, body, onPress }: CardProps) => {
   )
 }
 
-export const WelcomeCard = ({ saint, evangile }: WelcomeCardProps) => {
+export const WelcomeCard = ({
+  saint,
+  evangile
+}: WelcomeCardProps): JSX.Element => {
   const navigation = useNavigation()
   return (
     <View style={styles.card}>
       <Text style={styles.Title}>Saint Du Jour</Text>
       <Text style={styles.description}>{saint}</Text>
-      <Text style={styles.Title}>Phrase de l'Evangile du Jour</Text>
+      <Text style={styles.Title}>Phrase de l&apos;Evangile du Jour</Text>
       <Text style={styles.description}>{evangile}</Text>
       <TouchableOpacity
         style={{ alignSelf: 'flex-end', padding: 10 }}
         onPress={() => navigation.navigate('Evangile')}
       >
-        <Text style={styles.see}>Voir l'Evangile</Text>
+        <Text style={styles.see}>Voir l&apos;Evangile</Text>
       </TouchableOpacity>
     </View>
   )
