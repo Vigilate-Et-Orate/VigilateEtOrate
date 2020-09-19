@@ -13,6 +13,7 @@ import * as Storage from 'utils/storage/StorageManager'
 
 import PrayersScreen from 'screens/PrayersScreen'
 import ProfileScreen from 'screens/ProfileScreen'
+import IntentionsScreen from 'screens/IntentionsScreen'
 import theme from 'config/theme'
 import { Prayer, MyPrayer } from 'config/types/Prayer'
 import RegisterNotification from 'components/list/RegisterNotification'
@@ -154,6 +155,79 @@ const Home = (): JSX.Element => {
 
 const Tabs = createMaterialTopTabNavigator()
 
+type TabBarProps = {
+  state: any
+  descriptors: any
+  navigation: any
+}
+
+const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        height: 40,
+        backgroundColor: theme.colors.red,
+        alignItems: 'center',
+        paddingHorizontal: 10
+      }}
+    >
+      {state.routes.map((route: any, index: number) => {
+        const { options } = descriptors[route.key]
+        const label =
+          options.tabBarLabel !== undefined
+            ? options.tabBarLabel
+            : options.title !== undefined
+            ? options.title
+            : route.name
+
+        const isFocused = state.index == index
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'typePress',
+            target: route.key,
+            canPreventDefault: true
+          })
+
+          if (!isFocused && !event.defaultPrevented)
+            navigation.navigate(route.name)
+        }
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key
+          })
+        }
+
+        return (
+          <TouchableOpacity
+            accessibilityRole="button"
+            testID={options.tabBarTestID}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={{ flex: 1 }}
+            key={route.key}
+          >
+            <Text
+              style={{
+                color: isFocused
+                  ? theme.colors.blue
+                  : theme.colors.ultraLightGrey,
+                textAlign: 'center',
+                fontSize: 15
+              }}
+            >
+              {label}
+            </Text>
+          </TouchableOpacity>
+        )
+      })}
+    </View>
+  )
+}
+
 const HomeScreen = () => {
   const navigation = useNavigation()
 
@@ -168,18 +242,12 @@ const HomeScreen = () => {
         }
       }
     )
-
-    return () => subRes.remove()
-  }, [])
+  })
 
   return (
-    <Tabs.Navigator
-      tabBarOptions={{
-        activeTintColor: theme.colors.red,
-        inactiveTintColor: theme.colors.gray
-      }}
-    >
+    <Tabs.Navigator tabBar={(props) => <MainTabBar {...props} />}>
       <Tabs.Screen name="Home" component={Home} />
+      <Tabs.Screen name="Intentions" component={IntentionsScreen} />
       <Tabs.Screen name="Prayers" component={PrayersScreen} />
       <Tabs.Screen name="Profile" component={ProfileScreen} />
     </Tabs.Navigator>
