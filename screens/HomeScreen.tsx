@@ -242,14 +242,34 @@ const HomeScreen = () => {
         }
       }
     )
+
+    return () => {
+      subRes.remove()
+    }
   })
 
   return (
     <Tabs.Navigator tabBar={(props) => <MainTabBar {...props} />}>
-      <Tabs.Screen name="Home" component={Home} />
-      <Tabs.Screen name="Intentions" component={IntentionsScreen} />
-      <Tabs.Screen name="Prayers" component={PrayersScreen} />
-      <Tabs.Screen name="Profile" component={ProfileScreen} />
+      <Tabs.Screen
+        name="Home"
+        component={Home}
+        options={{ title: 'Accueil' }}
+      />
+      <Tabs.Screen
+        name="Intentions"
+        component={IntentionsScreen}
+        options={{ title: 'Intentions' }}
+      />
+      <Tabs.Screen
+        name="Prayers"
+        component={PrayersScreen}
+        options={{ title: 'Prières' }}
+      />
+      <Tabs.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ title: 'Profile' }}
+      />
     </Tabs.Navigator>
   )
 }

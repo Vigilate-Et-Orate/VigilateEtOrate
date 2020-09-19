@@ -9,7 +9,10 @@
     "notifContent": {
       "title": "Annnnngélus !!",
       "body": "Il est l'heure de chanter l'angélus",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "angelus"
+      }
     },
     "times": [
       {
@@ -39,7 +42,10 @@
     "notifContent": {
       "title": "Consécration à Marie",
       "body": "Offrons notre journée à notre Mère",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "consecration"
+      }
     },
     "times": []
   },
@@ -53,7 +59,10 @@
     "notifContent": {
       "title": "Prière avant l'étude",
       "body": "L'heure est à l'étude, prions",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "avant-letude"
+      }
     },
     "times": []
   },
@@ -67,7 +76,10 @@
     "notifContent": {
       "title": "Notre Père",
       "body": "Avez vous fait votre Notre Père de la journée ?",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "notre-pere"
+      }
     },
     "times": []
   },
@@ -81,7 +93,10 @@
     "notifContent": {
       "title": "Je Vous Salue Marie",
       "body": "Confions une intention à la très Sainte Vierge Marie",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "je-vous-salue-marie"
+      }
     },
     "times": []
   },
@@ -91,11 +106,14 @@
     "description": "Prière à Saint Jospeh de Cupertino",
     "active": false,
     "subscription": [""],
-    "content": "Ô saint Joseph de Cupertino,\nQui aime à te montrer favorable envers ceux qui ont recours à toi, je viens implorer ton aide pour cet examen que je dois passer.\nMalgré mon travail, ma bonne volonté, je crains de me laisser troubler et de ne pouvoir répondre convenablement.\nRappelle - toi que tu t’ es trouvé dans la même difficulté et que par l’ obéissance et la puissante protection de ton père spirituel tu en es sorti providentiellement.\nFais de même à mon égard: accorde - moi l’ assurance dans mes réponses et donne à mon intelligence la promptitude et la vivacité.\nJe te le demande pour l’ amour de Jésus, de Marie et de saint François dont tu fus l’ enfant et le serviteur fidèle.\nEn toi, je me confie, très saint patron des examens, et je suis convaincu que mon espoir ne sera pas déçu.\nAmen",
+    "content": "Ô saint Joseph de Cupertino,\nQui aime à te montrer favorable envers ceux qui ont recours à toi, je viens implorer ton aide pour cet examen que je dois passer.\nMalgré mon travail, ma bonne volonté, je crains de me laisser troubler et de ne pouvoir répondre convenablement.\nRappelle - toi que tu t’ es trouvé dans la même difficulté et que par l’ obéissance et la puissante protection de ton père spirituel tu en es sorti providentiellement.\nFais de même à mon égard: accorde - moi l’ assurance dans mes réponses et donne à mon intelligence la promptitude et la vivacité.\nJe te le demande pour l’ amour de Jésus, de Marie et de saint François dont tu fus l’ enfant et le serviteur fidèle.\nEn toi, je me confie, très saint patron des examens, et je suis convaincu que mon espoir ne sera pas déçu.\n",
     "notifContent": {
       "title": "St Joseph de Cupertino attend!",
       "body": "Prions Saint Jospeh de Cupertino",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "st-jo-cupertino"
+      }
     },
     "times": []
   },
@@ -105,11 +123,14 @@
     "description": "Prière à Saint Jospeh",
     "active": false,
     "subscription": [""],
-    "content": "Je vous salue, Joseph,\nVous que la grâce divine a comblé.\nLe sauveur a reposé entre vos bras et grandi sous vos yeux.\nVous êtes béni entre tous les hommes et Jésus,\nl’ enfant divin de votre virginale épouse est béni.\nSaint Joseph, donné pour père au Fils de Dieu,\nPriez pour nous dans nos soucis de famille, de santé et de travail, jusqu’ à nos derniers jours,\net daignez nous secourir à l’ heure de notre mort.\nAmen.",
+    "content": "Je vous salue, Joseph,\nVous que la grâce divine a comblé.\nLe sauveur a reposé entre vos bras et grandi sous vos yeux.\nVous êtes béni entre tous les hommes et Jésus,\nl’ enfant divin de votre virginale épouse est béni.\nSaint Joseph, donné pour père au Fils de Dieu,\nPriez pour nous dans nos soucis de famille, de santé et de travail, jusqu’ à nos derniers jours,\net daignez nous secourir à l’ heure de notre mort.\n",
     "notifContent": {
       "title": "Prions Saint Joseph",
       "body": "Prions le je vous salue Jospeh",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "salue-st-jo"
+      }
     },
     "times": []
   },
@@ -119,11 +140,14 @@
     "description": "Prière à Saint Jospeh",
     "active": false,
     "subscription": [""],
-    "content": "Ô glorieux saint Joseph,\nChef de la Sainte Famille de Nazareth,\nSi zélé à pourvoir à tous ses besoins;\nEtendez sur nos familles et nos écoles votre tendre sollicitude;\nPrennez sous votre conduite toutes les affaires spirituelles et temporelles qui les concernent\nEt faites que leur issue soit pour la gloire de Dieu et le salut de nos âmes.\nAinsi soit - il.",
+    "content": "Ô glorieux saint Joseph,\nChef de la Sainte Famille de Nazareth,\nSi zélé à pourvoir à tous ses besoins;\nEtendez sur nos familles et nos écoles votre tendre sollicitude;\nPrenez sous votre conduite toutes les affaires spirituelles et temporelles qui les concernent\nEt faites que leur issue soit pour la gloire de Dieu et le salut de nos âmes.\n",
     "notifContent": {
       "title": "Prions le Glorieux Saint Joseph",
       "body": "Confions nos familles et nos écoles",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "glorieux-st-jo"
+      }
     },
     "times": []
   },
@@ -133,11 +157,14 @@
     "description": "Prière à Saint Michel Archange",
     "active": false,
     "subscription": [""],
-    "content": "Saint Michel Archange,\nDéfendez-nous dans le combat\nEt soyez notre secours contre la malice et les embûches du démon.\nQue Dieu lui commande, nous vous en supplions;\nEt vous, Prince de la Milice Céleste,\nPar la force divine,\nRepoussez en enfers Satan\nEt les autres esprits mauvais qui\nRôdent dans le monde en vue de perdre les âmes. Ainsi soit-il",
+    "content": "Saint Michel Archange,\nDéfendez-nous dans le combat\nSoyez notre secours contre la malice et les embûches du démon.\nQue Dieu lui commande, nous vous en supplions;\nEt vous, Prince de la Milice Céleste,\nPar la force divine,\nRepoussez en enfers Satan\nEt les autres esprits mauvais qui\nRôdent dans le monde en vue de perdre les âmes.",
     "notifContent": {
       "title": "Confions la France",
       "body": "Prions le prince de la milice celeste",
-      "sound": true
+      "sound": true,
+      "data": {
+        "prayerName": "saint-michel-archange"
+      }
     },
     "times": []
   }
