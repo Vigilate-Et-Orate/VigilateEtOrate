@@ -11,6 +11,7 @@ import ManageNotificationsSubs from 'screens/ManageNotificationsSubs'
 import GospelScreen from 'screens/GospelScreen'
 import PrayerScreen from 'screens/PrayerScreen'
 import MyPrayerScreen from 'screens/MyPrayerScreen'
+import IntentionScreen from 'screens/IntentionScreen'
 
 // Parameters Type
 type MainStack = {
@@ -46,7 +47,7 @@ const Stack = (): JSX.Element => (
       <MainStack.Screen
         name="Home"
         component={Home}
-        options={{ title: 'Acceuil' }}
+        options={{ title: 'Accueil' }}
       />
       <MainStack.Screen
         name="ManageNotifs"
@@ -62,6 +63,11 @@ const Stack = (): JSX.Element => (
         name="Prayer"
         component={PrayerScreen}
         options={{ title: 'Prière' }}
+      />
+      <MainStack.Screen
+        name="Intention"
+        component={IntentionScreen}
+        options={{ title: 'Intention de Prière' }}
       />
       <MainStack.Screen
         name="MyPrayer"

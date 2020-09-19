@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import * as Notifications from 'expo-notifications'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
@@ -12,6 +13,7 @@ import * as Storage from 'utils/storage/StorageManager'
 
 import PrayersScreen from 'screens/PrayersScreen'
 import ProfileScreen from 'screens/ProfileScreen'
+import IntentionsScreen from 'screens/IntentionsScreen'
 import theme from 'config/theme'
 import { Prayer, MyPrayer } from 'config/types/Prayer'
 import RegisterNotification from 'components/list/RegisterNotification'
@@ -40,7 +42,7 @@ const Home = (): JSX.Element => {
   const navigation = useNavigation()
   const [myPrayer, setPrayer] = useState(defaultValues)
   const [firstname, setFirstName] = useState('')
-  const [availablePrayers, setAvailablePrayers] = useState(prayers)
+  const [availablePrayers, setAvailablePrayers] = useState(prayers as Prayer[])
   const [evangile, setEvangile] = useState<LectureAelf>()
   const [saint, setSaint] = useState<InformationAelf>()
   const [date, setDate] = useState(new Date(Date.now()))
@@ -153,35 +155,123 @@ const Home = (): JSX.Element => {
 
 const Tabs = createMaterialTopTabNavigator()
 
-class HomeScreen extends React.Component {
-  state = {
-    isReady: false
-  }
+type TabBarProps = {
+  state: any
+  descriptors: any
+  navigation: any
+}
 
-  // async componentDidMount() {
-  //   await SplashScreen.preventAutoHideAsync();
-  //   console.log('Waiting');
-  //   setTimeout(async () => {
-  //     console.log('Showing Screen')
-  //     this.setState({ isReady: true })
-  //     await SplashScreen.hideAsync()
-  //   }, 5000)
-  // }
+const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        height: 40,
+        backgroundColor: theme.colors.red,
+        alignItems: 'center',
+        paddingHorizontal: 10
+      }}
+    >
+      {state.routes.map((route: any, index: number) => {
+        const { options } = descriptors[route.key]
+        const label =
+          options.tabBarLabel !== undefined
+            ? options.tabBarLabel
+            : options.title !== undefined
+            ? options.title
+            : route.name
 
-  render(): JSX.Element {
-    return (
-      <Tabs.Navigator
-        tabBarOptions={{
-          activeTintColor: theme.colors.red,
-          inactiveTintColor: theme.colors.gray
-        }}
-      >
-        <Tabs.Screen name="Home" component={Home} />
-        <Tabs.Screen name="Prayers" component={PrayersScreen} />
-        <Tabs.Screen name="Profile" component={ProfileScreen} />
-      </Tabs.Navigator>
+        const isFocused = state.index == index
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'typePress',
+            target: route.key,
+            canPreventDefault: true
+          })
+
+          if (!isFocused && !event.defaultPrevented)
+            navigation.navigate(route.name)
+        }
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key
+          })
+        }
+
+        return (
+          <TouchableOpacity
+            accessibilityRole="button"
+            testID={options.tabBarTestID}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={{ flex: 1 }}
+            key={route.key}
+          >
+            <Text
+              style={{
+                color: isFocused
+                  ? theme.colors.blue
+                  : theme.colors.ultraLightGrey,
+                textAlign: 'center',
+                fontSize: 15
+              }}
+            >
+              {label}
+            </Text>
+          </TouchableOpacity>
+        )
+      })}
+    </View>
+  )
+}
+
+const HomeScreen = () => {
+  const navigation = useNavigation()
+
+  useEffect(() => {
+    const subRes = Notifications.addNotificationResponseReceivedListener(
+      (event) => {
+        const data = event.notification.request.content.data
+        if (data && (data.prayerName as string)) {
+          navigation.navigate('Prayer', {
+            name: data.prayerName as string
+          })
+        }
+      }
     )
-  }
+
+    return () => {
+      subRes.remove()
+    }
+  })
+
+  return (
+    <Tabs.Navigator tabBar={(props) => <MainTabBar {...props} />}>
+      <Tabs.Screen
+        name="Home"
+        component={Home}
+        options={{ title: 'Accueil' }}
+      />
+      <Tabs.Screen
+        name="Intentions"
+        component={IntentionsScreen}
+        options={{ title: 'Intentions' }}
+      />
+      <Tabs.Screen
+        name="Prayers"
+        component={PrayersScreen}
+        options={{ title: 'Prières' }}
+      />
+      <Tabs.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ title: 'Profile' }}
+      />
+    </Tabs.Navigator>
+  )
 }
 
 export default HomeScreen
