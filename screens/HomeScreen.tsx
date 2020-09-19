@@ -190,14 +190,6 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
             canPreventDefault: true
           })
 
-          console.log(
-            'isFocused:',
-            isFocused,
-            'defaultPrevented:',
-            event.defaultPrevented,
-            'RouteName:',
-            route.name
-          )
           if (!isFocused && !event.defaultPrevented)
             navigation.navigate(route.name)
         }

@@ -1,3 +1,5 @@
 export const buildSlug = (title: string) => {
-  title = title.replace(' ', '-')
+  let slug = title.toLowerCase()
+  slug = slug.split(' ').join('-')
+  return slug
 }

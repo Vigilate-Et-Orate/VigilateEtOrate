@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
   Button,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ToastAndroid
 } from 'react-native'
+import { MaterialIcons } from '@expo/vector-icons'
 
 import { Title, Header } from 'elements/text/Text'
 import { Intention } from 'config/types/Intention'
@@ -19,20 +20,37 @@ import theme from 'config/theme'
 
 type IntentionCardProps = {
   intention: Intention
+  removeIntention: (slug: string) => void
+  key: string
 }
 
-const IntentionCard = ({ intention }: IntentionCardProps): JSX.Element => {
+const IntentionCard = ({
+  intention,
+  removeIntention,
+  key
+}: IntentionCardProps): JSX.Element => {
   const navigation = useNavigation()
 
   return (
     <TouchableOpacity
+      key={key}
       style={styles.cardIntention}
-      onPress={() => navigation.navigate('Intention', { intention })}
+      onLongPress={() => navigation.navigate('Intention', { intention })}
     >
-      <View>
+      <View style={{ width: '92%', flexDirection: 'column' }}>
         <Text style={styles.title}>{intention.title}</Text>
         <Text>{intention.intention}</Text>
       </View>
+      <TouchableOpacity
+        style={{
+          width: '10%',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}
+        onPress={() => removeIntention(intention.slug)}
+      >
+        <MaterialIcons name="done" size={20} color="green" />
+      </TouchableOpacity>
     </TouchableOpacity>
   )
 }
@@ -77,31 +95,36 @@ const WriteIntentionBloc = ({ addIntention }: WriteIntentionProps) => {
 
 const IntentionsScreen = () => {
   const [intentions, setIntentions] = useState([] as Intention[])
+  let _isMounted: boolean
 
   useEffect(() => {
+    _isMounted = true
     Storage.getDataAsync(Storage.Stored.INTENTIONS).then((data) => {
       if (!data) return
       const parsed = JSON.parse(data)
       if (parsed) setIntentions(parsed)
     })
+    return () => {
+      if (_isMounted) _isMounted = false
+    }
   }, [intentions])
 
   const addIntention = (title: string, intention: string) => {
     const tmp = intentions
+    const slug = buildSlug(title)
     tmp.push({
       title,
-      intention
+      intention,
+      slug
     } as Intention)
-    const slug = buildSlug(title)
     Storage.setDataAsync(Storage.Stored.INTENTIONS, JSON.stringify(tmp))
       .then(() => {
         ToastAndroid.showWithGravity(
-          'Ajouté!',
+          'Ajoutée !',
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         )
         setIntentions(tmp)
-        return true
       })
       .catch(() => {
         ToastAndroid.showWithGravity(
@@ -113,7 +136,22 @@ const IntentionsScreen = () => {
   }
 
   const removeIntention = (slug: string) => {
-    if (!slug) return
+    const tmp = intentions.filter((i) => i.slug !== slug)
+    Storage.setDataAsync(Storage.Stored.INTENTIONS, JSON.stringify(tmp))
+      .then(() => {
+        ToastAndroid.showWithGravity(
+          'Enlevée !',
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        )
+      })
+      .catch(() => {
+        ToastAndroid.showWithGravity(
+          'Erreur...',
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        )
+      })
   }
 
   return (
@@ -124,7 +162,13 @@ const IntentionsScreen = () => {
         {intentions &&
           intentions.length > 0 &&
           intentions.map((int: Intention) => {
-            return <IntentionCard key={int.slug} intention={int} />
+            return (
+              <IntentionCard
+                key={int.slug}
+                intention={int}
+                removeIntention={removeIntention}
+              />
+            )
           })}
         {intentions && intentions.length <= 0 && (
           <Text>Pas d&apos;intentions...</Text>
@@ -154,7 +198,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: '#ffffff',
     marginVertical: 5,
-    flexDirection: 'column'
+    flexDirection: 'row'
   },
   input: {
     backgroundColor: '#ffffff',
