@@ -3518,6 +3518,18 @@ expo-file-system@~9.0.1:
   dependencies:
     uuid "^3.4.0"
 
+expo-firebase-analytics@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-analytics/-/expo-firebase-analytics-2.4.1.tgz#cb8d96fd91583271aba36e0edce7e2eadea5dec3"
+  integrity sha512-Z9bYDHoqu0lRT1vG5d6vjQe/Wg9ioSWtJ4uHRJBX0kojQNB4ONuO/OCAeiJoDfwfId11bPeslGlnR2P6fh8zGA==
+  dependencies:
+    expo-firebase-core "~1.1.1"
+
+expo-firebase-core@^1.1.1, expo-firebase-core@~1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-core/-/expo-firebase-core-1.1.1.tgz#9ee4b0118a5528c683ff5a676ee2594438e3f3b0"
+  integrity sha512-FCf9IsX30vLeMhIk/+QYZP6iRC4SVP3nite1CqjhL/pnDY0pFqHAfA4e5KKJQUaWw1nbtaHVlBcud/Zyaeu6xg==
+
 expo-font@~8.2.1:
   version "8.2.2"
   resolved "https://registry.yarnpkg.com/expo-font/-/expo-font-8.2.2.tgz#c67ee8d3841921a907464d67e8098baeed92bacf"
@@ -5953,7 +5965,7 @@ node-fetch@^1.0.1:
     encoding "^0.1.11"
     is-stream "^1.0.1"
 
-node-fetch@^2.2.0, node-fetch@^2.6.1:
+node-fetch@^2.2.0, node-fetch@^2.6.0:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==

@@ -4,6 +4,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Notifications from 'expo-notifications'
+import * as Analytics from 'expo-firebase-analytics'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
@@ -110,7 +111,12 @@ const Home = (): JSX.Element => {
       <Card
         title={myPrayer.title}
         body={myPrayer.content}
-        onPress={() => navigation.navigate('MyPrayer')}
+        onPress={() => {
+          Analytics.logEvent('PersonnalPrayer', {
+            location: 'homescreen'
+          })
+          navigation.navigate('MyPrayer')
+        }}
       />
       <View
         style={{
@@ -228,7 +234,7 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   )
 }
 
-const HomeScreen = () => {
+const HomeScreen = (): JSX.Element => {
   const navigation = useNavigation()
 
   useEffect(() => {
@@ -236,6 +242,9 @@ const HomeScreen = () => {
       (event) => {
         const data = event.notification.request.content.data
         if (data && (data.prayerName as string)) {
+          Analytics.logEvent('notificationClicked', {
+            prayer: data.prayerName
+          })
           navigation.navigate('Prayer', {
             name: data.prayerName as string
           })

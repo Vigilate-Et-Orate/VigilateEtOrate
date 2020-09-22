@@ -11,6 +11,7 @@ import {
   ToastAndroid
 } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
+import * as Analytics from 'expo-firebase-analytics'
 
 import { Title, Header } from 'elements/text/Text'
 import { Intention } from 'config/types/Intention'
@@ -47,7 +48,12 @@ const IntentionCard = ({
           flexDirection: 'column',
           justifyContent: 'center'
         }}
-        onPress={() => removeIntention(intention.slug)}
+        onPress={() => {
+          Analytics.logEvent('intention', {
+            type: 'dismissed'
+          })
+          removeIntention(intention.slug)
+        }}
       >
         <MaterialIcons name="done" size={20} color="green" />
       </TouchableOpacity>
@@ -83,6 +89,9 @@ const WriteIntentionBloc = ({ addIntention }: WriteIntentionProps) => {
           title="Ajouter"
           color={theme.colors.blue}
           onPress={() => {
+            Analytics.logEvent('intention', {
+              type: 'new'
+            })
             addIntention(title, intention)
             onTitleChange('')
             onIntentionChange('')
@@ -93,7 +102,7 @@ const WriteIntentionBloc = ({ addIntention }: WriteIntentionProps) => {
   )
 }
 
-const IntentionsScreen = () => {
+const IntentionsScreen = (): JSX.Element => {
   const [intentions, setIntentions] = useState([] as Intention[])
   let _isMounted: boolean
 

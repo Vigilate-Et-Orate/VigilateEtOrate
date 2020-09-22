@@ -27,9 +27,10 @@
     },
     "android": {
       "package": "com.prayernotifs.app",
+      "googleServicesFile": "./google-services.json",
       "icon": "./assets/icon-medium.png",
       "useNextNotificationsApi": true,
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon-adaptive.png",
         "backgroundImage": "./assets/icon.png",
