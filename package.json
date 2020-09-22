@@ -20,6 +20,8 @@
     "axios": "^0.19.2",
     "expo": "^38.0.8",
     "expo-constants": "~9.1.1",
+    "expo-firebase-analytics": "^2.4.1",
+    "expo-firebase-core": "^1.1.1",
     "expo-font": "~8.2.1",
     "expo-notifications": "~0.3.3",
     "expo-permissions": "~9.0.1",
