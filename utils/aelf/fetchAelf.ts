@@ -32,7 +32,7 @@ type AelfResponse = {
   ]
 }
 
-export function getformatedDate() {
+export function getformatedDate(): string {
   const d = new Date(Date.now()),
     year = d.getFullYear()
   let month = '' + (d.getMonth() + 1),

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "222667035685",
+    "firebase_url": "https://prayer-notification-app.firebaseio.com",
+    "project_id": "prayer-notification-app",
+    "storage_bucket": "prayer-notification-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222667035685:android:6b87b8af5ca133410b5bcc",
+        "android_client_info": {
+          "package_name": "com.prayernotifs.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "222667035685-kgmi8gfnr4fugejati0ipgkfffpoa3ho.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeW-aBhKRcCkQ6sFQHG_WPddLAn5pxZvU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "222667035685-kgmi8gfnr4fugejati0ipgkfffpoa3ho.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

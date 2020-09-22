@@ -10,6 +10,7 @@ import {
   TextInput,
   ScrollView
 } from 'react-native'
+import * as Analytics from 'expo-firebase-analytics'
 
 import * as Storage from 'utils/storage/StorageManager'
 import { MyPrayer } from 'config/types/Prayer'
@@ -42,6 +43,9 @@ const Profile = (): JSX.Element => {
     }
     Storage.setDataAsync(Storage.Stored.MY_PRAYER, JSON.stringify(prayer))
     Storage.setDataAsync(Storage.Stored.FIRSTNAME, firstName)
+    Analytics.logEvent('profile', {
+      type: 'updatedPersonnal Information'
+    })
     ToastAndroid.showWithGravity(
       'Sauvergardé avec succès !',
       ToastAndroid.SHORT,

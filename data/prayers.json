@@ -101,15 +101,15 @@
     "times": []
   },
   {
-    "displayName": "O Saint Jospeh de Cupertino",
+    "displayName": "O Saint Joseph de Cupertino",
     "name": "st-jo-cupertino",
-    "description": "Prière à Saint Jospeh de Cupertino",
+    "description": "Prière à Saint Joseph de Cupertino",
     "active": false,
     "subscription": [""],
     "content": "Ô saint Joseph de Cupertino,\nQui aime à te montrer favorable envers ceux qui ont recours à toi, je viens implorer ton aide pour cet examen que je dois passer.\nMalgré mon travail, ma bonne volonté, je crains de me laisser troubler et de ne pouvoir répondre convenablement.\nRappelle - toi que tu t’ es trouvé dans la même difficulté et que par l’ obéissance et la puissante protection de ton père spirituel tu en es sorti providentiellement.\nFais de même à mon égard: accorde - moi l’ assurance dans mes réponses et donne à mon intelligence la promptitude et la vivacité.\nJe te le demande pour l’ amour de Jésus, de Marie et de saint François dont tu fus l’ enfant et le serviteur fidèle.\nEn toi, je me confie, très saint patron des examens, et je suis convaincu que mon espoir ne sera pas déçu.\n",
     "notifContent": {
       "title": "St Joseph de Cupertino attend!",
-      "body": "Prions Saint Jospeh de Cupertino",
+      "body": "Prions Saint Joseph de Cupertino",
       "sound": true,
       "data": {
         "prayerName": "st-jo-cupertino"
@@ -120,13 +120,13 @@
   {
     "displayName": "Je vous salue Joseph",
     "name": "salue-st-jo",
-    "description": "Prière à Saint Jospeh",
+    "description": "Prière à Saint Joseph",
     "active": false,
     "subscription": [""],
     "content": "Je vous salue, Joseph,\nVous que la grâce divine a comblé.\nLe sauveur a reposé entre vos bras et grandi sous vos yeux.\nVous êtes béni entre tous les hommes et Jésus,\nl’ enfant divin de votre virginale épouse est béni.\nSaint Joseph, donné pour père au Fils de Dieu,\nPriez pour nous dans nos soucis de famille, de santé et de travail, jusqu’ à nos derniers jours,\net daignez nous secourir à l’ heure de notre mort.\n",
     "notifContent": {
       "title": "Prions Saint Joseph",
-      "body": "Prions le je vous salue Jospeh",
+      "body": "Prions le je vous salue Joseph",
       "sound": true,
       "data": {
         "prayerName": "salue-st-jo"
@@ -135,9 +135,9 @@
     "times": []
   },
   {
-    "displayName": "O Glorieux Saint Jospeh",
+    "displayName": "O Glorieux Saint Joseph",
     "name": "glorieux-st-jo",
-    "description": "Prière à Saint Jospeh",
+    "description": "Prière à Saint Joseph",
     "active": false,
     "subscription": [""],
     "content": "Ô glorieux saint Joseph,\nChef de la Sainte Famille de Nazareth,\nSi zélé à pourvoir à tous ses besoins;\nEtendez sur nos familles et nos écoles votre tendre sollicitude;\nPrenez sous votre conduite toutes les affaires spirituelles et temporelles qui les concernent\nEt faites que leur issue soit pour la gloire de Dieu et le salut de nos âmes.\n",
