@@ -3,7 +3,7 @@
     "name": "Prayer Notification App",
     "description": "Get notifications for prayer",
     "slug": "prayer-notification-app",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "privacy": "unlisted",
@@ -30,7 +30,7 @@
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/icon-medium.png",
       "useNextNotificationsApi": true,
-      "versionCode": 5,
+      "versionCode": 6,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon-adaptive.png",
         "backgroundImage": "./assets/icon.png",
