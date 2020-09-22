@@ -234,7 +234,7 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   )
 }
 
-const HomeScreen = () => {
+const HomeScreen = (): JSX.Element => {
   const navigation = useNavigation()
 
   useEffect(() => {

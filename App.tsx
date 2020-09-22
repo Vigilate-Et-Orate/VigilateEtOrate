@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { useNavigation } from '@react-navigation/native'
 import * as Notifications from 'expo-notifications'
 
 import * as NativeNotifs from './utils/notification/NotificationManager'
@@ -19,7 +18,7 @@ const App = (): JSX.Element => {
     // const subscription = Notifications.addPushTokenListener()
     const subReceived = Notifications.addNotificationReceivedListener(
       (notification) => {
-        console.log('Notification RECEIVED', notification)
+        if (!notification) return
       }
     )
 

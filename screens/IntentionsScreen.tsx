@@ -102,7 +102,7 @@ const WriteIntentionBloc = ({ addIntention }: WriteIntentionProps) => {
   )
 }
 
-const IntentionsScreen = () => {
+const IntentionsScreen = (): JSX.Element => {
   const [intentions, setIntentions] = useState([] as Intention[])
   let _isMounted: boolean
 
