@@ -26,7 +26,7 @@ const PrayerScreen = ({ route }: { route: Route }): JSX.Element => {
     prayerName: prayer?.name
   })
   return (
-    <Page title="Prière" heart>
+    <Page title="Prière">
       <PinchGestureHandler onGestureEvent={onGestureChange}>
         <ScrollView style={{ paddingHorizontal: 20 }}>
           <Title>{prayer?.displayName}</Title>
