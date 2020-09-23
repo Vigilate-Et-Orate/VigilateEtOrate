@@ -57,11 +57,7 @@ const Stack = (): JSX.Element => {
       <MainStack.Navigator
         initialRouteName="Home"
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#35415A'
-          },
-          headerTintColor: '#EBEBEB',
-          headerRight: () => <Logo width={40} height={40} />
+          headerShown: false
         }}
       >
         <MainStack.Screen
