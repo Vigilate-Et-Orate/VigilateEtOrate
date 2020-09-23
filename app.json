@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Prayer Notification App",
+    "name": "Vigilate & Orate",
     "description": "Get notifications for prayer",
     "slug": "prayer-notification-app",
     "version": "1.0.6",
@@ -9,8 +9,8 @@
     "privacy": "unlisted",
     "backgroundColor": "#EBEBEB",
     "primaryColor": "#35415A",
-    "scheme": "prayernotification",
-    "githubUrl": "https://github.com/awalshy/PrayerNotificationsApp",
+    "scheme": "vigilateetorate",
+    "githubUrl": "https://github.com/awalshy/VigilateEtOrate",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
