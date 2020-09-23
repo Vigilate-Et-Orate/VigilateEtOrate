@@ -4,6 +4,7 @@ import { ScrollView, Text } from 'react-native'
 import * as Storage from 'utils/storage/StorageManager'
 import { Header } from 'elements/text/Text'
 import { MyPrayer } from 'config/types/Prayer'
+import Page from 'components/layout/Page'
 
 const MyPrayerPage = (): JSX.Element => {
   const [myPrayer, setMyPrayer] = useState<MyPrayer>()
@@ -22,10 +23,12 @@ const MyPrayerPage = (): JSX.Element => {
   })
 
   return (
-    <ScrollView style={{ marginHorizontal: 20, marginTop: 20 }}>
-      <Header>{myPrayer?.title}</Header>
-      <Text style={{ fontSize: 14, marginTop: 20 }}>{myPrayer?.content}</Text>
-    </ScrollView>
+    <Page title="Ma Prière">
+      <ScrollView style={{ marginHorizontal: 20, marginTop: 20 }}>
+        <Header>{myPrayer?.title}</Header>
+        <Text style={{ fontSize: 14, marginTop: 20 }}>{myPrayer?.content}</Text>
+      </ScrollView>
+    </Page>
   )
 }
 
