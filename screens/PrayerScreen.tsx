@@ -4,6 +4,7 @@ import { PinchGestureHandler } from 'react-native-gesture-handler'
 import * as Analytics from 'expo-firebase-analytics'
 
 import { Title } from 'elements/text/Text'
+import Page from 'components/layout/Page'
 import prayers from 'data/prayers.json'
 
 type Route = {
@@ -25,13 +26,15 @@ const PrayerScreen = ({ route }: { route: Route }): JSX.Element => {
     prayerName: prayer?.name
   })
   return (
-    <PinchGestureHandler onGestureEvent={onGestureChange}>
-      <ScrollView style={{ paddingHorizontal: 20 }}>
-        <Title>{prayer?.displayName}</Title>
-        <Text style={{ fontSize: size }}>{prayer?.content}</Text>
-        <Text style={{ marginTop: 10, fontSize: size }}>Amen.</Text>
-      </ScrollView>
-    </PinchGestureHandler>
+    <Page title="Prière" heart>
+      <PinchGestureHandler onGestureEvent={onGestureChange}>
+        <ScrollView style={{ paddingHorizontal: 20 }}>
+          <Title>{prayer?.displayName}</Title>
+          <Text style={{ fontSize: size }}>{prayer?.content}</Text>
+          <Text style={{ marginTop: 10, fontSize: size }}>Amen.</Text>
+        </ScrollView>
+      </PinchGestureHandler>
+    </Page>
   )
 }
 

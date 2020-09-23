@@ -3,7 +3,6 @@ import { enableScreens } from 'react-native-screens'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 enableScreens()
-import { Image } from 'react-native'
 import * as Analytics from 'expo-firebase-analytics'
 
 // Screens
@@ -18,18 +17,6 @@ import IntentionScreen from 'screens/IntentionScreen'
 type MainStack = {
   Home: unknown
 }
-
-type LogoProps = {
-  width: number
-  height: number
-}
-
-const Logo = ({ width, height }: LogoProps): JSX.Element => (
-  <Image
-    style={{ width, height, marginRight: 5 }}
-    source={require('../../assets/icon-tiny.png')}
-  />
-)
 
 const MainStack = createNativeStackNavigator()
 
@@ -57,11 +44,7 @@ const Stack = (): JSX.Element => {
       <MainStack.Navigator
         initialRouteName="Home"
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#35415A'
-          },
-          headerTintColor: '#EBEBEB',
-          headerRight: () => <Logo width={40} height={40} />
+          headerShown: false
         }}
       >
         <MainStack.Screen
