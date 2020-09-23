@@ -4,6 +4,7 @@ import { ScrollView, Text } from 'react-native'
 import { LectureAelf, getDailyGospel } from 'utils/aelf/fetchAelf'
 
 import { Header } from 'elements/text/Text'
+import Page from 'components/layout/Page'
 
 const GospelScreen = (): JSX.Element => {
   const [evangile, setEvangile] = useState<LectureAelf>()
@@ -30,13 +31,15 @@ const GospelScreen = (): JSX.Element => {
   })
 
   return (
-    <ScrollView style={{ paddingTop: 25, paddingHorizontal: 20 }}>
-      <Header>{evangile?.titre}</Header>
-      <Text style={{ justifyContent: 'flex-end', marginBottom: 15 }}>
-        {evangile?.ref}
-      </Text>
-      <Text style={{ marginBottom: 15 }}>{evangile?.contenu}</Text>
-    </ScrollView>
+    <Page title="Evangile">
+      <ScrollView style={{ paddingTop: 25, paddingHorizontal: 20 }}>
+        <Header>{evangile?.titre}</Header>
+        <Text style={{ justifyContent: 'flex-end', marginBottom: 15 }}>
+          {evangile?.ref}
+        </Text>
+        <Text style={{ marginBottom: 15 }}>{evangile?.contenu}</Text>
+      </ScrollView>
+    </Page>
   )
 }
 
