@@ -60,7 +60,9 @@ export const IntentionCard = ({
   )
 }
 
-export const WriteIntention = ({ addIntention }: WriteIntentionProps) => {
+export const WriteIntention = ({
+  addIntention
+}: WriteIntentionProps): JSX.Element => {
   const [title, onTitleChange] = useState('')
   const [intention, onIntentionChange] = useState('')
 

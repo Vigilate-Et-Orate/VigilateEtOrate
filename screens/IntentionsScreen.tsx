@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  ToastAndroid,
-  StyleProp,
-  ViewStyle
-} from 'react-native'
+import { StyleSheet, View, ScrollView, Text, ToastAndroid } from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'
 
-import { Header } from 'elements/text/Text'
 import { Intention } from 'config/types/Intention'
 import { WriteIntention, IntentionCard } from 'components/intentions/Blocks'
 import * as Storage from 'utils/storage/StorageManager'

@@ -24,7 +24,7 @@ export const RoundedFilledButton = ({
   children,
   onPress,
   style
-}: ButtonProps) => {
+}: ButtonProps): JSX.Element => {
   return (
     <TouchableOpacity
       style={StyleSheet.compose(style, styles.roundedFilled)}
