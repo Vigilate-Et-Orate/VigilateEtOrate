@@ -1,23 +1,15 @@
 import theme from 'config/theme'
 import React from 'react'
-import {
-  Image,
-  StyleSheet,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native'
-import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
 export type PageProps = {
   title: string
-  heart: boolean
   children: JSX.Element
 }
 
-const Page = ({ title, heart, children }: PageProps) => {
+const Page = ({ title, children }: PageProps): JSX.Element => {
   const navigation = useNavigation()
 
   return (
