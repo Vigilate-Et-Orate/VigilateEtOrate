@@ -1,106 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
-  Button,
   StyleSheet,
   View,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
-  ToastAndroid
+  ToastAndroid,
+  StyleProp,
+  ViewStyle
 } from 'react-native'
-import { MaterialIcons } from '@expo/vector-icons'
-import * as Analytics from 'expo-firebase-analytics'
+import { FontAwesome5 } from '@expo/vector-icons'
 
-import { Title, Header } from 'elements/text/Text'
+import { Header } from 'elements/text/Text'
 import { Intention } from 'config/types/Intention'
+import { WriteIntention, IntentionCard } from 'components/intentions/Blocks'
 import * as Storage from 'utils/storage/StorageManager'
 import { buildSlug } from 'utils/slug/slugBuilder'
 import theme from 'config/theme'
-
-type IntentionCardProps = {
-  intention: Intention
-  removeIntention: (slug: string) => void
-  key: string
-}
-
-const IntentionCard = ({
-  intention,
-  removeIntention,
-  key
-}: IntentionCardProps): JSX.Element => {
-  const navigation = useNavigation()
-
-  return (
-    <TouchableOpacity
-      key={key}
-      style={styles.cardIntention}
-      onLongPress={() => navigation.navigate('Intention', { intention })}
-    >
-      <View style={{ width: '92%', flexDirection: 'column' }}>
-        <Text style={styles.title}>{intention.title}</Text>
-        <Text>{intention.intention}</Text>
-      </View>
-      <TouchableOpacity
-        style={{
-          width: '10%',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}
-        onPress={() => {
-          Analytics.logEvent('intention', {
-            type: 'dismissed'
-          })
-          removeIntention(intention.slug)
-        }}
-      >
-        <MaterialIcons name="done" size={20} color="green" />
-      </TouchableOpacity>
-    </TouchableOpacity>
-  )
-}
-
-type WriteIntentionProps = {
-  addIntention: (title: string, intention: string) => void
-}
-
-const WriteIntentionBloc = ({ addIntention }: WriteIntentionProps) => {
-  const [title, onTitleChange] = useState('')
-  const [intention, onIntentionChange] = useState('')
-
-  return (
-    <View style={styles.card}>
-      <Header>Ecrire une intention</Header>
-      <TextInput
-        style={styles.input}
-        onChangeText={onTitleChange}
-        value={title}
-        placeholder="Titre de l'intention"
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={onIntentionChange}
-        value={intention}
-        placeholder="Intention"
-      />
-      <View style={{ flexDirection: 'row-reverse' }}>
-        <Button
-          title="Ajouter"
-          color={theme.colors.blue}
-          onPress={() => {
-            Analytics.logEvent('intention', {
-              type: 'new'
-            })
-            addIntention(title, intention)
-            onTitleChange('')
-            onIntentionChange('')
-          }}
-        />
-      </View>
-    </View>
-  )
-}
 
 const IntentionsScreen = (): JSX.Element => {
   const [intentions, setIntentions] = useState([] as Intention[])
@@ -164,64 +81,105 @@ const IntentionsScreen = (): JSX.Element => {
   }
 
   return (
-    <ScrollView style={{ paddingHorizontal: 10 }}>
-      <Title>Mes Intentions</Title>
-      <WriteIntentionBloc addIntention={addIntention} />
-      <View style={styles.card}>
-        {intentions &&
-          intentions.length > 0 &&
-          intentions.map((int: Intention) => {
-            return (
-              <IntentionCard
-                key={int.slug}
-                intention={int}
-                removeIntention={removeIntention}
-              />
-            )
-          })}
-        {intentions && intentions.length <= 0 && (
-          <Text>Pas d&apos;intentions...</Text>
-        )}
+    <View style={styles.background}>
+      <View style={styles.header}>
+        <View style={{ height: '100%', flexDirection: 'column-reverse' }}>
+          <View
+            style={{
+              width: '100%',
+              paddingHorizontal: 40,
+              paddingVertical: 10,
+              flexDirection: 'row',
+              justifyContent: 'space-between'
+            }}
+          >
+            <View>
+              <FontAwesome5 name="pray" size={70} color="white" />
+            </View>
+            <View style={{ flexDirection: 'column-reverse' }}>
+              <Text style={{ fontSize: 32, color: theme.colors.white }}>
+                Mes Intentions
+              </Text>
+            </View>
+          </View>
+        </View>
       </View>
-    </ScrollView>
+      <ScrollView style={styles.body}>
+        <View
+          style={
+            intentions.length > 2
+              ? styles.roundedView
+              : styles.roundedViewHeight
+          }
+        >
+          <Text style={styles.h3}>Ecrire une intention</Text>
+          <WriteIntention addIntention={addIntention} />
+          <Text style={styles.h3}>Intentions</Text>
+          <View>
+            {intentions &&
+              intentions.length > 0 &&
+              intentions.map((int: Intention) => {
+                return (
+                  <IntentionCard
+                    key={int.slug}
+                    intention={int}
+                    removeIntention={removeIntention}
+                  />
+                )
+              })}
+            {intentions && intentions.length <= 0 && (
+              <Text style={{ color: theme.colors.white, paddingLeft: 30 }}>
+                Pas d&apos;intentions...
+              </Text>
+            )}
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  button: {
-    color: '#35415A'
+  h3: {
+    color: theme.colors.green,
+    fontSize: 25,
+    marginVertical: 10
   },
-  card: {
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    borderRadius: 15,
-    backgroundColor: '#ffffff',
-    margin: 10,
-    flexDirection: 'column'
+  background: {
+    height: '100%',
+    backgroundColor: theme.colors.green
   },
-  cardIntention: {
+  body: {
+    height: '125%'
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 0,
+    width: '100%',
+    height: '15%',
+    flex: 1,
     paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 15,
-    borderColor: theme.colors.gray,
-    borderWidth: 1,
-    backgroundColor: '#ffffff',
-    marginVertical: 5,
-    flexDirection: 'row'
+    paddingTop: 30
   },
-  input: {
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginVertical: 10,
-    borderWidth: 0.5,
-    borderColor: theme.colors.blue
+  roundedView: {
+    marginTop: '40%',
+    backgroundColor: theme.colors.lightGreen,
+    borderRadius: 30,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 35,
+    height: '100%'
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 6,
-    color: theme.colors.blue
+  roundedViewHeight: {
+    marginTop: '40%',
+    backgroundColor: theme.colors.lightGreen,
+    borderRadius: 30,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 35,
+    height: 700
   }
 })
 
