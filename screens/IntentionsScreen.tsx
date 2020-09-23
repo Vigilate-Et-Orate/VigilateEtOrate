@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 35,
-    height: 700
+    height: 750
   }
 })
 

@@ -28,14 +28,12 @@ export type WriteIntentionProps = {
 // Components
 export const IntentionCard = ({
   intention,
-  removeIntention,
-  key
+  removeIntention
 }: IntentionCardProps): JSX.Element => {
   const navigation = useNavigation()
 
   return (
     <TouchableOpacity
-      key={key}
       style={styles.cardIntention}
       onLongPress={() => navigation.navigate('Intention', { intention })}
     >

@@ -5,6 +5,7 @@ import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Notifications from 'expo-notifications'
 import * as Analytics from 'expo-firebase-analytics'
+import { FontAwesome5 } from '@expo/vector-icons'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
@@ -167,29 +168,44 @@ type TabBarProps = {
   navigation: any
 }
 
+const tabsNameIcon = [
+  { name: 'Home', iconName: 'home' },
+  { name: 'Intentions', iconName: 'feather-alt' },
+  { name: 'Prayers', iconName: 'book' },
+  { name: 'Profile', iconName: 'heart' }
+]
+
 const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   return (
     <View
       style={{
+        elevation: 20,
+        position: 'absolute',
+        bottom: 40,
+        left: '10%',
+        borderRadius: 40,
+        width: '80%',
         flexDirection: 'row',
-        height: 40,
-        backgroundColor: theme.colors.red,
-        alignItems: 'center',
-        paddingHorizontal: 10
+        height: 60,
+        zIndex: 40,
+        backgroundColor:
+          state.index == 1 ? theme.colors.green : theme.colors.blue
       }}
     >
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key]
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name
 
+        const name = tabsNameIcon.find((i) => i.name == route.name)?.iconName
         const isFocused = state.index == index
+        const color = !isFocused
+          ? theme.colors.white
+          : route.name == 'Intentions'
+          ? theme.colors.lightGreen
+          : route.name == 'Profile'
+          ? theme.colors.red
+          : theme.colors.yellow
 
-        const onPress = () => {
+        const onPressNav = () => {
           const event = navigation.emit({
             type: 'typePress',
             target: route.key,
@@ -209,24 +225,13 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
 
         return (
           <TouchableOpacity
-            accessibilityRole="button"
             testID={options.tabBarTestID}
-            onPress={onPress}
+            onPress={onPressNav}
             onLongPress={onLongPress}
-            style={{ flex: 1 }}
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
             key={route.key}
           >
-            <Text
-              style={{
-                color: isFocused
-                  ? theme.colors.blue
-                  : theme.colors.ultraLightGrey,
-                textAlign: 'center',
-                fontSize: 15
-              }}
-            >
-              {label}
-            </Text>
+            <FontAwesome5 name={name} size={25} color={color} />
           </TouchableOpacity>
         )
       })}
