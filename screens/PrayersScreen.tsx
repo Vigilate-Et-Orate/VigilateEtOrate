@@ -5,10 +5,10 @@ import {
   ScrollView,
   View,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native'
 
-import { Title } from 'elements/text/Text'
 import { Prayer } from 'config/types/Prayer'
 import prayers from 'data/prayers.json'
 import theme from 'config/theme'
@@ -34,13 +34,41 @@ const PrayerLine = ({ prayer }: PrayerLineProps): JSX.Element => {
 
 const PrayersScreen = (): JSX.Element => {
   return (
-    <ScrollView style={{ paddingHorizontal: 20 }}>
-      <Title>Prières</Title>
-      {prayers &&
-        prayers.map((prayer: Prayer) => (
-          <PrayerLine key={prayer.name} prayer={prayer} />
-        ))}
-    </ScrollView>
+    <View style={styles.background}>
+      <View style={styles.header}>
+        <View
+          style={{ flexDirection: 'row', height: '60%', position: 'relative' }}
+        >
+          <View style={{ position: 'absolute', top: 20, left: '15%' }}>
+            <Image
+              style={{ width: 80, height: 70 }}
+              source={require('../assets/newIconolive.png')}
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row-reverse',
+            height: '40%',
+            paddingHorizontal: 40
+          }}
+        >
+          <Text style={{ color: '#f6f4f4', fontSize: 32 }}>Prières</Text>
+        </View>
+      </View>
+      <ScrollView style={styles.body}>
+        <View
+          style={
+            prayers.length > 4 ? styles.roundedView : styles.roundedViewHeight
+          }
+        >
+          {prayers &&
+            prayers.map((prayer: Prayer) => (
+              <PrayerLine key={prayer.name} prayer={prayer} />
+            ))}
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -63,7 +91,43 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: theme.colors.gray
+    color: theme.colors.blue
+  },
+  background: {
+    height: '100%',
+    backgroundColor: theme.colors.blue
+  },
+  body: {
+    height: '125%'
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 0,
+    width: '100%',
+    height: '15%',
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingTop: 30
+  },
+  roundedView: {
+    marginTop: '40%',
+    backgroundColor: theme.colors.lightBlue,
+    borderRadius: 30,
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingBottom: 35,
+    height: '100%'
+  },
+  roundedViewHeight: {
+    marginTop: '40%',
+    backgroundColor: theme.colors.lightBlue,
+    borderRadius: 30,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 35,
+    height: 750
   }
 })
 
