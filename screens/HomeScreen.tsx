@@ -1,16 +1,21 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import { View, TouchableOpacity, Text, ScrollView } from 'react-native'
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Image
+} from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Notifications from 'expo-notifications'
 import * as Analytics from 'expo-firebase-analytics'
-import { FontAwesome5 } from '@expo/vector-icons'
+import { FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
-import { Title, Header } from 'elements/text/Text'
-import baseStyle from 'config/style'
 import * as Storage from 'utils/storage/StorageManager'
 
 import PrayersScreen from 'screens/PrayersScreen'
@@ -18,7 +23,6 @@ import ProfileScreen from 'screens/ProfileScreen'
 import IntentionsScreen from 'screens/IntentionsScreen'
 import theme from 'config/theme'
 import { Prayer, MyPrayer } from 'config/types/Prayer'
-import RegisterNotification from 'components/list/RegisterNotification'
 import prayers from 'data/prayers.json'
 import {
   LectureAelf,
@@ -26,6 +30,7 @@ import {
   getDailyGospel,
   getDailySaint
 } from 'utils/aelf/fetchAelf'
+import { PrayerBlockRegister } from 'components/prayers/Block'
 
 const defaultValues: MyPrayer = {
   title: 'Je vous salue Marie',
@@ -44,7 +49,8 @@ const Home = (): JSX.Element => {
   const navigation = useNavigation()
   const [myPrayer, setPrayer] = useState(defaultValues)
   const [firstname, setFirstName] = useState('')
-  const [availablePrayers, setAvailablePrayers] = useState(prayers as Prayer[])
+  const [pair, setPair] = useState<Prayer[]>([])
+  const [inpair, setInpair] = useState<Prayer[]>([])
   const [evangile, setEvangile] = useState<LectureAelf>()
   const [saint, setSaint] = useState<InformationAelf>()
   const [date, setDate] = useState(new Date(Date.now()))
@@ -73,12 +79,21 @@ const Home = (): JSX.Element => {
       setFirstName(data)
     })
     Storage.getDataAsync(Storage.Stored.SUBS).then((data) => {
-      if (!data) return
       let res: Prayer[] = prayers
-      const tmpData: Prayer[] = JSON.parse(data)
-      const values = tmpData.map((e) => e.name)
-      res = res.filter((e: Prayer) => !values.includes(e.name))
-      setAvailablePrayers(res)
+      let tmpData: Prayer[] = []
+      if (data) {
+        tmpData = JSON.parse(data)
+        const values = tmpData.map((e) => e.name)
+        res = res.filter((e: Prayer) => !values.includes(e.name))
+      }
+      const pairTmp: Prayer[] = []
+      const inpairTmp: Prayer[] = []
+      res.forEach((prayer: Prayer, index: number) => {
+        if (index % 2 == 0) pairTmp.push(prayer)
+        else inpairTmp.push(prayer)
+      })
+      setPair(pairTmp)
+      setInpair(inpairTmp)
     })
     getDailyGospel().then((gospel: LectureAelf | undefined) => {
       if (!gospel) return
@@ -93,73 +108,194 @@ const Home = (): JSX.Element => {
   useFocusEffect(useCallback(effectCallback, []))
 
   return (
-    <ScrollView style={baseStyle.view}>
-      {show && (
-        <DateTimePicker
-          mode="time"
-          value={date}
-          is24Hour={true}
-          display="default"
-          onChange={onDateChange}
-        />
-      )}
-      <Title>Bonjour {firstname} !</Title>
-      <WelcomeCard
-        saint={saint?.jour_liturgique_nom || 'Erreur de reseau'}
-        evangile={evangile?.titre || 'Erreur de reseau'}
-      />
-      <Header>Prière Personnelle</Header>
-      <Card
-        title={myPrayer.title}
-        body={myPrayer.content}
-        onPress={() => {
-          Analytics.logEvent('PersonnalPrayer', {
-            location: 'homescreen'
-          })
-          navigation.navigate('MyPrayer')
-        }}
-      />
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          alignContent: 'flex-end',
-          justifyContent: 'space-between'
-        }}
-      >
-        <Header>Prières disponibles</Header>
-        <View>
-          <TouchableOpacity onPress={() => navigation.navigate('ManageNotifs')}>
-            <Text style={{ color: theme.colors.red, marginBottom: 20 }}>
-              Gérer les Notifs
-            </Text>
-          </TouchableOpacity>
+    <View style={styles.background}>
+      <View style={styles.header}>
+        <View
+          style={{ flexDirection: 'row', height: '60%', position: 'relative' }}
+        >
+          <View style={{ position: 'absolute', top: '50%', right: '35%' }}>
+            <Image
+              style={{ width: 40, height: 35 }}
+              source={require('../assets/newIconolive.png')}
+            />
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: 'column',
+            height: '50%',
+            paddingHorizontal: 40
+          }}
+        >
+          <Text style={{ color: '#f6f4f4', fontSize: 22 }}>Bonjour</Text>
+          <Text style={{ color: '#f6f4f4', fontSize: 36 }}>{firstname} !</Text>
         </View>
       </View>
-      {availablePrayers &&
-        availablePrayers.map((p: Prayer) => (
-          <RegisterNotification
-            prayer={p}
-            onPress={async () => {
-              if (p.times && p.times.length == 0) {
-                setShow(true)
-                setCurrentPrayer(p.name)
-              } else
-                LocalNotification.registerForPrayer(
-                  p.name,
-                  new Date(Date.now())
-                )
-              setAvailablePrayers(
-                availablePrayers.filter((e) => e.name !== p.name)
-              )
+      <ScrollView style={styles.body}>
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            top: '2%',
+            right: '2%'
+          }}
+          onPress={() => navigation.navigate('Profile')}
+        >
+          <MaterialIcons name="settings" color={theme.colors.white} size={35} />
+        </TouchableOpacity>
+        <View style={styles.roundedView}>
+          {show && (
+            <DateTimePicker
+              mode="time"
+              value={date}
+              is24Hour={true}
+              display="default"
+              onChange={onDateChange}
+            />
+          )}
+          <Text style={styles.h3}>Saint du jour</Text>
+          <Text style={styles.saintDuJour}>{saint?.fete}</Text>
+          <Text style={styles.h3}>Evangile du jour</Text>
+          <WelcomeCard evangile={evangile?.titre || 'Erreur de reseau'} />
+          <Text style={styles.h3}>Prière Personnelle</Text>
+          <Card
+            title={myPrayer.title}
+            body={myPrayer.content}
+            onPress={() => {
+              Analytics.logEvent('PersonnalPrayer', {
+                location: 'homescreen'
+              })
+              navigation.navigate('MyPrayer')
             }}
-            key={p.name}
           />
-        ))}
-    </ScrollView>
+          <Text style={styles.h3}>Notifications disponibles</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center'
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'column',
+                width: '45%',
+                marginHorizontal: '2%'
+              }}
+            >
+              {pair &&
+                pair.map((prayer: Prayer, index: number) => (
+                  <PrayerBlockRegister
+                    key={prayer.name}
+                    prayer={prayer}
+                    index={index}
+                    onPress={async () => {
+                      if (prayer.times && prayer.times.length == 0) {
+                        setShow(true)
+                        setCurrentPrayer(prayer.name)
+                      } else
+                        LocalNotification.registerForPrayer(
+                          prayer.name,
+                          new Date(Date.now())
+                        )
+                      setPair(
+                        pair.filter((e: Prayer) => e.name !== prayer.name)
+                      )
+                    }}
+                  />
+                ))}
+            </View>
+            <View
+              style={{
+                flexDirection: 'column',
+                width: '45%',
+                marginHorizontal: '2%'
+              }}
+            >
+              {inpair &&
+                inpair.map((prayer: Prayer, index: number) => (
+                  <PrayerBlockRegister
+                    key={prayer.name}
+                    prayer={prayer}
+                    index={index}
+                    inpair
+                    onPress={async () => {
+                      if (prayer.times && prayer.times.length == 0) {
+                        setShow(true)
+                        setCurrentPrayer(prayer.name)
+                      } else
+                        LocalNotification.registerForPrayer(
+                          prayer.name,
+                          new Date(Date.now())
+                        )
+                      setInpair(
+                        inpair.filter((e: Prayer) => e.name !== prayer.name)
+                      )
+                    }}
+                  />
+                ))}
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
+const styles = StyleSheet.create({
+  h3: {
+    marginVertical: 20,
+    color: theme.colors.white,
+    fontSize: 20
+  },
+  saintDuJour: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: theme.colors.blue,
+    color: theme.colors.white,
+    borderRadius: 10,
+    marginHorizontal: '3%',
+    elevation: 10
+  },
+  column: {
+    marginHorizontal: 10,
+    width: '45%',
+    flexDirection: 'column'
+  },
+  description: {
+    fontSize: 14,
+    color: theme.colors.blue
+  },
+  background: {
+    height: '100%',
+    backgroundColor: theme.colors.blue
+  },
+  body: {
+    height: '125%',
+    position: 'relative'
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 0,
+    width: '100%',
+    height: '15%',
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingTop: 30
+  },
+  roundedView: {
+    marginTop: '45%',
+    backgroundColor: theme.colors.lightBlue,
+    borderRadius: 30,
+    flexDirection: 'column',
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    paddingBottom: 35,
+    paddingTop: 15
+  }
+})
+
+// Tabs
 const Tabs = createMaterialTopTabNavigator()
 
 type TabBarProps = {
