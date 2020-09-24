@@ -16,7 +16,6 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
-import { Header } from 'elements/text/Text'
 import * as Storage from 'utils/storage/StorageManager'
 
 import PrayersScreen from 'screens/PrayersScreen'
@@ -24,7 +23,6 @@ import ProfileScreen from 'screens/ProfileScreen'
 import IntentionsScreen from 'screens/IntentionsScreen'
 import theme from 'config/theme'
 import { Prayer, MyPrayer } from 'config/types/Prayer'
-import RegisterNotification from 'components/list/RegisterNotification'
 import prayers from 'data/prayers.json'
 import {
   LectureAelf,
@@ -32,6 +30,7 @@ import {
   getDailyGospel,
   getDailySaint
 } from 'utils/aelf/fetchAelf'
+import { PrayerBlockRegister } from 'components/prayers/Block'
 
 const defaultValues: MyPrayer = {
   title: 'Je vous salue Marie',
@@ -50,7 +49,8 @@ const Home = (): JSX.Element => {
   const navigation = useNavigation()
   const [myPrayer, setPrayer] = useState(defaultValues)
   const [firstname, setFirstName] = useState('')
-  const [availablePrayers, setAvailablePrayers] = useState(prayers as Prayer[])
+  const [pair, setPair] = useState<Prayer[]>([])
+  const [inpair, setInpair] = useState<Prayer[]>([])
   const [evangile, setEvangile] = useState<LectureAelf>()
   const [saint, setSaint] = useState<InformationAelf>()
   const [date, setDate] = useState(new Date(Date.now()))
@@ -79,12 +79,21 @@ const Home = (): JSX.Element => {
       setFirstName(data)
     })
     Storage.getDataAsync(Storage.Stored.SUBS).then((data) => {
-      if (!data) return
       let res: Prayer[] = prayers
-      const tmpData: Prayer[] = JSON.parse(data)
-      const values = tmpData.map((e) => e.name)
-      res = res.filter((e: Prayer) => !values.includes(e.name))
-      setAvailablePrayers(res)
+      let tmpData: Prayer[] = []
+      if (data) {
+        tmpData = JSON.parse(data)
+        const values = tmpData.map((e) => e.name)
+        res = res.filter((e: Prayer) => !values.includes(e.name))
+      }
+      const pairTmp: Prayer[] = []
+      const inpairTmp: Prayer[] = []
+      res.forEach((prayer: Prayer, index: number) => {
+        if (index % 2 == 0) pairTmp.push(prayer)
+        else inpairTmp.push(prayer)
+      })
+      setPair(pairTmp)
+      setInpair(inpairTmp)
     })
     getDailyGospel().then((gospel: LectureAelf | undefined) => {
       if (!gospel) return
@@ -159,26 +168,72 @@ const Home = (): JSX.Element => {
             }}
           />
           <Text style={styles.h3}>Notifications disponibles</Text>
-          {availablePrayers &&
-            availablePrayers.map((p: Prayer) => (
-              <RegisterNotification
-                prayer={p}
-                onPress={async () => {
-                  if (p.times && p.times.length == 0) {
-                    setShow(true)
-                    setCurrentPrayer(p.name)
-                  } else
-                    LocalNotification.registerForPrayer(
-                      p.name,
-                      new Date(Date.now())
-                    )
-                  setAvailablePrayers(
-                    availablePrayers.filter((e) => e.name !== p.name)
-                  )
-                }}
-                key={p.name}
-              />
-            ))}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center'
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'column',
+                width: '45%',
+                marginHorizontal: '2%'
+              }}
+            >
+              {pair &&
+                pair.map((prayer: Prayer, index: number) => (
+                  <PrayerBlockRegister
+                    key={prayer.name}
+                    prayer={prayer}
+                    index={index}
+                    onPress={async () => {
+                      if (prayer.times && prayer.times.length == 0) {
+                        setShow(true)
+                        setCurrentPrayer(prayer.name)
+                      } else
+                        LocalNotification.registerForPrayer(
+                          prayer.name,
+                          new Date(Date.now())
+                        )
+                      setPair(
+                        pair.filter((e: Prayer) => e.name !== prayer.name)
+                      )
+                    }}
+                  />
+                ))}
+            </View>
+            <View
+              style={{
+                flexDirection: 'column',
+                width: '45%',
+                marginHorizontal: '2%'
+              }}
+            >
+              {inpair &&
+                inpair.map((prayer: Prayer, index: number) => (
+                  <PrayerBlockRegister
+                    key={prayer.name}
+                    prayer={prayer}
+                    index={index}
+                    inpair
+                    onPress={async () => {
+                      if (prayer.times && prayer.times.length == 0) {
+                        setShow(true)
+                        setCurrentPrayer(prayer.name)
+                      } else
+                        LocalNotification.registerForPrayer(
+                          prayer.name,
+                          new Date(Date.now())
+                        )
+                      setInpair(
+                        inpair.filter((e: Prayer) => e.name !== prayer.name)
+                      )
+                    }}
+                  />
+                ))}
+            </View>
+          </View>
         </View>
       </ScrollView>
     </View>
