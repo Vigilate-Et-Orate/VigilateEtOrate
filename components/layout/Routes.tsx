@@ -12,6 +12,7 @@ import GospelScreen from 'screens/GospelScreen'
 import PrayerScreen from 'screens/PrayerScreen'
 import MyPrayerScreen from 'screens/MyPrayerScreen'
 import IntentionScreen from 'screens/IntentionScreen'
+import SettingsScreen from 'screens/SettingsScreen'
 
 // Parameters Type
 type MainStack = {
@@ -76,6 +77,11 @@ const Stack = (): JSX.Element => {
           name="MyPrayer"
           component={MyPrayerScreen}
           options={{ title: 'Ma Prière' }}
+        />
+        <MainStack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{ title: 'Parametres' }}
         />
       </MainStack.Navigator>
     </NavigationContainer>

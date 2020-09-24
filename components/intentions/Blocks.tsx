@@ -63,6 +63,7 @@ export const WriteIntention = ({
 }: WriteIntentionProps): JSX.Element => {
   const [title, onTitleChange] = useState('')
   const [intention, onIntentionChange] = useState('')
+  const [error, setError] = useState(false)
 
   return (
     <View style={styles.card}>
@@ -80,6 +81,21 @@ export const WriteIntention = ({
         value={intention}
         placeholder="Intention"
       />
+      {error && (
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: theme.colors.red,
+            borderRadius: 15,
+            paddingHorizontal: 20,
+            paddingVertical: 5
+          }}
+        >
+          <Text style={{ color: theme.colors.white }}>
+            Veuilez bien remplir les deux champs !
+          </Text>
+        </View>
+      )}
       <View style={{ flexDirection: 'row-reverse', marginTop: 25 }}>
         <RoundedFilledButton
           style={{ backgroundColor: theme.colors.lightGreen }}
@@ -87,7 +103,12 @@ export const WriteIntention = ({
             Analytics.logEvent('intention', {
               type: 'new'
             })
+            if (!title || !intention) {
+              setError(true)
+              return
+            }
             addIntention(title, intention)
+            setError(false)
             onTitleChange('')
             onIntentionChange('')
           }}
