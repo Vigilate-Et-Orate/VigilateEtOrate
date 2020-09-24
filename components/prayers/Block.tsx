@@ -10,6 +10,7 @@ export type PrayerBlockProps = {
   prayer: Prayer
   index: number
   inpair?: boolean
+  fav?: boolean
 }
 
 export type PrayerBlockRegisterProps = {
@@ -22,13 +23,14 @@ export type PrayerBlockRegisterProps = {
 export const PrayerBlock = ({
   prayer,
   index,
-  inpair
+  inpair,
+  fav
 }: PrayerBlockProps): JSX.Element => {
   const navigation = useNavigation()
   const isBig = index % 2 == (inpair ? 1 : 0)
   return (
     <TouchableOpacity
-      style={isBig ? styles.bigCard : styles.card}
+      style={isBig ? styles.bigCard : fav ? styles.favCard : styles.card}
       onPress={() => navigation.navigate('Prayer', { name: prayer.name })}
     >
       <View style={{ width: '80%' }}>
@@ -92,6 +94,18 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     elevation: 15,
     height: 200,
+    overflow: 'hidden'
+  },
+  favCard: {
+    paddingHorizontal: '7%',
+    paddingVertical: 17,
+    borderRadius: 15,
+    backgroundColor: theme.colors.white,
+    marginVertical: 10,
+    flexDirection: 'row',
+    shadowColor: '#000',
+    elevation: 15,
+    height: 100,
     overflow: 'hidden'
   },
   bigCard: {

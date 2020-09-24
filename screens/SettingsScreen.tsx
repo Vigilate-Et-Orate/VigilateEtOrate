@@ -17,7 +17,7 @@ import { MyPrayer } from 'config/types/Prayer'
 import { Header } from 'elements/text/Text'
 import theme from 'config/theme'
 
-const Profile = (): JSX.Element => {
+const Settings = (): JSX.Element => {
   const [modalVisible, setModalVisible] = useState(false)
   const [firstName, onFirstNameChange] = useState('')
   const [prayerTitle, onPrayerTitleChange] = useState('')
@@ -176,4 +176,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Profile
+export default Settings

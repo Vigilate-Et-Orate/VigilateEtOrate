@@ -8,14 +8,35 @@ import theme from 'config/theme'
 export type PageProps = {
   title: string
   children: JSX.Element
+  heart?: boolean
+  onPress?: () => Promise<void>
+  faved?: boolean
 }
 
-const Page = ({ title, children }: PageProps): JSX.Element => {
+const Page = ({
+  title,
+  heart,
+  onPress,
+  faved,
+  children
+}: PageProps): JSX.Element => {
   const navigation = useNavigation()
 
   return (
     <View style={styles.background}>
       <View style={styles.header}>
+        {heart && (
+          <TouchableOpacity
+            style={{ position: 'absolute', top: '30%', right: '5%' }}
+            onPress={onPress}
+          >
+            <MaterialCommunityIcons
+              name="heart"
+              color={faved ? theme.colors.red : theme.colors.white}
+              size={40}
+            />
+          </TouchableOpacity>
+        )}
         <View style={{ flexDirection: 'row', height: '30%' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <MaterialCommunityIcons name="arrow-left" size={40} color="white" />

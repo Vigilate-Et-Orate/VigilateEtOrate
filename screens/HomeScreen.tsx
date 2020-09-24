@@ -19,7 +19,7 @@ import Card, { WelcomeCard } from 'elements/layout/Card'
 import * as Storage from 'utils/storage/StorageManager'
 
 import PrayersScreen from 'screens/PrayersScreen'
-import ProfileScreen from 'screens/ProfileScreen'
+import FavouriteScreen from 'screens/FavouriteScreen'
 import IntentionsScreen from 'screens/IntentionsScreen'
 import theme from 'config/theme'
 import { Prayer, MyPrayer } from 'config/types/Prayer'
@@ -138,7 +138,7 @@ const Home = (): JSX.Element => {
             top: '2%',
             right: '2%'
           }}
-          onPress={() => navigation.navigate('Profile')}
+          onPress={() => navigation.navigate('Settings')}
         >
           <MaterialIcons name="settings" color={theme.colors.white} size={35} />
         </TouchableOpacity>
@@ -308,7 +308,7 @@ const tabsNameIcon = [
   { name: 'Home', iconName: 'home' },
   { name: 'Intentions', iconName: 'feather-alt' },
   { name: 'Prayers', iconName: 'book' },
-  { name: 'Profile', iconName: 'heart' }
+  { name: 'Favourite', iconName: 'heart' }
 ]
 
 const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
@@ -337,7 +337,7 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
           ? theme.colors.white
           : route.name == 'Intentions'
           ? theme.colors.lightGreen
-          : route.name == 'Profile'
+          : route.name == 'Favourite'
           ? theme.colors.red
           : theme.colors.yellow
 
@@ -416,9 +416,9 @@ const HomeScreen = (): JSX.Element => {
         options={{ title: 'Prières' }}
       />
       <Tabs.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ title: 'Profile' }}
+        name="Favourite"
+        component={FavouriteScreen}
+        options={{ title: 'Favoris' }}
       />
     </Tabs.Navigator>
   )

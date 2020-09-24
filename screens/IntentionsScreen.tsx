@@ -48,6 +48,7 @@ const IntentionsScreen = (): JSX.Element => {
           ToastAndroid.BOTTOM
         )
       })
+    setIntentions(tmp)
   }
 
   const removeIntention = (slug: string) => {

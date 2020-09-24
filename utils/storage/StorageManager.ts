@@ -10,7 +10,9 @@ export enum Stored {
   MY_PRAYER = 'my-prayer',
   DAY_INFO = 'day-info',
   FIRSTNAME = 'firstname',
-  INTENTIONS = 'intentions'
+  INTENTIONS = 'intentions',
+  FAVOURITE = 'favourites',
+  LATEST_MIGRATION = 'migration'
 }
 
 /**
