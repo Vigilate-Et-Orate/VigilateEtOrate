@@ -17,7 +17,6 @@ type CardProps = {
 }
 
 type WelcomeCardProps = {
-  saint: string
   evangile: string
 }
 
@@ -32,15 +31,10 @@ const Card = ({ title, body, onPress }: CardProps): JSX.Element => {
   )
 }
 
-export const WelcomeCard = ({
-  saint,
-  evangile
-}: WelcomeCardProps): JSX.Element => {
+export const WelcomeCard = ({ evangile }: WelcomeCardProps): JSX.Element => {
   const navigation = useNavigation()
   return (
     <View style={styles.card}>
-      <Text style={styles.Title}>Saint Du Jour</Text>
-      <Text style={styles.description}>{saint}</Text>
       <Text style={styles.Title}>Phrase de l&apos;Evangile du Jour</Text>
       <Text style={styles.description}>{evangile}</Text>
       <TouchableOpacity
@@ -65,7 +59,7 @@ const styles = StyleSheet.create({
       width: 50,
       height: 50
     },
-    shadowColor: theme.colors.gray
+    elevation: 10
   },
   Title: {
     fontSize: 20,
@@ -75,13 +69,17 @@ const styles = StyleSheet.create({
   see: {
     marginVertical: 5,
     alignItems: 'flex-end',
-    color: theme.colors.red
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: theme.colors.blue,
+    color: theme.colors.yellow
   },
   description: {
     fontSize: 15,
     marginLeft: 10,
     marginBottom: 12,
-    color: theme.colors.gray
+    color: theme.colors.blue
   }
 })
 
