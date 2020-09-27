@@ -2,8 +2,9 @@
   "expo": {
     "name": "Vigilate & Orate",
     "description": "Get notifications for prayer",
-    "slug": "prayer-notification-app",
+    "slug": "vigilate-et-opere",
     "version": "1.0.6",
+    "sdkVersion": "39.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "privacy": "unlisted",
@@ -11,13 +12,17 @@
     "primaryColor": "#35415A",
     "scheme": "vigilateetorate",
     "githubUrl": "https://github.com/awalshy/VigilateEtOrate",
+    "updates": {
+      "fallbackToCacheTimeout": 300
+    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#35415A"
     },
-    "updates": {
-      "fallbackToCacheTimeout": 0
+    "notification": {
+      "icon": "./assets/icon-notif.png",
+      "color": "#35415A"
     },
     "assetBundlePatterns": [
       "./assets/*"
@@ -29,16 +34,19 @@
       "package": "com.prayernotifs.app",
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/icon-medium.png",
+      "backgroundColor": "#35415A",
       "useNextNotificationsApi": true,
       "versionCode": 6,
+      "splash": {
+        "mdpi": "./assets/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#35415A"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon-adaptive.png",
         "backgroundImage": "./assets/icon.png",
         "backgroundColor": "#35415A"
       }
-    },
-    "notification": {
-      "icon": "./assets/icon-notif.png"
     }
   }
 }
