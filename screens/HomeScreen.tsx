@@ -7,7 +7,8 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Image
+  Image,
+  ToastAndroid
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Notifications from 'expo-notifications'
@@ -392,6 +393,27 @@ const HomeScreen = (): JSX.Element => {
         }
       }
     )
+    // Check if user is unboarded
+    Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
+      if (!data) {
+        navigation.navigate('StartUnboard')
+        return
+      }
+      Storage.getDataAsync(Storage.Stored.MY_PRAYER).then((data) => {
+        if (!data) {
+          ToastAndroid.show(
+            "N'hésitez pas à vous faire une prière perso !",
+            ToastAndroid.SHORT
+          )
+          return
+        }
+        const parsed: MyPrayer = JSON.parse(data)
+        if (!parsed.title && !parsed.content) {
+          navigation.navigate('StartUnboard')
+          return
+        }
+      })
+    })
 
     return () => {
       subRes.remove()
