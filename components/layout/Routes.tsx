@@ -13,6 +13,8 @@ import PrayerScreen from 'screens/PrayerScreen'
 import MyPrayerScreen from 'screens/MyPrayerScreen'
 import IntentionScreen from 'screens/IntentionScreen'
 import SettingsScreen from 'screens/SettingsScreen'
+import StartUnboarding from 'screens/Unboarding/Unboarding'
+import Unboarding from 'components/layout/UnboardingRoutes'
 
 // Parameters Type
 type MainStack = {
@@ -48,6 +50,8 @@ const Stack = (): JSX.Element => {
           headerShown: false
         }}
       >
+        <MainStack.Screen name="StartUnboard" component={StartUnboarding} />
+        <MainStack.Screen name="Unboarding" component={Unboarding} />
         <MainStack.Screen
           name="Home"
           component={Home}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import * as Application from 'expo-application'
 import { ToastAndroid } from 'react-native'
 import * as SplashScreen from 'expo-splash-screen'
@@ -10,8 +10,7 @@ import Stack from './components/layout/Routes'
 import { Migration } from 'config/types/System'
 import prayers from 'data/prayers.json'
 import { Favourite } from 'config/types/Favourite'
-import { MyPrayer, Prayer } from 'config/types/Prayer'
-import Unboarding from 'screens/Unboarding/Unboarding'
+import { Prayer } from 'config/types/Prayer'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -44,8 +43,6 @@ const migrateData = async () => {
 }
 
 const App = (): JSX.Element => {
-  const [unboarded, setUnboarded] = useState(false)
-
   const launchTest = () => {
     // Check if data was migrated after update
     Storage.getDataAsync(Storage.Stored.LATEST_MIGRATION).then((data) => {
@@ -74,28 +71,6 @@ const App = (): JSX.Element => {
         )
       }
     })
-    // Check if user is unboarded
-    Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
-      if (!data) {
-        setUnboarded(false)
-        SplashScreen.hideAsync()
-        return
-      }
-    })
-    Storage.getDataAsync(Storage.Stored.MY_PRAYER).then((data) => {
-      if (!data) {
-        setUnboarded(false)
-        SplashScreen.hideAsync()
-        return
-      }
-      const parsed: MyPrayer = JSON.parse(data)
-      if (!parsed.title || !parsed.content) {
-        setUnboarded(false)
-        SplashScreen.hideAsync()
-        return
-      }
-    })
-    setUnboarded(true)
     SplashScreen.hideAsync()
   }
 
@@ -116,7 +91,7 @@ const App = (): JSX.Element => {
     }
   }, [])
 
-  return unboarded ? <Stack /> : <Unboarding />
+  return <Stack />
 }
 
 export default App

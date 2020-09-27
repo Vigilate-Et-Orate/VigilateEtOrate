@@ -1,27 +1,47 @@
-import React, { useState } from 'react'
-import { View, Button } from 'react-native'
+import React from 'react'
+import { View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native'
 
 import theme from 'config/theme'
-import Stack from 'components/layout/Routes'
+import { useNavigation } from '@react-navigation/native'
 
 const Unboarding = (): JSX.Element => {
-  const [unboarded, setUnboarded] = useState(false)
+  const navigation = useNavigation()
 
-  if (!unboarded)
-    return (
-      <View
+  return (
+    <View>
+      <Image
         style={{
-          backgroundColor: theme.colors.blue,
-          height: '100%',
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center'
+          width: '100%',
+          height: '100%'
         }}
+        source={require('../../assets/Unboarding.png')}
+      />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('Unboarding')}
       >
-        <Button title="Unboard!" onPress={() => setUnboarded(true)} />
-      </View>
-    )
-  return <Stack />
+        <Text style={styles.text}>Continuer</Text>
+      </TouchableOpacity>
+    </View>
+  )
 }
+
+const styles = StyleSheet.create({
+  button: {
+    position: 'absolute',
+    zIndex: 40,
+    elevation: 40,
+    top: '30%',
+    backgroundColor: theme.colors.lightBlue,
+    left: '15%',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 50
+  },
+  text: {
+    fontSize: 22,
+    color: theme.colors.white
+  }
+})
 
 export default Unboarding
