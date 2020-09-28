@@ -1,16 +1,22 @@
-import React from 'react'
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
+import React, { useState } from 'react'
+import { View, TouchableOpacity, StyleSheet, Text, Switch } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
 
 import { Prayer } from 'config/types/Prayer'
 import theme from 'config/theme'
+import * as LocalNotification from 'utils/notification/LocalNotification'
 
 export type PrayerBlockProps = {
   prayer: Prayer
   index: number
   inpair?: boolean
   fav?: boolean
+}
+
+export type PrayerBlockManageNotifProps = {
+  prayer: Prayer
+  onReactivate: (name: string) => void
 }
 
 export type PrayerBlockRegisterProps = {
@@ -69,6 +75,45 @@ export const PrayerBlockRegister = ({
   )
 }
 
+export const PrayerBlockManageNotification = ({
+  prayer,
+  onReactivate
+}: PrayerBlockManageNotifProps): JSX.Element => {
+  const [enabled, setEnabled] = useState(prayer.active)
+
+  const toggleSwitch = () => {
+    if (enabled) LocalNotification.unsubFromPrayer(prayer.name)
+    else {
+      if (prayer.times && prayer.times.length == 0) onReactivate(prayer.name)
+      LocalNotification.registerForPrayer(prayer.name, new Date(Date.now()))
+    }
+    setEnabled(!enabled)
+  }
+
+  return (
+    <View style={styles.manageNotifCard}>
+      <View style={{ width: '70%' }}>
+        <Text style={styles.title}>{prayer.displayName}</Text>
+        <Text>{prayer.description}</Text>
+      </View>
+      <View
+        style={{
+          width: '30%',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}
+      >
+        <Switch
+          trackColor={{ false: theme.colors.red, true: theme.colors.yellow }}
+          thumbColor={theme.colors.blue}
+          onValueChange={toggleSwitch}
+          value={enabled}
+        />
+      </View>
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
   registerButton: {
     backgroundColor: theme.colors.blue,
@@ -83,6 +128,15 @@ const styles = StyleSheet.create({
     color: theme.colors.blue,
     fontSize: 20,
     marginBottom: 7
+  },
+  manageNotifCard: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: theme.colors.white,
+    elevation: 2,
+    flexDirection: 'row',
+    borderRadius: 15,
+    marginVertical: 10
   },
   card: {
     paddingLeft: 10,

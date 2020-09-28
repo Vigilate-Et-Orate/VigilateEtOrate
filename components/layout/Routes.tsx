@@ -7,7 +7,6 @@ import * as Analytics from 'expo-firebase-analytics'
 
 // Screens
 import Home from 'screens/HomeScreen'
-import ManageNotificationsSubs from 'screens/ManageNotificationsSubs'
 import GospelScreen from 'screens/GospelScreen'
 import PrayerScreen from 'screens/PrayerScreen'
 import MyPrayerScreen from 'screens/MyPrayerScreen'
@@ -56,11 +55,6 @@ const Stack = (): JSX.Element => {
           name="Home"
           component={Home}
           options={{ title: 'Accueil' }}
-        />
-        <MainStack.Screen
-          name="ManageNotifs"
-          component={ManageNotificationsSubs}
-          options={{ title: 'Gérer les Notifications' }}
         />
         <MainStack.Screen
           name="Evangile"

@@ -20,6 +20,7 @@
     "axios": "^0.19.2",
     "expo": "^39.0.0",
     "expo-application": "~2.3.0",
+    "expo-blur": "~8.2.0",
     "expo-constants": "~9.2.0",
     "expo-firebase-analytics": "~2.5.0",
     "expo-firebase-core": "~1.2.0",
