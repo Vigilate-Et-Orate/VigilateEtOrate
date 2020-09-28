@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
   Modal,
-  Button,
   StyleSheet,
   TouchableOpacity,
   ToastAndroid,
@@ -13,16 +12,76 @@ import {
 import { BlurView } from 'expo-blur'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 import * as Storage from 'utils/storage/StorageManager'
 import theme from 'config/theme'
+import {
+  MyPrayerBlock,
+  FirstnameBlock
+} from 'components/prayers/PersonnalBlock'
+import { PrayerBlockManageNotification } from 'components/prayers/Block'
+import { Prayer } from 'config/types/Prayer'
+import * as LocalNotification from 'utils/notification/LocalNotification'
+
+const HorizontalLine = (): JSX.Element => (
+  <View
+    style={{
+      borderBottomColor: theme.colors.blue,
+      borderBottomWidth: 1,
+      marginVertical: 20
+    }}
+  ></View>
+)
 
 const Settings = (): JSX.Element => {
   const navigation = useNavigation()
   const [modalVisible, setModalVisible] = useState(false)
+  const [data, setData] = useState<Prayer[]>()
+  const [date, setDate] = useState(new Date(Date.now()))
+  const [show, setShow] = useState(false)
+  const [currentPrayer, setCurrentPrayer] = useState('')
+  let _isMounted: boolean
+
+  const onReactivate = (name: string) => {
+    setCurrentPrayer(name)
+    setShow(true)
+  }
+
+  const onDateChange = (event: any, selectedDate?: Date | undefined) => {
+    if (!event) return
+    const currentDate = selectedDate || date
+    setDate(currentDate)
+    setShow(false)
+    LocalNotification.registerForPrayer(currentPrayer, currentDate)
+    setCurrentPrayer('')
+  }
+
+  useEffect(() => {
+    _isMounted = true
+    Storage.getDataAsync(Storage.Stored.SUBS).then((res) => {
+      if (!res) {
+        setData([])
+        return
+      }
+      setData(JSON.parse(res))
+    })
+    return () => {
+      if (_isMounted) _isMounted = false
+    }
+  }, [])
 
   return (
     <View style={styles.background}>
+      {show && (
+        <DateTimePicker
+          mode="time"
+          value={date}
+          is24Hour={true}
+          display="default"
+          onChange={onDateChange}
+        />
+      )}
       <Modal animationType="fade" transparent={true} visible={modalVisible}>
         <View style={styles.centeredView}>
           <BlurView intensity={300} style={styles.modal}>
@@ -65,6 +124,7 @@ const Settings = (): JSX.Element => {
                     ToastAndroid.SHORT,
                     ToastAndroid.BOTTOM
                   )
+                  navigation.goBack()
                 }}
               >
                 <Text style={{ color: theme.colors.white, fontSize: 18 }}>
@@ -100,7 +160,7 @@ const Settings = (): JSX.Element => {
         <TouchableOpacity
           style={{
             position: 'absolute',
-            top: '12%',
+            top: '3%',
             left: '2%',
             elevation: 20,
             zIndex: 90
@@ -114,15 +174,42 @@ const Settings = (): JSX.Element => {
           />
         </TouchableOpacity>
         <View style={styles.roundedView}>
-          <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-            <Button
-              onPress={() => {
-                setModalVisible(true)
-              }}
-              color={theme.colors.red}
-              title="Clear Cache and Notification Subscriptions"
-            />
+          <Text style={styles.title}>Prénom</Text>
+          <FirstnameBlock settings />
+          <Text style={styles.title}>Ma Prière Personnelle</Text>
+          <MyPrayerBlock settings />
+          <HorizontalLine />
+          <Text style={styles.title}>Données de l&apos;application</Text>
+          <Text>
+            Les données dont les intentions, les rappels, les prières favorites,
+            votre prière personnelle. Ici vous pouvez toutes ces données.{' '}
+            <Text style={{ color: theme.colors.red, fontSize: 16 }}>
+              Attention
+            </Text>{' '}
+            c&apos;est irréversible !
+          </Text>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={{ color: theme.colors.white, fontSize: 16 }}>
+                Suprimer
+              </Text>
+            </TouchableOpacity>
           </View>
+          <HorizontalLine />
+          <Text style={styles.title}>Notifications</Text>
+          {data &&
+            data.map((p: Prayer) => {
+              return (
+                <PrayerBlockManageNotification
+                  onReactivate={onReactivate}
+                  prayer={p}
+                  key={p.name}
+                />
+              )
+            })}
         </View>
       </ScrollView>
     </View>
@@ -130,6 +217,19 @@ const Settings = (): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
+  deleteButton: {
+    marginVertical: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    backgroundColor: theme.colors.red,
+    marginRight: 25
+  },
+  title: {
+    fontSize: 24,
+    color: theme.colors.blue,
+    marginVertical: 15
+  },
   centeredView: {
     paddingTop: '45%',
     paddingHorizontal: 20,
@@ -170,12 +270,10 @@ const styles = StyleSheet.create({
     marginTop: '40%',
     backgroundColor: theme.colors.white,
     borderRadius: 30,
-    paddingTop: 50,
-    flexDirection: 'row',
+    flexDirection: 'column',
     paddingHorizontal: 20,
     justifyContent: 'center',
-    paddingBottom: 35,
-    height: '100%'
+    paddingBottom: 35
   }
 })
 

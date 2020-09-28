@@ -16,7 +16,11 @@ export type PersonnalBlockProps = {
   settings: boolean
 }
 
-export const MyPrayerBlock = (): JSX.Element => {
+export const MyPrayerBlock = ({
+  settings
+}: {
+  settings?: boolean
+}): JSX.Element => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
 
@@ -47,7 +51,12 @@ export const MyPrayerBlock = (): JSX.Element => {
   }, [])
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        settings ? { elevation: 0, paddingHorizontal: 5 } : {}
+      ]}
+    >
       <TextInput
         value={title}
         onChangeText={setTitle}
@@ -71,14 +80,18 @@ export const MyPrayerBlock = (): JSX.Element => {
   )
 }
 
-export const FirstnameBlock = (): JSX.Element => {
+export const FirstnameBlock = ({
+  settings
+}: {
+  settings?: boolean
+}): JSX.Element => {
   const [firstname, setFirstname] = useState('')
 
   const save = async (e: any) => {
     e.preventDefault()
     await Storage.setDataAsync(Storage.Stored.FIRSTNAME, firstname)
     ToastAndroid.showWithGravity(
-      'C&apos;est tout bon!',
+      "C'est tout bon!",
       ToastAndroid.SHORT,
       ToastAndroid.BOTTOM
     )
@@ -92,7 +105,12 @@ export const FirstnameBlock = (): JSX.Element => {
   })
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        settings ? { elevation: 0, paddingHorizontal: 5 } : {}
+      ]}
+    >
       <TextInput
         value={firstname}
         onChangeText={setFirstname}
@@ -128,7 +146,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginVertical: 10,
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.green
+    borderBottomColor: theme.colors.yellow
   },
   button: {
     backgroundColor: theme.colors.yellow,
