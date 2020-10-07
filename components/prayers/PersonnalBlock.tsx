@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     backgroundColor: theme.colors.white + 'e4',
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 10,
     shadowColor: '#000',
     elevation: 15,
     flexDirection: 'column',

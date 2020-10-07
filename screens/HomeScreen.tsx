@@ -8,7 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  ToastAndroid
+  Keyboard
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Notifications from 'expo-notifications'
@@ -157,17 +157,21 @@ const Home = (): JSX.Element => {
           <Text style={styles.saintDuJour}>{saint?.fete}</Text>
           <Text style={styles.h3}>Evangile du jour</Text>
           <WelcomeCard evangile={evangile?.titre || 'Erreur de reseau'} />
-          <Text style={styles.h3}>Prière Personnelle</Text>
-          <Card
-            title={myPrayer.title}
-            body={myPrayer.content}
-            onPress={() => {
-              Analytics.logEvent('PersonnalPrayer', {
-                location: 'homescreen'
-              })
-              navigation.navigate('MyPrayer')
-            }}
-          />
+          {myPrayer.title !== '' && (
+            <View>
+              <Text style={styles.h3}>Prière Personnelle</Text>
+              <Card
+                title={myPrayer.title}
+                body={myPrayer.content}
+                onPress={() => {
+                  Analytics.logEvent('PersonnalPrayer', {
+                    location: 'homescreen'
+                  })
+                  navigation.navigate('MyPrayer')
+                }}
+              />
+            </View>
+          )}
           <Text style={styles.h3}>Notifications disponibles</Text>
           <View
             style={{
@@ -378,6 +382,7 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
 
 const HomeScreen = (): JSX.Element => {
   const navigation = useNavigation()
+  const [keyboard, setScreenKeyboard] = useState(false)
 
   useEffect(() => {
     const subRes = Notifications.addNotificationResponseReceivedListener(
@@ -399,29 +404,21 @@ const HomeScreen = (): JSX.Element => {
         navigation.navigate('StartUnboard')
         return
       }
-      Storage.getDataAsync(Storage.Stored.MY_PRAYER).then((data) => {
-        if (!data) {
-          ToastAndroid.show(
-            "N'hésitez pas à vous faire une prière perso !",
-            ToastAndroid.SHORT
-          )
-          return
-        }
-        const parsed: MyPrayer = JSON.parse(data)
-        if (!parsed.title && !parsed.content) {
-          navigation.navigate('StartUnboard')
-          return
-        }
-      })
     })
+    Keyboard.addListener('keyboardDidShow', () => setScreenKeyboard(true))
+    Keyboard.addListener('keyboardDidHide', () => setScreenKeyboard(false))
 
     return () => {
       subRes.remove()
+      Keyboard.removeAllListeners('keyboardDidShow')
+      Keyboard.removeAllListeners('keyboardDidHide')
     }
   })
 
   return (
-    <Tabs.Navigator tabBar={(props) => <MainTabBar {...props} />}>
+    <Tabs.Navigator
+      tabBar={(props) => (keyboard ? <View></View> : <MainTabBar {...props} />)}
+    >
       <Tabs.Screen
         name="Home"
         component={Home}
