@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     color: theme.colors.blue,
-    marginVertical: 15
+    marginVertical: 10
   },
   centeredView: {
     paddingTop: '45%',
