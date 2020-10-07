@@ -31,7 +31,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.prayernotifs.app",
+      "package": "com.vigilateetorate.app",
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/icon-medium.png",
       "backgroundColor": "#35415A",

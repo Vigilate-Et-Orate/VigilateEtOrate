@@ -382,7 +382,7 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
 
 const HomeScreen = (): JSX.Element => {
   const navigation = useNavigation()
-  const [keyboard, setScreenKeyboard] = useState(false)
+  const [keyboard, setKeyboard] = useState(false)
 
   useEffect(() => {
     const subRes = Notifications.addNotificationResponseReceivedListener(
@@ -405,8 +405,8 @@ const HomeScreen = (): JSX.Element => {
         return
       }
     })
-    Keyboard.addListener('keyboardDidShow', () => setScreenKeyboard(true))
-    Keyboard.addListener('keyboardDidHide', () => setScreenKeyboard(false))
+    Keyboard.addListener('keyboardDidShow', () => setKeyboard(true))
+    Keyboard.addListener('keyboardDidHide', () => setKeyboard(false))
 
     return () => {
       subRes.remove()

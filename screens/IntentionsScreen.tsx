@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View, ScrollView, Text, ToastAndroid } from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'
+import { useFocusEffect } from '@react-navigation/native'
 
 import { Intention } from 'config/types/Intention'
 import { WriteIntention, IntentionCard } from 'components/intentions/Blocks'
@@ -12,17 +13,19 @@ const IntentionsScreen = (): JSX.Element => {
   const [intentions, setIntentions] = useState([] as Intention[])
   let _isMounted: boolean
 
-  useEffect(() => {
-    _isMounted = true
-    Storage.getDataAsync(Storage.Stored.INTENTIONS).then((data) => {
-      if (!data) return
-      const parsed = JSON.parse(data)
-      if (parsed) setIntentions(parsed)
-    })
-    return () => {
-      if (_isMounted) _isMounted = false
-    }
-  }, [intentions])
+  useFocusEffect(
+    useCallback(() => {
+      _isMounted = true
+      Storage.getDataAsync(Storage.Stored.INTENTIONS).then((data) => {
+        if (!data) return
+        const parsed = JSON.parse(data)
+        if (parsed) setIntentions(parsed)
+      })
+      return () => {
+        if (_isMounted) _isMounted = false
+      }
+    }, [intentions])
+  )
 
   const addIntention = (title: string, intention: string) => {
     const tmp = intentions

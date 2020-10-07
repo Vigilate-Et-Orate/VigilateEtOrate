@@ -80,10 +80,7 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
 
 const Routes = (): JSX.Element => {
   return (
-    <Unboard.Navigator
-      keyboardDismissMode="none"
-      tabBar={(props) => <TabBar {...props} />}
-    >
+    <Unboard.Navigator tabBar={(props) => <TabBar {...props} />}>
       <Unboard.Screen name="Un1" component={Unboard1} />
       <Unboard.Screen name="Un2" component={Unboard2} />
       <Unboard.Screen name="Un3" component={Unboard3} />

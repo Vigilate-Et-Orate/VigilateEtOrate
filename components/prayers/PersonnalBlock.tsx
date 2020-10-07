@@ -102,7 +102,7 @@ export const FirstnameBlock = ({
       if (!data) return
       setFirstname(data)
     })
-  })
+  }, [])
 
   return (
     <View
