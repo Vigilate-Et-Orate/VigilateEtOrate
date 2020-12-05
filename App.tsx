@@ -84,6 +84,19 @@ const App = (): JSX.Element => {
     )
 
     SplashScreen.preventAutoHideAsync()
+    NativeNotifs.getExponentToken().then((token) => {
+      console.log('Push token', token)
+      fetch('http://192.168.1.3:4000/registerdevice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          token
+        })
+      })
+    })
     launchTest()
 
     return () => {

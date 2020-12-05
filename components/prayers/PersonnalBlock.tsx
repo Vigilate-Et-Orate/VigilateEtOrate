@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 
 import theme from 'config/theme'
-import { MyPrayer } from 'config/types/Prayer'
+import { TMyPrayer } from 'config/types/Prayer'
 import * as Storage from 'utils/storage/StorageManager'
 
 export type PersonnalBlockProps = {
@@ -26,7 +26,7 @@ export const MyPrayerBlock = ({
 
   const save = async (e: any) => {
     e.preventDefault()
-    const myPrayer: MyPrayer = {
+    const myPrayer: TMyPrayer = {
       title,
       content
     }
@@ -42,11 +42,10 @@ export const MyPrayerBlock = ({
   }
 
   useEffect(() => {
-    Storage.getDataAsync(Storage.Stored.MY_PRAYER).then((data) => {
+    Storage.getDataAsync<TMyPrayer>(Storage.Stored.MY_PRAYER).then((data) => {
       if (!data) return
-      const parsed: MyPrayer = JSON.parse(data)
-      setContent(parsed.content)
-      setTitle(parsed.title)
+      setContent(data.content)
+      setTitle(data.title)
     })
   }, [])
 

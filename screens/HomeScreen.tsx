@@ -32,6 +32,7 @@ import {
   getDailySaint
 } from 'utils/aelf/fetchAelf'
 import { PrayerBlockRegister } from 'components/prayers/Block'
+import { TUser } from 'config/types/User'
 
 const defaultValues: MyPrayer = {
   title: 'Je vous salue Marie',
@@ -57,6 +58,7 @@ const Home = (): JSX.Element => {
   const [date, setDate] = useState(new Date(Date.now()))
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState('')
+  const [user, setUser] = useState<TUser>()
 
   const onDateChange = (event: any, selectedDate?: Date | undefined) => {
     if (!event) return
@@ -70,32 +72,32 @@ const Home = (): JSX.Element => {
   }
 
   const effectCallback = () => {
-    Storage.getDataAsync(Storage.Stored.MY_PRAYER).then((data) => {
-      if (!data) return
-      const res = JSON.parse(data)
-      setPrayer(res)
-    })
-    Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
-      if (!data) return
-      setFirstName(data)
-    })
-    Storage.getDataAsync(Storage.Stored.SUBS).then((data) => {
-      let res: Prayer[] = prayers
-      let tmpData: Prayer[] = []
-      if (data) {
-        tmpData = JSON.parse(data)
-        const values = tmpData.map((e) => e.name)
-        res = res.filter((e: Prayer) => !values.includes(e.name))
-      }
-      const pairTmp: Prayer[] = []
-      const inpairTmp: Prayer[] = []
-      res.forEach((prayer: Prayer, index: number) => {
-        if (index % 2 == 0) pairTmp.push(prayer)
-        else inpairTmp.push(prayer)
-      })
-      setPair(pairTmp)
-      setInpair(inpairTmp)
-    })
+    // Storage.getDataAsync(Storage.Stored.MY_PRAYER).then((data) => {
+    //   if (!data) return
+    //   const res = JSON.parse(data)
+    //   setPrayer(res)
+    // })
+    // Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
+    //   if (!data) return
+    //   setFirstName(data)
+    // })
+    // Storage.getDataAsync(Storage.Stored.SUBS).then((data) => {
+    //   let res: Prayer[] = prayers
+    //   let tmpData: Prayer[] = []
+    //   if (data) {
+    //     tmpData = JSON.parse(data)
+    //     const values = tmpData.map((e) => e.name)
+    //     res = res.filter((e: Prayer) => !values.includes(e.name))
+    //   }
+    //   const pairTmp: Prayer[] = []
+    //   const inpairTmp: Prayer[] = []
+    //   res.forEach((prayer: Prayer, index: number) => {
+    //     if (index % 2 == 0) pairTmp.push(prayer)
+    //     else inpairTmp.push(prayer)
+    //   })
+    //   setPair(pairTmp)
+    //   setInpair(inpairTmp)
+    // })
     getDailyGospel().then((gospel: LectureAelf | undefined) => {
       if (!gospel) return
       setEvangile(gospel)
@@ -399,11 +401,14 @@ const HomeScreen = (): JSX.Element => {
       }
     )
     // Check if user is unboarded
-    Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
-      if (!data) {
-        navigation.navigate('StartUnboard')
-        return
-      }
+    // Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
+    //   if (!data) {
+    //     navigation.navigate('StartUnboard')
+    //     return
+    //   }
+    // })
+    Storage.getDataAsync<TUser>(Storage.Stored.USER).then((data) => {
+      if (!data) navigation.navigate('SignIn')
     })
     Keyboard.addListener('keyboardDidShow', () => setKeyboard(true))
     Keyboard.addListener('keyboardDidHide', () => setKeyboard(false))

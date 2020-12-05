@@ -1,23 +1,28 @@
 import { NotificationContent } from './NotificationTypes'
 
-export type NotifTime = {
+export type TNotifTime = {
   hour: number
   minute: number
   repeats: boolean
 }
 
-export type Prayer = {
+export type TPrayer = {
   displayName: string
   name: string
   description: string
-  active: boolean
-  subscription: string[]
+  // active: boolean
+  // subscription: string[]
   content: string
   notifContent: NotificationContent
-  times: NotifTime[]
+  // times: NotifTime[]
 }
 
-export type MyPrayer = {
+export type TPrayerResponse = {
+  error?: string
+  prayers: TPrayer[]
+}
+
+export type TMyPrayer = {
   title: string
   content: string
 }

@@ -1,6 +1,6 @@
-export type Intention = {
+export type TIntention = {
   title: string
   intention: string
-  slug: string
+  userId: string
   prayer?: string
 }

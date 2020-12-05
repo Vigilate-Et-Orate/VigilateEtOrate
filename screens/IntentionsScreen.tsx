@@ -3,24 +3,25 @@ import { StyleSheet, View, ScrollView, Text, ToastAndroid } from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useFocusEffect } from '@react-navigation/native'
 
-import { Intention } from 'config/types/Intention'
+import { TIntention } from 'config/types/Intention'
 import { WriteIntention, IntentionCard } from 'components/intentions/Blocks'
 import * as Storage from 'utils/storage/StorageManager'
 import { buildSlug } from 'utils/slug/slugBuilder'
 import theme from 'config/theme'
 
 const IntentionsScreen = (): JSX.Element => {
-  const [intentions, setIntentions] = useState([] as Intention[])
+  const [intentions, setIntentions] = useState([] as TIntention[])
   let _isMounted: boolean
 
   useFocusEffect(
     useCallback(() => {
       _isMounted = true
-      Storage.getDataAsync(Storage.Stored.INTENTIONS).then((data) => {
-        if (!data) return
-        const parsed = JSON.parse(data)
-        if (parsed) setIntentions(parsed)
-      })
+      Storage.getDataAsync<TIntention>(Storage.Stored.INTENTIONS).then(
+        (data) => {
+          if (!data) return
+          setIntentions(data)
+        }
+      )
       return () => {
         if (_isMounted) _isMounted = false
       }
@@ -28,49 +29,48 @@ const IntentionsScreen = (): JSX.Element => {
   )
 
   const addIntention = (title: string, intention: string) => {
-    const tmp = intentions
-    const slug = buildSlug(title)
-    tmp.push({
-      title,
-      intention,
-      slug
-    } as Intention)
-    Storage.setDataAsync(Storage.Stored.INTENTIONS, JSON.stringify(tmp))
-      .then(() => {
-        ToastAndroid.showWithGravity(
-          'Ajoutée !',
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM
-        )
-        setIntentions(tmp)
-      })
-      .catch(() => {
-        ToastAndroid.showWithGravity(
-          'Erreur...',
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM
-        )
-      })
-    setIntentions(tmp)
+    // const tmp = intentions
+    // const slug = buildSlug(title)
+    // tmp.push({
+    //   title,
+    //   intention,
+    // } as TIntention)
+    // Storage.setDataAsync(Storage.Stored.INTENTIONS, JSON.stringify(tmp))
+    //   .then(() => {
+    //     ToastAndroid.showWithGravity(
+    //       'Ajoutée !',
+    //       ToastAndroid.SHORT,
+    //       ToastAndroid.BOTTOM
+    //     )
+    //     setIntentions(tmp)
+    //   })
+    //   .catch(() => {
+    //     ToastAndroid.showWithGravity(
+    //       'Erreur...',
+    //       ToastAndroid.SHORT,
+    //       ToastAndroid.BOTTOM
+    //     )
+    //   })
+    // setIntentions(tmp)
   }
 
   const removeIntention = (slug: string) => {
-    const tmp = intentions.filter((i) => i.slug !== slug)
-    Storage.setDataAsync(Storage.Stored.INTENTIONS, JSON.stringify(tmp))
-      .then(() => {
-        ToastAndroid.showWithGravity(
-          'Enlevée !',
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM
-        )
-      })
-      .catch(() => {
-        ToastAndroid.showWithGravity(
-          'Erreur...',
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM
-        )
-      })
+    // const tmp = intentions.filter((i) => i.slug !== slug)
+    // Storage.setDataAsync(Storage.Stored.INTENTIONS, JSON.stringify(tmp))
+    //   .then(() => {
+    //     ToastAndroid.showWithGravity(
+    //       'Enlevée !',
+    //       ToastAndroid.SHORT,
+    //       ToastAndroid.BOTTOM
+    //     )
+    //   })
+    //   .catch(() => {
+    //     ToastAndroid.showWithGravity(
+    //       'Erreur...',
+    //       ToastAndroid.SHORT,
+    //       ToastAndroid.BOTTOM
+    //     )
+    //   })
   }
 
   return (
@@ -111,10 +111,10 @@ const IntentionsScreen = (): JSX.Element => {
           <View>
             {intentions &&
               intentions.length > 0 &&
-              intentions.map((int: Intention) => {
+              intentions.map((int) => {
                 return (
                   <IntentionCard
-                    key={int.slug}
+                    key={int.title}
                     intention={int}
                     removeIntention={removeIntention}
                   />

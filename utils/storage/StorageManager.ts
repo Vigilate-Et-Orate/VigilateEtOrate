@@ -12,7 +12,10 @@ export enum Stored {
   FIRSTNAME = 'firstname',
   INTENTIONS = 'intentions',
   FAVOURITE = 'favourites',
-  LATEST_MIGRATION = 'migration'
+  LATEST_MIGRATION = 'migration',
+  PRAYERS = 'prayers',
+  USER = 'user',
+  TOKEN = 'token'
 }
 
 /**
@@ -26,7 +29,7 @@ export const setDataAsync = async (
   data: string
 ): Promise<void> => {
   try {
-    await AsyncStorage.setItem(key, data)
+    await AsyncStorage.setItem(key, JSON.stringify(data))
   } catch (e) {
     throw new Error('Failed to store ' + key)
   }
@@ -39,10 +42,12 @@ export const setDataAsync = async (
  *
  * @return {any}
  */
-export const getDataAsync = async (
+export const getDataAsync = async <T>(
   key: Stored | string
-): Promise<string | null> => {
-  return await AsyncStorage.getItem(key)
+): Promise<T | null> => {
+  const data = await AsyncStorage.getItem(key)
+  if (!data) return null
+  return JSON.parse(data) as T
 }
 
 /**
