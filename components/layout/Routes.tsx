@@ -6,11 +6,10 @@ enableScreens()
 import * as Analytics from 'expo-firebase-analytics'
 
 // Screens
-import Home from 'screens/HomeScreen'
+import Home from 'components/layout/HomeRoutes'
 import GospelScreen from 'screens/GospelScreen'
 import PrayerScreen from 'screens/PrayerScreen'
 import MyPrayerScreen from 'screens/MyPrayerScreen'
-import IntentionScreen from 'screens/IntentionScreen'
 import SettingsScreen from 'screens/SettingsScreen'
 import StartUnboarding from 'screens/Unboarding/Unboarding'
 import Unboarding from 'components/layout/UnboardingRoutes'
@@ -67,11 +66,6 @@ const Stack = (): JSX.Element => {
           name="Prayer"
           component={PrayerScreen}
           options={{ title: 'Prière' }}
-        />
-        <MainStack.Screen
-          name="Intention"
-          component={IntentionScreen}
-          options={{ title: 'Intention de Prière' }}
         />
         <MainStack.Screen
           name="MyPrayer"

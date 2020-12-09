@@ -1,35 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { ScrollView, Text } from 'react-native'
+import { connect } from 'react-redux'
 
-import { LectureAelf, getDailyGospel } from 'utils/aelf/fetchAelf'
+import { TLectureAelf } from 'config/types/AelfApi'
 
 import { Header } from 'elements/text/Text'
 import Page from 'components/layout/Page'
+import { RootState } from 'red/reducers/RootReducer'
 
-const GospelScreen = (): JSX.Element => {
-  const [evangile, setEvangile] = useState<LectureAelf>()
-  let _isMounted: boolean
-
-  useEffect(() => {
-    _isMounted = true
-    // Storage.getDataAsync(Storage.Stored.EVANGILE).then((data: string | null) => {
-    //   if (!data) return
-    //   let res: LectureAelf = JSON.parse(data)
-    //   res.
-    // })
-    getDailyGospel().then((data) => {
-      if (!data) return
-      let html = data.contenu
-      html = html.replace(/<\/p>/gi, '\n')
-      html = html.replace(/<[^>]+>/gi, '')
-      data.contenu = html
-      setEvangile(data)
-    })
-    return () => {
-      if (_isMounted) _isMounted = false
-    }
-  })
-
+const GospelScreen = ({
+  evangile
+}: {
+  evangile: TLectureAelf | undefined
+}): JSX.Element => {
   return (
     <Page title="Evangile">
       <ScrollView style={{ paddingTop: 25, paddingHorizontal: 20 }}>
@@ -43,4 +26,8 @@ const GospelScreen = (): JSX.Element => {
   )
 }
 
-export default GospelScreen
+const mapToProps = (state: RootState) => ({
+  evangile: state.evangile.evangile
+})
+
+export default connect(mapToProps)(GospelScreen)

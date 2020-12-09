@@ -1,80 +1,55 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View, ScrollView, Text, ToastAndroid } from 'react-native'
-import { FontAwesome5 } from '@expo/vector-icons'
-import { useFocusEffect } from '@react-navigation/native'
+import React, { useCallback, useState } from 'react'
+import { StyleSheet, View, ScrollView, Text, Modal } from 'react-native'
+import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
 
 import { TIntention } from 'config/types/Intention'
 import { WriteIntention, IntentionCard } from 'components/intentions/Blocks'
-import * as Storage from 'utils/storage/StorageManager'
-import { buildSlug } from 'utils/slug/slugBuilder'
 import theme from 'config/theme'
+import { connect, useDispatch } from 'react-redux'
+import { RootState } from 'red/reducers/RootReducer'
+import { postIntention } from 'utils/api/api_firebase'
+import { addIntentions } from 'red/actions/IntentionsActions'
+import {
+  TouchableHighlight,
+  TouchableOpacity
+} from 'react-native-gesture-handler'
 
-const IntentionsScreen = (): JSX.Element => {
-  const [intentions, setIntentions] = useState([] as TIntention[])
-  let _isMounted: boolean
+const IntentionsScreen = ({
+  intentions,
+  userId
+}: {
+  intentions: TIntention[]
+  userId: string | undefined
+}): JSX.Element => {
+  const dispatch = useDispatch()
+  const [open, openModal] = useState(false)
+  const [selectedIntention, setSI] = useState<TIntention>()
 
-  useFocusEffect(
-    useCallback(() => {
-      _isMounted = true
-      Storage.getDataAsync<TIntention>(Storage.Stored.INTENTIONS).then(
-        (data) => {
-          if (!data) return
-          setIntentions(data)
-        }
-      )
-      return () => {
-        if (_isMounted) _isMounted = false
-      }
-    }, [intentions])
-  )
-
-  const addIntention = (title: string, intention: string) => {
-    // const tmp = intentions
-    // const slug = buildSlug(title)
-    // tmp.push({
-    //   title,
-    //   intention,
-    // } as TIntention)
-    // Storage.setDataAsync(Storage.Stored.INTENTIONS, JSON.stringify(tmp))
-    //   .then(() => {
-    //     ToastAndroid.showWithGravity(
-    //       'Ajoutée !',
-    //       ToastAndroid.SHORT,
-    //       ToastAndroid.BOTTOM
-    //     )
-    //     setIntentions(tmp)
-    //   })
-    //   .catch(() => {
-    //     ToastAndroid.showWithGravity(
-    //       'Erreur...',
-    //       ToastAndroid.SHORT,
-    //       ToastAndroid.BOTTOM
-    //     )
-    //   })
-    // setIntentions(tmp)
+  const addIntention = async (intention: string) => {
+    await postIntention(intention, userId)
+    dispatch(addIntentions(intention, userId))
   }
-
-  const removeIntention = (slug: string) => {
-    // const tmp = intentions.filter((i) => i.slug !== slug)
-    // Storage.setDataAsync(Storage.Stored.INTENTIONS, JSON.stringify(tmp))
-    //   .then(() => {
-    //     ToastAndroid.showWithGravity(
-    //       'Enlevée !',
-    //       ToastAndroid.SHORT,
-    //       ToastAndroid.BOTTOM
-    //     )
-    //   })
-    //   .catch(() => {
-    //     ToastAndroid.showWithGravity(
-    //       'Erreur...',
-    //       ToastAndroid.SHORT,
-    //       ToastAndroid.BOTTOM
-    //     )
-    //   })
+  const focusIntention = (id: string) => {
+    const int = intentions.find((i) => i.id == id)
+    setSI(int)
+    openModal(true)
   }
 
   return (
     <View style={styles.background}>
+      <Modal animationType="fade" visible={open} transparent>
+        <View style={styles.modalCenter}>
+          <View style={styles.modal}>
+            <Text>{selectedIntention?.intention || ''}</Text>
+            <TouchableHighlight
+              style={styles.modalClose}
+              onPress={() => openModal(false)}
+            >
+              <Text style={{ color: theme.colors.white }}>Fermer</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
       <View style={styles.header}>
         <View style={{ height: '100%', flexDirection: 'column-reverse' }}>
           <View
@@ -100,7 +75,7 @@ const IntentionsScreen = (): JSX.Element => {
       <ScrollView style={styles.body}>
         <View
           style={
-            intentions.length > 2
+            intentions.length > 6
               ? styles.roundedView
               : styles.roundedViewHeight
           }
@@ -109,17 +84,14 @@ const IntentionsScreen = (): JSX.Element => {
           <WriteIntention addIntention={addIntention} />
           <Text style={styles.h3}>Intentions</Text>
           <View>
-            {intentions &&
-              intentions.length > 0 &&
-              intentions.map((int) => {
-                return (
-                  <IntentionCard
-                    key={int.title}
-                    intention={int}
-                    removeIntention={removeIntention}
-                  />
-                )
-              })}
+            {intentions.length !== 0 &&
+              intentions.map((int) => (
+                <IntentionCard
+                  key={int.id}
+                  intention={int}
+                  onLongPress={() => focusIntention(int.id)}
+                />
+              ))}
             {intentions && intentions.length <= 0 && (
               <Text style={{ color: theme.colors.white, paddingLeft: 30 }}>
                 Pas d&apos;intentions...
@@ -133,6 +105,39 @@ const IntentionsScreen = (): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
+  modalClose: {
+    display: 'flex',
+    alignSelf: 'center',
+    marginTop: 15,
+    backgroundColor: theme.colors.green,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 20,
+    zIndex: 40,
+    elevation: 10
+  },
+  modal: {
+    width: '80%',
+    backgroundColor: theme.colors.white,
+    paddingHorizontal: 15,
+    paddingVertical: 25,
+    borderRadius: 20,
+    elevation: 15,
+    shadowColor: '#f00',
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 5,
+      height: 7
+    }
+  },
+  modalCenter: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000000a0'
+  },
   h3: {
     color: theme.colors.green,
     fontSize: 25,
@@ -176,4 +181,9 @@ const styles = StyleSheet.create({
   }
 })
 
-export default IntentionsScreen
+const mapToProps = (state: RootState) => ({
+  intentions: state.intentions.intentions,
+  userId: state.user.user?.id
+})
+
+export default connect(mapToProps)(IntentionsScreen)

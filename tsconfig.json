@@ -16,7 +16,8 @@
       "utils/*": ["utils/*"],
       "components/*": ["components/*"],
       "config/*": ["config/*"],
-      "data/*": ["data/*"]
+      "data/*": ["data/*"],
+      "red/*": ["./redux/*"]
     }
   }
 }

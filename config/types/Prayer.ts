@@ -1,4 +1,5 @@
 import { NotificationContent } from './NotificationTypes'
+import CONST from 'config/constants'
 
 export type TNotifTime = {
   hour: number
@@ -7,22 +8,34 @@ export type TNotifTime = {
 }
 
 export type TPrayer = {
+  _id: string
   displayName: string
   name: string
   description: string
-  // active: boolean
-  // subscription: string[]
   content: string
   notifContent: NotificationContent
-  // times: NotifTime[]
-}
-
-export type TPrayerResponse = {
-  error?: string
-  prayers: TPrayer[]
 }
 
 export type TMyPrayer = {
   title: string
   content: string
 }
+
+// Response
+export type TPrayerResponse = {
+  error?: string
+  prayers: TPrayer[]
+}
+
+// Redux
+export interface IPrayersState {
+  prayers: TPrayer[]
+  count: number
+}
+
+export interface IPrayersUpdate {
+  type: typeof CONST.PRAYERS.PRAYERS_UPDATE
+  prayers: TPrayer[]
+}
+
+export type TPrayersActionTypes = IPrayersUpdate

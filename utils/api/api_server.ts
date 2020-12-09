@@ -6,10 +6,8 @@ import { ToastAndroid } from 'react-native'
 
 import * as StorageManager from 'utils/storage/StorageManager'
 import * as api from 'utils/api/baseRequest'
-import { TSignInResponse, TUser } from 'config/types/User'
+import { ISignInResponse, TUser, IMeResponse } from 'config/types/User'
 import { TPrayerResponse, TPrayer } from 'config/types/Prayer'
-import firebase from 'utils/firebase'
-import { TIntention } from 'config/types/Intention'
 
 /**
  * SignIn With Credentials
@@ -18,7 +16,7 @@ export const signInCredentials = async (
   email: string,
   password: string
 ): Promise<boolean> => {
-  const res = await api.post<TSignInResponse>('/login', {
+  const res = await api.post<ISignInResponse>('/login', {
     email,
     password
   })
@@ -39,7 +37,7 @@ export const registerCredentials = async (
   lastname: string,
   password: string
 ): Promise<boolean> => {
-  const res = await api.post<TSignInResponse>('/register', {
+  const res = await api.post<ISignInResponse>('/register', {
     email,
     firstname,
     lastname,
@@ -57,6 +55,18 @@ export const registerCredentials = async (
 }
 
 /**
+ * User
+ */
+export const getUserData = async (
+  token: string
+): Promise<TUser | undefined> => {
+  const res = await api.get<IMeResponse>('/me', token)
+  if (res.error) return
+  StorageManager.setDataAsync(StorageManager.Stored.USER, res.user)
+  return res.user as TUser
+}
+
+/**
  * Prayers
  */
 export const getPrayers = async (): Promise<TPrayer[] | undefined> => {
@@ -68,51 +78,4 @@ export const getPrayers = async (): Promise<TPrayer[] | undefined> => {
     JSON.stringify(res.prayers)
   )
   return res.prayers as TPrayer[]
-}
-
-/**
- * Intentions
- */
-export const getIntentions = async (): Promise<TIntention[]> => {
-  const user = await StorageManager.getDataAsync<TUser>(
-    StorageManager.Stored.USER
-  )
-  if (!user) throw new Error('User Not Logged')
-  const dbIntentions = firebase.firestore().collection('intentions')
-  const snapshot = await dbIntentions.where('userId', '==', user._id).get()
-  const intentions: TIntention[] = []
-  snapshot.forEach((i) => {
-    const data = i.data()
-    console.log('Intention: ', data)
-    intentions.push(data as TIntention)
-  })
-  await StorageManager.setDataAsync(
-    StorageManager.Stored.INTENTIONS,
-    JSON.stringify(intentions)
-  )
-  return intentions
-}
-
-export const postIntention = async (
-  title: string,
-  content: string,
-  prayer?: string
-): Promise<void> => {
-  const user = await StorageManager.getDataAsync<TUser>(
-    StorageManager.Stored.USER
-  )
-  const intentions = await StorageManager.getDataAsync<TIntention[]>(
-    StorageManager.Stored.INTENTIONS
-  )
-  if (!user || !intentions) throw new Error('Failed to push intentions')
-  const newIntRef = firebase.firestore().collection('intentions').doc()
-  const intention: TIntention = {
-    title,
-    intention: content,
-    userId: user._id
-  }
-  if (prayer) intention.prayer = prayer
-  const _newInt = await newIntRef.set(intention)
-  console.log('SET INTENTION returns=', _newInt)
-  intentions.push(intention)
 }

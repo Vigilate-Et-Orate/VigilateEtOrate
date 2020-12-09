@@ -18,16 +18,7 @@ export enum Stored {
   TOKEN = 'token'
 }
 
-/**
- * Save data
- *
- * @param {string} key - key of item
- * @param {any} data - data to be saved
- */
-export const setDataAsync = async (
-  key: Stored | string,
-  data: string
-): Promise<void> => {
+export const setDataAsync = async (key: Stored, data: any): Promise<void> => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(data))
   } catch (e) {
@@ -35,13 +26,18 @@ export const setDataAsync = async (
   }
 }
 
-/**
- * Retrieve data
- *
- * @param {string} key - key of item to be retreived
- *
- * @return {any}
- */
+export const getSeveralAsync = async (
+  keys: Stored[]
+): Promise<[string, string][]> => {
+  try {
+    const data = await AsyncStorage.multiGet(keys)
+    console.log('data multi get', data)
+    return data
+  } catch (e) {
+    throw new Error('Failed to get several keys')
+  }
+}
+
 export const getDataAsync = async <T>(
   key: Stored | string
 ): Promise<T | null> => {
@@ -50,9 +46,14 @@ export const getDataAsync = async <T>(
   return JSON.parse(data) as T
 }
 
-/**
- * Clear all Stored keys and values
- */
+export const removeDataAsync = async (key: Stored): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(key)
+  } catch (e) {
+    throw new Error('Failed to delete key=' + key)
+  }
+}
+
 export const clear = async (): Promise<void> => {
   await AsyncStorage.clear()
 }

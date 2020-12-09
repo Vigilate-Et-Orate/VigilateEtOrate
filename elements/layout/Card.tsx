@@ -11,7 +11,7 @@ import theme from 'config/theme'
 import { useNavigation } from '@react-navigation/native'
 
 type CardProps = {
-  title: string
+  title?: string
   body: string
   onPress: (ev: GestureResponderEvent) => void | null
 }
@@ -24,7 +24,7 @@ const Card = ({ title, body, onPress }: CardProps): JSX.Element => {
   return (
     <View>
       <TouchableOpacity style={styles.card} onPress={onPress}>
-        <Text style={styles.Title}>{title}</Text>
+        {title && <Text style={styles.Title}>{title}</Text>}
         <Text style={styles.description}>{body}</Text>
       </TouchableOpacity>
     </View>

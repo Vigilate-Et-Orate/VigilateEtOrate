@@ -1,64 +1,47 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import {
   View,
   TouchableOpacity,
   Text,
   ScrollView,
   StyleSheet,
-  Image,
-  Keyboard
+  Image
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import * as Notifications from 'expo-notifications'
 import * as Analytics from 'expo-firebase-analytics'
-import { FontAwesome5, MaterialIcons } from '@expo/vector-icons'
+import { MaterialIcons } from '@expo/vector-icons'
 
 import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
-import * as Storage from 'utils/storage/StorageManager'
-
-import PrayersScreen from 'screens/PrayersScreen'
-import FavouriteScreen from 'screens/FavouriteScreen'
-import IntentionsScreen from 'screens/IntentionsScreen'
 import theme from 'config/theme'
-import { Prayer, MyPrayer } from 'config/types/Prayer'
-import prayers from 'data/prayers.json'
-import {
-  LectureAelf,
-  InformationAelf,
-  getDailyGospel,
-  getDailySaint
-} from 'utils/aelf/fetchAelf'
+import { TPrayer } from 'config/types/Prayer'
 import { PrayerBlockRegister } from 'components/prayers/Block'
 import { TUser } from 'config/types/User'
+import { TLectureAelf, TInformationAelf } from 'config/types/AelfApi'
+import { RootState } from 'red/reducers/RootReducer'
+import { connect } from 'react-redux'
 
-const defaultValues: MyPrayer = {
-  title: 'Je vous salue Marie',
-  content: `Je vous salue Marie, pleine de grâces
-Le Seigneur est avec vous
-vous êtes bénie entre toutes les femmes
-et Jésus le fruit de vos entrailles est beni
-Sainte Marie Mère de Dieu,
-priez pour nous pauvre pêcheurs,
-maintenant et à l'heure de notre mort.
-Amen.
-`
+type THomeScreenProps = {
+  user: TUser | undefined
+  loggedIn: boolean
+  prayers: TPrayer[] | undefined
+  evangile: TLectureAelf | undefined
+  infos: TInformationAelf | undefined
 }
 
-const Home = (): JSX.Element => {
+const HomeScreen = ({
+  user,
+  prayers,
+  evangile,
+  infos
+}: THomeScreenProps): JSX.Element => {
   const navigation = useNavigation()
-  const [myPrayer, setPrayer] = useState(defaultValues)
-  const [firstname, setFirstName] = useState('')
-  const [pair, setPair] = useState<Prayer[]>([])
-  const [inpair, setInpair] = useState<Prayer[]>([])
-  const [evangile, setEvangile] = useState<LectureAelf>()
-  const [saint, setSaint] = useState<InformationAelf>()
+  const [pair, setPair] = useState<TPrayer[]>([])
+  const [inpair, setInpair] = useState<TPrayer[]>([])
   const [date, setDate] = useState(new Date(Date.now()))
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState('')
-  const [user, setUser] = useState<TUser>()
 
   const onDateChange = (event: any, selectedDate?: Date | undefined) => {
     if (!event) return
@@ -72,40 +55,15 @@ const Home = (): JSX.Element => {
   }
 
   const effectCallback = () => {
-    // Storage.getDataAsync(Storage.Stored.MY_PRAYER).then((data) => {
-    //   if (!data) return
-    //   const res = JSON.parse(data)
-    //   setPrayer(res)
-    // })
-    // Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
-    //   if (!data) return
-    //   setFirstName(data)
-    // })
-    // Storage.getDataAsync(Storage.Stored.SUBS).then((data) => {
-    //   let res: Prayer[] = prayers
-    //   let tmpData: Prayer[] = []
-    //   if (data) {
-    //     tmpData = JSON.parse(data)
-    //     const values = tmpData.map((e) => e.name)
-    //     res = res.filter((e: Prayer) => !values.includes(e.name))
-    //   }
-    //   const pairTmp: Prayer[] = []
-    //   const inpairTmp: Prayer[] = []
-    //   res.forEach((prayer: Prayer, index: number) => {
-    //     if (index % 2 == 0) pairTmp.push(prayer)
-    //     else inpairTmp.push(prayer)
-    //   })
-    //   setPair(pairTmp)
-    //   setInpair(inpairTmp)
-    // })
-    getDailyGospel().then((gospel: LectureAelf | undefined) => {
-      if (!gospel) return
-      setEvangile(gospel)
+    const pairTmp: TPrayer[] = []
+    const inpairTmp: TPrayer[] = []
+    if (!prayers || prayers.length <= 0) return
+    prayers.forEach((prayer, index) => {
+      if (index % 2 == 0) pairTmp.push(prayer)
+      else inpairTmp.push(prayer)
     })
-    getDailySaint().then((saint: InformationAelf | undefined) => {
-      if (!saint) return
-      setSaint(saint)
-    })
+    setPair(pairTmp)
+    setInpair(inpairTmp)
   }
 
   useFocusEffect(useCallback(effectCallback, []))
@@ -131,14 +89,16 @@ const Home = (): JSX.Element => {
           }}
         >
           <Text style={{ color: '#f6f4f4', fontSize: 22 }}>Bonjour</Text>
-          <Text style={{ color: '#f6f4f4', fontSize: 36 }}>{firstname} !</Text>
+          <Text style={{ color: '#f6f4f4', fontSize: 36 }}>
+            {user ? `${user.firstname} !` : ''}
+          </Text>
         </View>
       </View>
       <ScrollView style={styles.body}>
         <TouchableOpacity
           style={{
             position: 'absolute',
-            top: '2%',
+            top: '4%',
             right: '2%'
           }}
           onPress={() => navigation.navigate('Settings')}
@@ -155,16 +115,23 @@ const Home = (): JSX.Element => {
               onChange={onDateChange}
             />
           )}
-          <Text style={styles.h3}>Saint du jour</Text>
-          <Text style={styles.saintDuJour}>{saint?.fete}</Text>
-          <Text style={styles.h3}>Evangile du jour</Text>
-          <WelcomeCard evangile={evangile?.titre || 'Erreur de reseau'} />
-          {myPrayer.title !== '' && (
+          {infos && (
+            <React.Fragment>
+              <Text style={styles.h3}>Saint du jour</Text>
+              <Text style={styles.saintDuJour}>{infos.fete}</Text>
+            </React.Fragment>
+          )}
+          {evangile && (
+            <React.Fragment>
+              <Text style={styles.h3}>Evangile du jour</Text>
+              <WelcomeCard evangile={evangile.titre} />
+            </React.Fragment>
+          )}
+          {user?.personnalPrayer && (
             <View>
               <Text style={styles.h3}>Prière Personnelle</Text>
               <Card
-                title={myPrayer.title}
-                body={myPrayer.content}
+                body={user.personnalPrayer}
                 onPress={() => {
                   Analytics.logEvent('PersonnalPrayer', {
                     location: 'homescreen'
@@ -189,23 +156,23 @@ const Home = (): JSX.Element => {
               }}
             >
               {pair &&
-                pair.map((prayer: Prayer, index: number) => (
+                pair.map((prayer: TPrayer, index: number) => (
                   <PrayerBlockRegister
                     key={prayer.name}
                     prayer={prayer}
                     index={index}
                     onPress={async () => {
-                      if (prayer.times && prayer.times.length == 0) {
-                        setShow(true)
-                        setCurrentPrayer(prayer.name)
-                      } else
-                        LocalNotification.registerForPrayer(
-                          prayer.name,
-                          new Date(Date.now())
-                        )
-                      setPair(
-                        pair.filter((e: Prayer) => e.name !== prayer.name)
-                      )
+                      // if (prayer.times && prayer.times.length == 0) {
+                      //   setShow(true)
+                      //   setCurrentPrayer(prayer.name)
+                      // } else
+                      //   LocalNotification.registerForPrayer(
+                      //     prayer.name,
+                      //     new Date(Date.now())
+                      //   )
+                      // setPair(
+                      //   pair.filter((e: TPrayer) => e.name !== prayer.name)
+                      // )
                     }}
                   />
                 ))}
@@ -218,24 +185,24 @@ const Home = (): JSX.Element => {
               }}
             >
               {inpair &&
-                inpair.map((prayer: Prayer, index: number) => (
+                inpair.map((prayer: TPrayer, index: number) => (
                   <PrayerBlockRegister
                     key={prayer.name}
                     prayer={prayer}
                     index={index}
                     inpair
                     onPress={async () => {
-                      if (prayer.times && prayer.times.length == 0) {
-                        setShow(true)
-                        setCurrentPrayer(prayer.name)
-                      } else
-                        LocalNotification.registerForPrayer(
-                          prayer.name,
-                          new Date(Date.now())
-                        )
-                      setInpair(
-                        inpair.filter((e: Prayer) => e.name !== prayer.name)
-                      )
+                      // if (prayer.times && prayer.times.length == 0) {
+                      //   setShow(true)
+                      //   setCurrentPrayer(prayer.name)
+                      // } else
+                      //   LocalNotification.registerForPrayer(
+                      //     prayer.name,
+                      //     new Date(Date.now())
+                      //   )
+                      //   setInpair(
+                      //     inpair.filter((e: TPrayer) => e.name !== prayer.name)
+                      //   )
                     }}
                   />
                 ))}
@@ -302,150 +269,12 @@ const styles = StyleSheet.create({
   }
 })
 
-// Tabs
-const Tabs = createMaterialTopTabNavigator()
+const mapToProps = (state: RootState) => ({
+  user: state.user.user,
+  loggedIn: state.user.loggedIn,
+  prayers: state.prayers.prayers,
+  evangile: state.evangile.evangile,
+  infos: state.dailyInfos.informations
+})
 
-type TabBarProps = {
-  state: any
-  descriptors: any
-  navigation: any
-}
-
-const tabsNameIcon = [
-  { name: 'Home', iconName: 'home' },
-  { name: 'Intentions', iconName: 'feather-alt' },
-  { name: 'Prayers', iconName: 'book' },
-  { name: 'Favourite', iconName: 'heart' }
-]
-
-const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
-  return (
-    <View
-      style={{
-        elevation: 20,
-        position: 'absolute',
-        bottom: 40,
-        left: '10%',
-        borderRadius: 40,
-        width: '80%',
-        flexDirection: 'row',
-        height: 60,
-        zIndex: 40,
-        backgroundColor:
-          state.index == 1 ? theme.colors.green : theme.colors.blue
-      }}
-    >
-      {state.routes.map((route: any, index: number) => {
-        const { options } = descriptors[route.key]
-
-        const name = tabsNameIcon.find((i) => i.name == route.name)?.iconName
-        const isFocused = state.index == index
-        const color = !isFocused
-          ? theme.colors.white
-          : route.name == 'Intentions'
-          ? theme.colors.lightGreen
-          : route.name == 'Favourite'
-          ? theme.colors.red
-          : theme.colors.yellow
-
-        const onPressNav = () => {
-          const event = navigation.emit({
-            type: 'typePress',
-            target: route.key,
-            canPreventDefault: true
-          })
-
-          if (!isFocused && !event.defaultPrevented)
-            navigation.navigate(route.name)
-        }
-
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key
-          })
-        }
-
-        return (
-          <TouchableOpacity
-            testID={options.tabBarTestID}
-            onPress={onPressNav}
-            onLongPress={onLongPress}
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-            key={route.key}
-          >
-            <FontAwesome5 name={name} size={25} color={color} />
-          </TouchableOpacity>
-        )
-      })}
-    </View>
-  )
-}
-
-const HomeScreen = (): JSX.Element => {
-  const navigation = useNavigation()
-  const [keyboard, setKeyboard] = useState(false)
-
-  useEffect(() => {
-    const subRes = Notifications.addNotificationResponseReceivedListener(
-      (event) => {
-        const data = event.notification.request.content.data
-        if (data && (data.prayerName as string)) {
-          Analytics.logEvent('notificationClicked', {
-            prayer: data.prayerName
-          })
-          navigation.navigate('Prayer', {
-            name: data.prayerName as string
-          })
-        }
-      }
-    )
-    // Check if user is unboarded
-    // Storage.getDataAsync(Storage.Stored.FIRSTNAME).then((data) => {
-    //   if (!data) {
-    //     navigation.navigate('StartUnboard')
-    //     return
-    //   }
-    // })
-    Storage.getDataAsync<TUser>(Storage.Stored.USER).then((data) => {
-      if (!data) navigation.navigate('SignIn')
-    })
-    Keyboard.addListener('keyboardDidShow', () => setKeyboard(true))
-    Keyboard.addListener('keyboardDidHide', () => setKeyboard(false))
-
-    return () => {
-      subRes.remove()
-      Keyboard.removeAllListeners('keyboardDidShow')
-      Keyboard.removeAllListeners('keyboardDidHide')
-    }
-  })
-
-  return (
-    <Tabs.Navigator
-      tabBar={(props) => (keyboard ? <View></View> : <MainTabBar {...props} />)}
-    >
-      <Tabs.Screen
-        name="Home"
-        component={Home}
-        options={{ title: 'Accueil' }}
-      />
-      <Tabs.Screen
-        name="Intentions"
-        component={IntentionsScreen}
-        options={{ title: 'Intentions' }}
-      />
-      <Tabs.Screen
-        name="Prayers"
-        component={PrayersScreen}
-        options={{ title: 'Prières' }}
-      />
-      <Tabs.Screen
-        name="Favourite"
-        component={FavouriteScreen}
-        options={{ title: 'Favoris' }}
-      />
-    </Tabs.Navigator>
-  )
-}
-
-export default HomeScreen
+export default connect(mapToProps)(HomeScreen)
