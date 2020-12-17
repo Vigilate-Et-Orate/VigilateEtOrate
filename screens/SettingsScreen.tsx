@@ -1,140 +1,37 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import {
   View,
   Text,
-  Modal,
   StyleSheet,
   TouchableOpacity,
-  ToastAndroid,
   Image,
   ScrollView
 } from 'react-native'
-import { BlurView } from 'expo-blur'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
-import DateTimePicker from '@react-native-community/datetimepicker'
 
-import * as Storage from 'utils/storage/StorageManager'
 import theme from 'config/theme'
-import {
-  MyPrayerBlock,
-  FirstnameBlock
-} from 'components/prayers/PersonnalBlock'
-import { PrayerBlockManageNotification } from 'components/prayers/Block'
-import { Prayer } from 'config/types/Prayer'
-import * as LocalNotification from 'utils/notification/LocalNotification'
+import { RootState } from 'red/reducers/RootReducer'
+import { connect, useDispatch } from 'react-redux'
+import { TUser } from 'config/types/User'
+import { userLogout } from 'red/actions/UserActions'
 
-const HorizontalLine = (): JSX.Element => (
-  <View
-    style={{
-      borderBottomColor: theme.colors.blue,
-      borderBottomWidth: 1,
-      marginVertical: 20
-    }}
-  ></View>
-)
-
-const Settings = (): JSX.Element => {
+const Settings = ({ user }: { user: TUser | undefined }): JSX.Element => {
   const navigation = useNavigation()
-  const [modalVisible, setModalVisible] = useState(false)
-  const [data, setData] = useState<Prayer[]>()
-  const [date, setDate] = useState(new Date(Date.now()))
-  const [show, setShow] = useState(false)
-  const [currentPrayer, setCurrentPrayer] = useState('')
-  let _isMounted: boolean
+  const dispatch = useDispatch()
 
-  const onReactivate = (name: string) => {
-    setCurrentPrayer(name)
-    setShow(true)
+  const getInitials = () => {
+    if (!user) return ''
+    return user.firstname[0] + user.lastname[0]
   }
 
-  const onDateChange = (event: any, selectedDate?: Date | undefined) => {
-    if (!event) return
-    const currentDate = selectedDate || date
-    setDate(currentDate)
-    setShow(false)
-    LocalNotification.registerForPrayer(currentPrayer, currentDate)
-    setCurrentPrayer('')
+  const logout = () => {
+    dispatch(userLogout())
+    navigation.navigate('SignIn')
   }
-
-  useEffect(() => {
-    _isMounted = true
-    Storage.getDataAsync(Storage.Stored.SUBS).then((res) => {
-      if (!res) {
-        setData([])
-        return
-      }
-      setData(JSON.parse(res))
-    })
-    return () => {
-      if (_isMounted) _isMounted = false
-    }
-  }, [])
 
   return (
     <View style={styles.background}>
-      {show && (
-        <DateTimePicker
-          mode="time"
-          value={date}
-          is24Hour={true}
-          display="default"
-          onChange={onDateChange}
-        />
-      )}
-      <Modal animationType="fade" transparent={true} visible={modalVisible}>
-        <View style={styles.centeredView}>
-          <BlurView intensity={300} style={styles.modal}>
-            <TouchableOpacity
-              style={{
-                alignSelf: 'flex-end',
-                backgroundColor: theme.colors.blue,
-                padding: 5,
-                borderRadius: 30
-              }}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <MaterialCommunityIcons
-                name="close"
-                size={20}
-                color={theme.colors.white}
-              />
-            </TouchableOpacity>
-            <Text
-              style={{
-                marginBottom: 10,
-                color: theme.colors.blue,
-                fontSize: 18
-              }}
-            >
-              Ceci est une opération destructive. Attention cela supprimera
-              toutes vos données et souscriptions !
-            </Text>
-            <Text style={{ color: theme.colors.red, fontSize: 16 }}>
-              Êtes vous sûr de vouloir tout effacer ?
-            </Text>
-            <View style={{ flexDirection: 'row-reverse', marginTop: 20 }}>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => {
-                  Storage.clear()
-                  setModalVisible(!modalVisible)
-                  ToastAndroid.showWithGravity(
-                    'Cache supprimé',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.BOTTOM
-                  )
-                  navigation.goBack()
-                }}
-              >
-                <Text style={{ color: theme.colors.white, fontSize: 18 }}>
-                  Oui
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </BlurView>
-        </View>
-      </Modal>
       <View style={styles.header}>
         <View
           style={{ flexDirection: 'row', height: '60%', position: 'relative' }}
@@ -160,7 +57,7 @@ const Settings = (): JSX.Element => {
         <TouchableOpacity
           style={{
             position: 'absolute',
-            top: '3%',
+            top: '8%',
             left: '2%',
             elevation: 20,
             zIndex: 90
@@ -174,42 +71,31 @@ const Settings = (): JSX.Element => {
           />
         </TouchableOpacity>
         <View style={styles.roundedView}>
-          <Text style={styles.title}>Prénom</Text>
-          <FirstnameBlock settings />
-          <Text style={styles.title}>Ma Prière Personnelle</Text>
-          <MyPrayerBlock settings />
-          <HorizontalLine />
-          <Text style={styles.title}>Données de l&apos;application</Text>
-          <Text>
-            Les données dont les intentions, les rappels, les prières favorites,
-            votre prière personnelle. Ici vous pouvez toutes ces données.{' '}
-            <Text style={{ color: theme.colors.red, fontSize: 16 }}>
-              Attention
-            </Text>{' '}
-            c&apos;est irréversible !
-          </Text>
-          <View style={{ flexDirection: 'row-reverse' }}>
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => setModalVisible(true)}
-            >
-              <Text style={{ color: theme.colors.white, fontSize: 16 }}>
-                Suprimer
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <HorizontalLine />
-          <Text style={styles.title}>Notifications</Text>
-          {data &&
-            data.map((p: Prayer) => {
-              return (
-                <PrayerBlockManageNotification
-                  onReactivate={onReactivate}
-                  prayer={p}
-                  key={p.name}
-                />
-              )
-            })}
+          {user && (
+            <View style={styles.userRow}>
+              <View style={{ width: '30%', height: '100%' }}>
+                <View style={styles.avatar}>
+                  <Text style={{ color: theme.colors.white, fontSize: 30 }}>
+                    {getInitials()}
+                  </Text>
+                </View>
+              </View>
+              <View style={{ width: '70%', paddingLeft: 10 }}>
+                <Text style={{ fontSize: 26 }}>
+                  {user.firstname + ' ' + user.lastname}
+                </Text>
+                <Text>{user.email}</Text>
+                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                  <TouchableOpacity
+                    style={styles.logoutButton}
+                    onPress={logout}
+                  >
+                    <Text>Se Deconnecter</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -217,36 +103,27 @@ const Settings = (): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
-  deleteButton: {
-    marginVertical: 10,
+  logoutButton: {
+    paddingHorizontal: 15,
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-    backgroundColor: theme.colors.red,
-    marginRight: 25
-  },
-  title: {
-    fontSize: 24,
-    color: theme.colors.blue,
-    marginVertical: 10
-  },
-  centeredView: {
-    paddingTop: '45%',
-    paddingHorizontal: 20,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  modal: {
     borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 15
+    backgroundColor: theme.colors.ultraLightGrey,
+    marginTop: 10
   },
-  modalButton: {
-    borderRadius: 30,
-    backgroundColor: theme.colors.red,
-    paddingHorizontal: 20,
-    paddingVertical: 10
+  userRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    height: 200,
+    marginTop: 10
+  },
+  avatar: {
+    borderRadius: 100,
+    width: 100,
+    height: 100,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.ultraLightGrey
   },
   background: {
     height: '100%',
@@ -273,8 +150,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingHorizontal: 20,
     justifyContent: 'center',
-    paddingBottom: 35
+    paddingVertical: 35
   }
 })
 
-export default Settings
+const mapToProps = (state: RootState) => ({
+  user: state.user.user
+})
+
+export default connect(mapToProps)(Settings)

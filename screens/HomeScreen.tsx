@@ -160,7 +160,7 @@ const HomeScreen = ({
               onChange={onDateChange}
             />
           )}
-          {infos && (
+          {infos?.fete && (
             <React.Fragment>
               <Text style={styles.h3}>Saint du jour</Text>
               <Text style={styles.saintDuJour}>{infos.fete}</Text>
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingHorizontal: 20,
     justifyContent: 'center',
-    paddingBottom: 35,
+    paddingBottom: 100,
     paddingTop: 15
   }
 })
