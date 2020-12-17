@@ -49,9 +49,7 @@ export const IntentionCard = ({
           dispatch(deleteIntentions(intention))
         }}
       >
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <MaterialIcons name="done" size={20} color="green" />
-        </View>
+        <MaterialIcons name="done" size={20} color="green" />
       </TouchableOpacity>
     </TouchableOpacity>
   )
@@ -100,13 +98,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: '100%',
     width: '100%',
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#d7d7d7c0'
   },
   cardIntentionLeft: {
     flex: 10,
     flexDirection: 'column',
-    borderRightWidth: 1,
-    borderRightColor: theme.colors.green + 'c4',
     paddingVertical: 10,
     paddingRight: 10
   },
@@ -124,12 +124,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   cardIntention: {
-    paddingHorizontal: 10,
-    borderRadius: 15,
-    borderColor: theme.colors.green,
-    borderWidth: 1,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 12,
+    elevation: 17,
     backgroundColor: theme.colors.white,
-    marginVertical: 5,
+    marginVertical: 3,
     flexDirection: 'row'
   },
   input: {

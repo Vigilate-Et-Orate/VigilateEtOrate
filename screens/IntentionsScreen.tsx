@@ -1,6 +1,14 @@
-import React, { useCallback, useState } from 'react'
-import { StyleSheet, View, ScrollView, Text, Modal } from 'react-native'
-import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'
+import React, { useState } from 'react'
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Modal,
+  Pressable,
+  Vibration
+} from 'react-native'
+import { FontAwesome5 } from '@expo/vector-icons'
 
 import { TIntention } from 'config/types/Intention'
 import { WriteIntention, IntentionCard } from 'components/intentions/Blocks'
@@ -9,10 +17,6 @@ import { connect, useDispatch } from 'react-redux'
 import { RootState } from 'red/reducers/RootReducer'
 import { postIntention } from 'utils/api/api_firebase'
 import { addIntentions } from 'red/actions/IntentionsActions'
-import {
-  TouchableHighlight,
-  TouchableOpacity
-} from 'react-native-gesture-handler'
 
 const IntentionsScreen = ({
   intentions,
@@ -33,22 +37,17 @@ const IntentionsScreen = ({
     const int = intentions.find((i) => i.id == id)
     setSI(int)
     openModal(true)
+    Vibration.vibrate(20)
   }
 
   return (
     <View style={styles.background}>
       <Modal animationType="fade" visible={open} transparent>
-        <View style={styles.modalCenter}>
+        <Pressable style={styles.modalCenter} onPress={() => openModal(false)}>
           <View style={styles.modal}>
             <Text>{selectedIntention?.intention || ''}</Text>
-            <TouchableHighlight
-              style={styles.modalClose}
-              onPress={() => openModal(false)}
-            >
-              <Text style={{ color: theme.colors.white }}>Fermer</Text>
-            </TouchableHighlight>
           </View>
-        </View>
+        </Pressable>
       </Modal>
       <View style={styles.header}>
         <View style={{ height: '100%', flexDirection: 'column-reverse' }}>
