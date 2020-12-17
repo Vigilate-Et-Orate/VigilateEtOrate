@@ -15,14 +15,14 @@ import theme from 'config/theme'
 import { TUser } from 'config/types/User'
 import { updateUser } from 'red/actions/UserActions'
 import { updateIntentions } from 'red/actions/IntentionsActions'
-import { getPrayers, getUserData } from 'utils/api/api_server'
+import {
+  getFavourites,
+  getNotifs,
+  getPrayers,
+  getUserData,
+  registerDevice
+} from 'utils/api/api_server'
 import { getIntentions } from 'utils/api/api_firebase'
-
-// Screens
-import PrayersScreen from 'screens/PrayersScreen'
-import FavouriteScreen from 'screens/FavouriteScreen'
-import IntentionsScreen from 'screens/IntentionsScreen'
-import Home from 'screens/HomeScreen'
 import { RootState } from 'red/reducers/RootReducer'
 import { updatePrayers } from 'red/actions/PrayersActions'
 import { getDailyGospel, getDailySaint } from 'utils/api/api_aelf'
@@ -31,30 +31,60 @@ import { updateInformations } from 'red/actions/DailyInformationsActions'
 import { TIntention } from 'config/types/Intention'
 import { TPrayer } from 'config/types/Prayer'
 import { TInformationAelf, TLectureAelf } from 'config/types/AelfApi'
+import { updateFavourites } from 'red/actions/FavouritesActions'
+import { getExponentToken } from 'utils/notification/NotificationManager'
+import { TNotif } from 'config/types/TNotif'
+import { updateNotifs } from 'red/actions/NotifsActions'
 
-const loadLocal = async (dispatch: Dispatch<any>) => {
+// Screens
+import PrayersScreen from 'screens/PrayersScreen'
+import FavouriteScreen from 'screens/FavouriteScreen'
+import IntentionsScreen from 'screens/IntentionsScreen'
+import Home from 'screens/HomeScreen'
+
+const loadLocal = async (
+  dispatch: Dispatch<any>,
+  setProgress: (n: number) => void,
+  setIsReady: (b: boolean) => void
+) => {
   console.log('LOCAL')
   try {
     const user = await Storage.getDataAsync<TUser>(Storage.Stored.USER)
+    setProgress(10)
     const intentions = await Storage.getDataAsync<TIntention[]>(
       Storage.Stored.INTENTIONS
     )
+    setProgress(20)
     const prayers = await Storage.getDataAsync<TPrayer[]>(
       Storage.Stored.PRAYERS
     )
+    setProgress(30)
     const informations = await Storage.getDataAsync<TInformationAelf>(
       Storage.Stored.DAY_INFO
     )
+    setProgress(40)
     const evangile = await Storage.getDataAsync<TLectureAelf>(
       Storage.Stored.EVANGILE
     )
-    if (!user || !intentions || !prayers || !informations || !evangile) return
-    console.log('INTENTIONS LOCAL', intentions)
+    setProgress(50)
+    const notifs = await Storage.getDataAsync<TNotif[]>(Storage.Stored.NOTIFS)
+    setProgress(90)
+    if (
+      !user ||
+      !intentions ||
+      !prayers ||
+      !informations ||
+      !evangile ||
+      !notifs
+    )
+      return
     dispatch(updateUser(user))
     dispatch(updateIntentions(intentions))
     dispatch(updatePrayers(prayers))
     dispatch(updateEvangile(evangile))
     dispatch(updateInformations(informations))
+    dispatch(updateNotifs(notifs))
+    setIsReady(true)
   } catch (e) {
     console.error(e.message)
   }
@@ -78,21 +108,37 @@ const loadOnline = async (
     setProgress(40)
     const evangile = await getDailyGospel()
     setProgress(50)
-    if (!user || !intentions || !prayers || !informations || !evangile) return
-    dispatch(updateUser(user))
+    const favs = await getFavourites(token)
     setProgress(60)
-    dispatch(updateIntentions(intentions))
+    const notifs = await getNotifs(token)
     setProgress(70)
+    if (
+      !user ||
+      !intentions ||
+      !prayers ||
+      !informations ||
+      !evangile ||
+      !favs ||
+      !notifs
+    )
+      return
+    dispatch(updateIntentions(intentions))
     dispatch(updatePrayers(prayers))
-    setProgress(80)
     dispatch(updateEvangile(evangile))
-    setProgress(90)
     dispatch(updateInformations(informations))
+    dispatch(updateFavourites(favs))
+    dispatch(updateNotifs(notifs))
+    if (!user.devices || user.devices.length <= 0) {
+      const expoToken = await getExponentToken()
+      const dev = await registerDevice(token, expoToken.data)
+      if (dev) user.devices.push(dev)
+    }
+    dispatch(updateUser(user))
     setProgress(100)
     setIsReady(true)
   } catch (e) {
-    console.error(e.message)
-    loadLocal(dispatch)
+    console.error('FETCHING ONLINE ERROR', e.message)
+    loadLocal(dispatch, setProgress, setIsReady)
   }
 }
 
@@ -105,8 +151,7 @@ async function loadData(
   const token = await Storage.getDataAsync<string>(Storage.Stored.TOKEN)
   if (status.isInternetReachable && token)
     await loadOnline(dispatch, token, setProgress, setIsReady)
-  else await loadLocal(dispatch)
-  await SplashScreen.hideAsync()
+  else await loadLocal(dispatch, setProgress, setIsReady)
 }
 
 // Tabs

@@ -4,8 +4,16 @@ export type TFavourite = {
   id: string
   user: string
   prayer: string
-  fav: boolean
+  faved: boolean
 }
+
+interface Res {
+  error?: string
+}
+
+export type TFavouriteResponse = TFavourite[] & Res
+
+export type TToggleFavResponse = Res & TFavourite
 
 // Redux
 export type TFavouriteState = {
@@ -23,12 +31,18 @@ export interface IFavouriteRemove {
   favourite: TFavourite
 }
 
-export interface IFavouriteUpdate {
-  type: typeof CONST.FAVOURITES.FAVOURITES_ADD
+export interface IFavouritesUpdate {
+  type: typeof CONST.FAVOURITES.FAVOURITES_UPDATE
   favourites: TFavourite[]
+}
+
+export interface IFavouriteUpdate {
+  type: typeof CONST.FAVOURITES.FAVOURITE_UPDATE
+  favourite: TFavourite
 }
 
 export type TFavouritesActionTypes =
   | IFavouriteUpdate
   | IFavouriteRemove
   | IFavouriteAdd
+  | IFavouritesUpdate

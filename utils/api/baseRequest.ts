@@ -35,3 +35,18 @@ export const get = async <T>(url: string, token?: string) => {
   if (res.status !== 200) ToastAndroid.show(data.error, ToastAndroid.SHORT)
   return data as T
 }
+
+export const del = async <T>(url: string, token: string) => {
+  const headers = {
+    Accept: 'apaplication/json',
+    Authorization: token
+  }
+  const res = await fetch(URL.API + url, {
+    method: 'DELETE',
+    headers,
+    mode: 'cors'
+  })
+  const data = await res.json()
+  if (res.status !== 200) ToastAndroid.show(data.error, ToastAndroid.SHORT)
+  return data as T
+}

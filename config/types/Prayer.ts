@@ -1,4 +1,3 @@
-import { NotificationContent } from './NotificationTypes'
 import CONST from 'config/constants'
 
 export type TNotifTime = {
@@ -13,7 +12,7 @@ export type TPrayer = {
   name: string
   description: string
   content: string
-  notifContent: NotificationContent
+  notificationContent: string
 }
 
 export type TMyPrayer = {

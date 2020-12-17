@@ -20,7 +20,6 @@ import { deleteIntentions } from 'red/actions/IntentionsActions'
 // Types
 export type IntentionCardProps = {
   intention: TIntention
-  key: string
   onLongPress: () => void
 }
 

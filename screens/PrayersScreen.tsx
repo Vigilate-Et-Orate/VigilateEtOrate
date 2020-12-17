@@ -1,16 +1,17 @@
 import React from 'react'
 import { StyleSheet, ScrollView, View, Text, Image } from 'react-native'
 
-import { Prayer } from 'config/types/Prayer'
+import { TPrayer } from 'config/types/Prayer'
 import { PrayerBlock } from 'components/prayers/Block'
-import prayers from 'data/prayers.json'
 import theme from 'config/theme'
+import { RootState } from 'red/reducers/RootReducer'
+import { connect } from 'react-redux'
 
-const PrayersScreen = (): JSX.Element => {
-  const pair: Prayer[] = []
-  const inpair: Prayer[] = []
+const PrayersScreen = ({ prayers }: { prayers: TPrayer[] }): JSX.Element => {
+  const pair: TPrayer[] = []
+  const inpair: TPrayer[] = []
 
-  prayers.forEach((prayer: Prayer, index: number) => {
+  prayers.forEach((prayer: TPrayer, index: number) => {
     if (index % 2 == 0) pair.push(prayer)
     else inpair.push(prayer)
   })
@@ -46,18 +47,18 @@ const PrayersScreen = (): JSX.Element => {
         >
           <View style={styles.column}>
             {pair &&
-              pair.map((prayer: Prayer, index: number) => (
+              pair.map((prayer: TPrayer, index: number) => (
                 <PrayerBlock key={prayer.name} prayer={prayer} index={index} />
               ))}
           </View>
           <View style={styles.column}>
             {inpair &&
-              inpair.map((prayer: Prayer, index: number) => (
+              inpair.map((prayer: TPrayer, index: number) => (
                 <PrayerBlock
                   key={prayer.name}
                   prayer={prayer}
                   index={index}
-                  inpair={true}
+                  inpair
                 />
               ))}
           </View>
@@ -119,4 +120,8 @@ const styles = StyleSheet.create({
   }
 })
 
-export default PrayersScreen
+const mapToProps = (state: RootState) => ({
+  prayers: state.prayers.prayers
+})
+
+export default connect(mapToProps)(PrayersScreen)

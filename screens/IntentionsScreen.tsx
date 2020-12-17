@@ -92,7 +92,7 @@ const IntentionsScreen = ({
                   onLongPress={() => focusIntention(int.id)}
                 />
               ))}
-            {intentions && intentions.length <= 0 && (
+            {intentions.length <= 0 && (
               <Text style={{ color: theme.colors.white, paddingLeft: 30 }}>
                 Pas d&apos;intentions...
               </Text>

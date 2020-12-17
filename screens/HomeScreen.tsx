@@ -6,13 +6,13 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Image
+  Image,
+  Platform
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Analytics from 'expo-firebase-analytics'
 import { MaterialIcons } from '@expo/vector-icons'
 
-import * as LocalNotification from 'utils/notification/LocalNotification'
 import Card, { WelcomeCard } from 'elements/layout/Card'
 import theme from 'config/theme'
 import { TPrayer } from 'config/types/Prayer'
@@ -20,7 +20,18 @@ import { PrayerBlockRegister } from 'components/prayers/Block'
 import { TUser } from 'config/types/User'
 import { TLectureAelf, TInformationAelf } from 'config/types/AelfApi'
 import { RootState } from 'red/reducers/RootReducer'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
+import {
+  stringTimeToReadable,
+  stringToTime,
+  timeToString
+} from 'utils/time/timeManager'
+import {
+  registerForNotification,
+  removeNotification
+} from 'utils/api/api_server'
+import { TNotif } from 'config/types/TNotif'
+import { addNotif, removeNotif } from 'red/actions/NotifsActions'
 
 type THomeScreenProps = {
   user: TUser | undefined
@@ -28,45 +39,79 @@ type THomeScreenProps = {
   prayers: TPrayer[] | undefined
   evangile: TLectureAelf | undefined
   infos: TInformationAelf | undefined
+  notifs: TNotif[] | undefined
+  token: string
 }
+
+type TPrayerHome = {
+  notif: boolean
+  time: string
+} & TPrayer
 
 const HomeScreen = ({
   user,
   prayers,
   evangile,
-  infos
+  infos,
+  notifs,
+  token
 }: THomeScreenProps): JSX.Element => {
   const navigation = useNavigation()
-  const [pair, setPair] = useState<TPrayer[]>([])
-  const [inpair, setInpair] = useState<TPrayer[]>([])
+  const dispatch = useDispatch()
+
+  const [pair, setPair] = useState<TPrayerHome[]>([])
+  const [inpair, setInpair] = useState<TPrayerHome[]>([])
   const [date, setDate] = useState(new Date(Date.now()))
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState('')
 
-  const onDateChange = (event: any, selectedDate?: Date | undefined) => {
+  const onDateChange = async (event: any, selectedDate?: Date | undefined) => {
     if (!event) return
     const currentDate = selectedDate || date
+    setShow(Platform.OS === 'ios')
     setDate(currentDate)
-    setShow(false)
-    if (currentPrayer && currentPrayer.length > 0) {
-      LocalNotification.registerForPrayer(currentPrayer, currentDate)
-      setCurrentPrayer('')
+    if (currentPrayer) {
+      console.log('Offset', currentDate.getTimezoneOffset())
+      const t = timeToString({
+        hour: currentDate.getHours() + currentDate.getTimezoneOffset() / 60,
+        minute: currentDate.getMinutes(),
+        repeat: true,
+        daysLeft: 0
+      })
+      const n = await registerForNotification(token, currentPrayer, t)
+      console.log('Notifs registered:', n)
+      if (!n) return
+      dispatch(addNotif(n))
+      // LocalNotification.registerForPrayer(currentPrayer, currentDate)
+      // setCurrentPrayer('')
     }
   }
 
   const effectCallback = () => {
-    const pairTmp: TPrayer[] = []
-    const inpairTmp: TPrayer[] = []
-    if (!prayers || prayers.length <= 0) return
+    const pairTmp: TPrayerHome[] = []
+    const inpairTmp: TPrayerHome[] = []
+    if (!prayers || prayers.length <= 0 || !notifs) return
     prayers.forEach((prayer, index) => {
-      if (index % 2 == 0) pairTmp.push(prayer)
-      else inpairTmp.push(prayer)
+      const notif = notifs.find(
+        (n) => n.notificationContent === prayer.notificationContent
+      )
+      let time = ''
+      if (notif) {
+        time = stringTimeToReadable((notif?.time as string) || 'Error|r')
+      }
+      const p = {
+        ...prayer,
+        time,
+        notif: notif ? true : false
+      }
+      if (index % 2 == 0) pairTmp.push(p)
+      else inpairTmp.push(p)
     })
     setPair(pairTmp)
     setInpair(inpairTmp)
   }
 
-  useFocusEffect(useCallback(effectCallback, []))
+  useFocusEffect(useCallback(effectCallback, [prayers, notifs]))
 
   return (
     <View style={styles.background}>
@@ -156,23 +201,26 @@ const HomeScreen = ({
               }}
             >
               {pair &&
-                pair.map((prayer: TPrayer, index: number) => (
+                pair.map((prayer, index: number) => (
                   <PrayerBlockRegister
                     key={prayer.name}
                     prayer={prayer}
                     index={index}
+                    notif={prayer.notif}
+                    time={prayer.time}
                     onPress={async () => {
-                      // if (prayer.times && prayer.times.length == 0) {
-                      //   setShow(true)
-                      //   setCurrentPrayer(prayer.name)
-                      // } else
-                      //   LocalNotification.registerForPrayer(
-                      //     prayer.name,
-                      //     new Date(Date.now())
-                      //   )
-                      // setPair(
-                      //   pair.filter((e: TPrayer) => e.name !== prayer.name)
-                      // )
+                      if (prayer.notif) {
+                        const not = notifs?.find(
+                          (n) =>
+                            n.notificationContent === prayer.notificationContent
+                        )
+                        if (!not) return
+                        const no = await removeNotification(token, not._id)
+                        dispatch(removeNotif(no || not))
+                      } else {
+                        setCurrentPrayer(prayer.notificationContent)
+                        setShow(true)
+                      }
                     }}
                   />
                 ))}
@@ -185,24 +233,27 @@ const HomeScreen = ({
               }}
             >
               {inpair &&
-                inpair.map((prayer: TPrayer, index: number) => (
+                inpair.map((prayer, index: number) => (
                   <PrayerBlockRegister
                     key={prayer.name}
                     prayer={prayer}
                     index={index}
+                    notif={prayer.notif}
+                    time={prayer.time}
                     inpair
                     onPress={async () => {
-                      // if (prayer.times && prayer.times.length == 0) {
-                      //   setShow(true)
-                      //   setCurrentPrayer(prayer.name)
-                      // } else
-                      //   LocalNotification.registerForPrayer(
-                      //     prayer.name,
-                      //     new Date(Date.now())
-                      //   )
-                      //   setInpair(
-                      //     inpair.filter((e: TPrayer) => e.name !== prayer.name)
-                      //   )
+                      if (prayer.notif) {
+                        const not = notifs?.find(
+                          (n) =>
+                            n.notificationContent === prayer.notificationContent
+                        )
+                        if (!not) return
+                        const no = await removeNotification(token, not._id)
+                        dispatch(removeNotif(no || not))
+                      } else {
+                        setCurrentPrayer(prayer.notificationContent)
+                        setShow(true)
+                      }
                     }}
                   />
                 ))}
@@ -274,7 +325,9 @@ const mapToProps = (state: RootState) => ({
   loggedIn: state.user.loggedIn,
   prayers: state.prayers.prayers,
   evangile: state.evangile.evangile,
-  infos: state.dailyInfos.informations
+  infos: state.dailyInfos.informations,
+  token: state.user.token,
+  notifs: state.notifs.notifs
 })
 
 export default connect(mapToProps)(HomeScreen)

@@ -6,13 +6,17 @@ import intentionsReducer from './IntentionsReducer'
 import prayersReducer from './PrayersReducer'
 import evangileReducer from './EvangileReducer'
 import dailyInfosReducer from './DailyInformationsReducer'
+import favouriteReducer from './FavouritesReducer'
+import notifsReducer from './NotifsReducer'
 
 const rootReducer = combineReducers({
   user: userReducer,
   prayers: prayersReducer,
   intentions: intentionsReducer,
   evangile: evangileReducer,
-  dailyInfos: dailyInfosReducer
+  dailyInfos: dailyInfosReducer,
+  favourites: favouriteReducer,
+  notifs: notifsReducer
 })
 
 export type RootState = ReturnType<typeof rootReducer>
