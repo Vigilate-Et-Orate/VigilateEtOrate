@@ -37,12 +37,17 @@ export const postIntention = async (
   const intentions = await StorageManager.getDataAsync<TIntention[]>(
     StorageManager.Stored.INTENTIONS
   )
-  if (!intentions || !userId) throw new Error('Failed to push intentions')
+  if (!userId) throw new Error('Failed to push intentions')
   const newIntRef = firebase.firestore().collection('intentions').doc()
   await newIntRef.set({
     intention: content,
     userId
   })
+  // Save Intentions to storage
+  if (!intentions) {
+    const int: TIntention[] = []
+    int.push({ intention: content, id: newIntRef.id, userId })
+  }
 }
 
 export const removeIntentions = async (id: string): Promise<void> => {

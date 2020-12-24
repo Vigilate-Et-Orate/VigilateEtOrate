@@ -27,7 +27,7 @@ const Settings = ({ user }: { user: TUser | undefined }): JSX.Element => {
 
   const logout = () => {
     dispatch(userLogout())
-    navigation.navigate('SignIn')
+    navigation.navigate('Welcome')
   }
 
   return (

@@ -1,28 +1,20 @@
 import React from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'
+import { connect, useDispatch } from 'react-redux'
 
 import theme from 'config/theme'
-import * as Storage from 'utils/storage/StorageManager'
 import { WriteIntention } from 'components/intentions/Blocks'
-import { buildSlug } from 'utils/slug/slugBuilder'
+import { postIntention } from 'utils/api/api_firebase'
+import { addIntentions } from 'red/actions/IntentionsActions'
+import { RootState } from 'red/reducers/RootReducer'
 
-const Unboard = (): JSX.Element => {
-  const addIntention = (title: string, intention: string) => {
-    const slug = buildSlug(title)
-    Storage.getDataAsync(Storage.Stored.INTENTIONS).then((data) => {
-      if (!data) return
-      const intentions = JSON.parse(data)
-      intentions.push({
-        title,
-        intention,
-        slug
-      })
-      Storage.setDataAsync(
-        Storage.Stored.INTENTIONS,
-        JSON.stringify(intentions)
-      )
-    })
+const Unboard = ({ userId }: { userId: string | undefined }): JSX.Element => {
+  const dispatch = useDispatch()
+  const addIntention = async (intention: string) => {
+    console.log('Adding Intention UserId:', userId)
+    await postIntention(intention, userId)
+    dispatch(addIntentions(intention, userId))
   }
 
   return (
@@ -58,4 +50,8 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Unboard
+const mapToProps = (state: RootState) => ({
+  userId: state.user.user?.id
+})
+
+export default connect(mapToProps)(Unboard)

@@ -83,7 +83,7 @@ const IntentionsScreen = ({
           <WriteIntention addIntention={addIntention} />
           <Text style={styles.h3}>Intentions</Text>
           <View>
-            {intentions.length !== 0 &&
+            {Array.isArray(intentions) &&
               intentions.map((int) => (
                 <IntentionCard
                   key={int.id}

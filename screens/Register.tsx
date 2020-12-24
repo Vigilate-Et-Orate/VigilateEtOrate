@@ -6,23 +6,26 @@ import firebase from 'firebase'
 
 import theme from 'config/theme'
 import { TextInput } from 'react-native-gesture-handler'
-import { signInCredentials } from 'utils/api/api_server'
+import { registerCredentials } from 'utils/api/api_server'
 import { connect, useDispatch } from 'react-redux'
+import { userLogin } from 'red/actions/UserActions'
 import { RootState } from 'red/reducers/RootReducer'
-import { updateUser, userLogin } from 'red/actions/UserActions'
 import { loadData } from 'components/layout/HomeRoutes'
 
-const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
+const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const [firstname, setFirsname] = useState('')
+  const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const signIn = async () => {
-    const res = await signInCredentials(email, password)
+  const register = async () => {
+    const res = await registerCredentials(email, firstname, lastname, password)
     await firebase.auth().signInWithEmailAndPassword(email, password)
     if (res) {
-      dispatch(userLogin(res.token, res.user, false))
+      dispatch(userLogin(res.token, res.user, true))
+      setTimeout(() => {}, 500)
       loadData(
         dispatch,
         (_n: number) => {},
@@ -57,13 +60,27 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
         source={require('../assets/candle.png')}
       />
       <View style={[styles.card, keyboard ? styles.cardUp : styles.cardDown]}>
-        <Text style={styles.title}>Se Connecter</Text>
+        <Text style={styles.title}>Créer un compte</Text>
         <View style={styles.inputs}>
           <TextInput
             value={email}
             onChangeText={setEmail}
             style={styles.input}
             placeholder="Email"
+            placeholderTextColor={theme.colors.blue}
+          />
+          <TextInput
+            value={firstname}
+            onChangeText={setFirsname}
+            style={styles.input}
+            placeholder="Prénom"
+            placeholderTextColor={theme.colors.blue}
+          />
+          <TextInput
+            value={lastname}
+            onChangeText={setLastname}
+            style={styles.input}
+            placeholder="Nom de famille"
             placeholderTextColor={theme.colors.blue}
           />
           <TextInput
@@ -76,7 +93,7 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
           />
         </View>
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.arrowButton} onPress={signIn}>
+          <TouchableOpacity style={styles.arrowButton} onPress={register}>
             <FontAwesome5
               name="arrow-right"
               size={40}
@@ -85,14 +102,12 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
           </TouchableOpacity>
         </View>
       </View>
-      {!keyboard && (
-        <TouchableOpacity
-          style={styles.register}
-          onPress={() => navigation.navigate('Register')}
-        >
-          <Text style={{ color: theme.colors.white }}>Pas de compte ?</Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={keyboard ? styles.hidden : styles.register}
+        onPress={() => navigation.navigate('SignIn')}
+      >
+        <Text style={{ color: theme.colors.white }}>Déjà un compte ?</Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -103,24 +118,27 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.blue
   },
   cardUp: {
-    marginTop: '35%',
-    height: '90%'
+    height: '90%',
+    marginTop: '35%'
   },
   cardDown: {
-    marginTop: '65%',
-    height: '60%'
+    height: '60%',
+    marginTop: '65%'
   },
   card: {
     borderRadius: 30,
     backgroundColor: theme.colors.white,
     paddingHorizontal: '10%',
-    zIndex: 15
+    zIndex: 30
   },
   title: {
     textAlign: 'left',
     fontSize: 36,
     color: theme.colors.blue,
     marginVertical: '7%'
+  },
+  hidden: {
+    display: 'none'
   },
   register: {
     position: 'absolute',
@@ -132,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: '6%',
-    zIndex: 30
+    zIndex: 40
   },
   input: {
     backgroundColor: theme.colors.white + '33',
@@ -145,7 +163,7 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.blue
   },
   inputs: {
-    marginTop: '15%',
+    marginTop: '8%',
     marginBottom: '15%'
   },
   actions: {
@@ -161,8 +179,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 10,
-    zIndex: 40
+    elevation: 7
   }
 })
 
@@ -170,4 +187,4 @@ const mapToProps = (state: RootState) => ({
   keyboard: state.keyboard
 })
 
-export default connect(mapToProps)(SignInScreen)
+export default connect(mapToProps)(RegisterScreen)

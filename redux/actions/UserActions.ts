@@ -1,6 +1,9 @@
+import firebase from 'firebase'
+
 import { TUser, TUserActionTypes } from 'config/types/User'
 import CONST from 'config/constants'
 import * as Storage from 'utils/storage/StorageManager'
+// import firebase from 'firebase'
 
 export function updateUser(user: TUser, store?: boolean): TUserActionTypes {
   if (store) Storage.setDataAsync(Storage.Stored.USER, user)
@@ -40,6 +43,9 @@ export function userLogin(
 export function userLogout(): TUserActionTypes {
   Storage.removeDataAsync(Storage.Stored.USER)
   Storage.removeDataAsync(Storage.Stored.TOKEN)
+  Storage.removeDataAsync(Storage.Stored.FAVOURITE)
+  Storage.removeDataAsync(Storage.Stored.INTENTIONS)
+  firebase.auth().signOut()
   return {
     type: CONST.USER.USER_LOGOUT
   }

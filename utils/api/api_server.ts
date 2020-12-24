@@ -23,20 +23,23 @@ import { TNotif, TNotifResponse, TNotifsResponse } from 'config/types/TNotif'
 export const signInCredentials = async (
   email: string,
   password: string
-): Promise<boolean> => {
+): Promise<{ user: TUser; token: string } | undefined> => {
   const res = await api.post<ISignInResponse>('/login', {
     email,
     password
   })
 
-  if (res.error) return false
+  if (res.error) return
   ToastAndroid.show('Bienvenue' + res.user.firstname, ToastAndroid.SHORT)
   StorageManager.setDataAsync(StorageManager.Stored.TOKEN, res.token)
   StorageManager.setDataAsync(
     StorageManager.Stored.USER,
     JSON.stringify(res.user)
   )
-  return true
+  return {
+    user: res.user,
+    token: res.token
+  }
 }
 
 export const registerCredentials = async (
@@ -44,7 +47,7 @@ export const registerCredentials = async (
   firstname: string,
   lastname: string,
   password: string
-): Promise<boolean> => {
+): Promise<{ user: TUser; token: string } | undefined> => {
   const res = await api.post<ISignInResponse>('/register', {
     email,
     firstname,
@@ -52,14 +55,17 @@ export const registerCredentials = async (
     password
   })
 
-  if (res.error) return false
+  if (res.error) return
   ToastAndroid.show('Bienvenue' + res.user.firstname, ToastAndroid.SHORT)
   StorageManager.setDataAsync(StorageManager.Stored.TOKEN, res.token)
   StorageManager.setDataAsync(
     StorageManager.Stored.USER,
     JSON.stringify(res.user)
   )
-  return true
+  return {
+    user: res.user,
+    token: res.token
+  }
 }
 
 /**
@@ -68,6 +74,7 @@ export const registerCredentials = async (
 export const getUserData = async (
   token: string
 ): Promise<TUser | undefined> => {
+  console.log('USER TOKEN=', token)
   const res = await api.get<IMeResponse>('/me', token)
   if (res.error) return
   StorageManager.setDataAsync(StorageManager.Stored.USER, res.user)
@@ -81,6 +88,7 @@ export const registerDevice = async (
   token: string,
   deviceToken: string
 ): Promise<TDevice | undefined> => {
+  console.log('REGISTER DEVICE=', token, deviceToken)
   const res = await api.post<TDeviceResponse>(
     '/devices',
     {
@@ -145,6 +153,7 @@ export const toggleFavourite = async (
   const favs = await StorageManager.getDataAsync<TFavourite[]>(
     StorageManager.Stored.FAVOURITE
   )
+  console.log('ADD FAV PRAYER =', prayerId)
   const res = await api.post<TToggleFavResponse>(
     '/favourites',
     {

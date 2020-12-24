@@ -8,11 +8,7 @@ import { isFavourite } from 'utils/favourites/favourites'
 import theme from 'config/theme'
 import { TPrayer } from 'config/types/Prayer'
 import { connect, useDispatch } from 'react-redux'
-import {
-  addFavourite,
-  deleteFavourite,
-  updateFavourite
-} from 'red/actions/FavouritesActions'
+import { updateFavourite } from 'red/actions/FavouritesActions'
 import { toggleFavourite } from 'utils/api/api_server'
 import { RootState } from 'red/reducers/RootReducer'
 import { TFavourite } from 'config/types/Favourite'

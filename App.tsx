@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import * as SplashScreen from 'expo-splash-screen'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
+import { Keyboard } from 'react-native'
 
 import RootReducer from 'red/reducers/RootReducer'
 import * as Notifications from 'expo-notifications'
@@ -30,6 +31,8 @@ const App = (): JSX.Element => {
 
     return () => {
       subReceived.remove()
+      Keyboard.removeAllListeners('keyboardDidShow')
+      Keyboard.removeAllListeners('keyboardDidHide')
     }
   }, [])
 

@@ -14,6 +14,7 @@ import SettingsScreen from 'screens/SettingsScreen'
 import StartUnboarding from 'screens/Unboarding/Unboarding'
 import Unboarding from 'components/layout/UnboardingRoutes'
 import SignInScreen from 'screens/SignIn'
+import RegisterScreen from 'screens/Register'
 
 // Parameters Type
 type MainStack = {
@@ -50,7 +51,8 @@ const Stack = (): JSX.Element => {
         }}
       >
         <MainStack.Screen name="SignIn" component={SignInScreen} />
-        <MainStack.Screen name="StartUnboard" component={StartUnboarding} />
+        <MainStack.Screen name="Register" component={RegisterScreen} />
+        <MainStack.Screen name="Welcome" component={StartUnboarding} />
         <MainStack.Screen name="Unboarding" component={Unboarding} />
         <MainStack.Screen
           name="Home"

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import { View, TouchableOpacity, Keyboard, Image, Text } from 'react-native'
+import {
+  View,
+  TouchableOpacity,
+  Keyboard,
+  Image,
+  Text,
+  ToastAndroid
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { FontAwesome5 } from '@expo/vector-icons'
 import * as Notifications from 'expo-notifications'
@@ -41,6 +48,7 @@ import PrayersScreen from 'screens/PrayersScreen'
 import FavouriteScreen from 'screens/FavouriteScreen'
 import IntentionsScreen from 'screens/IntentionsScreen'
 import Home from 'screens/HomeScreen'
+import { updateKeyboard } from 'red/actions/KeyboardActions'
 
 const loadLocal = async (
   dispatch: Dispatch<any>,
@@ -96,38 +104,30 @@ const loadOnline = async (
   setProgress: (n: number) => void,
   setIsReady: (b: boolean) => void
 ) => {
-  console.log('ONLINE')
   try {
-    const user = await getUserData(token)
+    let user: TUser | undefined | null = await getUserData(token)
+    if (user) dispatch(updateUser(user))
     setProgress(10)
-    const intentions = await getIntentions()
-    setProgress(20)
     const prayers = await getPrayers()
+    if (prayers) dispatch(updatePrayers(prayers))
     setProgress(30)
     const informations = await getDailySaint()
+    if (informations) dispatch(updateInformations(informations))
     setProgress(40)
     const evangile = await getDailyGospel()
+    if (evangile) dispatch(updateEvangile(evangile))
     setProgress(50)
     const favs = await getFavourites(token)
+    if (favs) dispatch(updateFavourites(favs))
     setProgress(60)
     const notifs = await getNotifs(token)
+    if (notifs) dispatch(updateNotifs(notifs))
     setProgress(70)
-    if (
-      !user ||
-      !intentions ||
-      !prayers ||
-      !informations ||
-      !evangile ||
-      !favs ||
-      !notifs
-    )
-      return
-    dispatch(updateIntentions(intentions))
-    dispatch(updatePrayers(prayers))
-    dispatch(updateEvangile(evangile))
-    dispatch(updateInformations(informations))
-    dispatch(updateFavourites(favs))
-    dispatch(updateNotifs(notifs))
+    const intentions = await getIntentions()
+    if (intentions) dispatch(updateIntentions(intentions))
+    setProgress(80)
+    if (!user) user = await Storage.getDataAsync(Storage.Stored.USER)
+    if (!user) return
     if (!user.devices || user.devices.length <= 0) {
       const expoToken = await getExponentToken()
       const dev = await registerDevice(token, expoToken.data)
@@ -137,18 +137,20 @@ const loadOnline = async (
     setProgress(100)
     setIsReady(true)
   } catch (e) {
-    console.error('FETCHING ONLINE ERROR', e.message)
+    console.error('Error Loading', e.message)
     loadLocal(dispatch, setProgress, setIsReady)
   }
 }
 
-async function loadData(
+export async function loadData(
   dispatch: Dispatch<any>,
   setProgress: (n: number) => void,
   setIsReady: (b: boolean) => void
 ) {
+  console.log('LOAD DATA')
   const status = await getNetworkStateAsync()
   const token = await Storage.getDataAsync<string>(Storage.Stored.TOKEN)
+  console.log('TOKEN LOAD DATA=', token)
   if (status.isInternetReachable && token)
     await loadOnline(dispatch, token, setProgress, setIsReady)
   else await loadLocal(dispatch, setProgress, setIsReady)
@@ -234,43 +236,44 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   )
 }
 
-const HomeRoutes = ({
-  user
-}: {
-  user: TUser | undefined
-  loggedIn: boolean
-}): JSX.Element => {
+const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const [isReady, setIsReady] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [keyboard, setKeyboard] = useState(false)
+  const [loadedOnce, setLoadedOnce] = useState(false)
 
   useEffect(() => {
-    const subRes = Notifications.addNotificationResponseReceivedListener(
-      (event) => {
-        const data = event.notification.request.content.data
-        if (data && (data.prayerName as string)) {
-          Analytics.logEvent('notificationClicked', {
-            prayer: data.prayerName
-          })
-          navigation.navigate('Prayer', {
-            name: data.prayerName as string
-          })
-        }
-      }
-    )
-    if (!user) loadData(dispatch, setProgress, setIsReady)
+    loadData(dispatch, setProgress, setIsReady)
     Storage.getDataAsync(Storage.Stored.TOKEN).then((data) => {
-      if (!data) navigation.navigate('SignIn')
+      setIsReady(true)
+      if (!data) navigation.navigate('Welcome')
     })
-    Keyboard.addListener('keyboardDidShow', () => setKeyboard(true))
-    Keyboard.addListener('keyboardDidHide', () => setKeyboard(false))
+    if (!loadedOnce) {
+      const subRes = Notifications.addNotificationResponseReceivedListener(
+        (event) => {
+          const data = event.notification.request.content.data
+          if (data && (data.prayerName as string)) {
+            Analytics.logEvent('notificationClicked', {
+              prayer: data.prayerName
+            })
+            navigation.navigate('Prayer', {
+              name: data.prayerName as string
+            })
+          }
+        }
+      )
+      Keyboard.addListener('keyboardDidShow', () =>
+        dispatch(updateKeyboard(true))
+      )
+      Keyboard.addListener('keyboardDidHide', () =>
+        dispatch(updateKeyboard(false))
+      )
+      setLoadedOnce(true)
 
-    return () => {
-      subRes.remove()
-      Keyboard.removeAllListeners('keyboardDidShow')
-      Keyboard.removeAllListeners('keyboardDidHide')
+      return () => {
+        subRes.remove()
+      }
     }
   }, [])
 
@@ -345,7 +348,7 @@ const HomeRoutes = ({
 }
 
 const mapToProps = (state: RootState) => ({
-  user: state.user.user
+  keyboard: state.keyboard
 })
 
 export default connect(mapToProps)(HomeRoutes)

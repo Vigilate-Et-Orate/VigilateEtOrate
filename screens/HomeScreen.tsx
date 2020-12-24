@@ -21,11 +21,7 @@ import { TUser } from 'config/types/User'
 import { TLectureAelf, TInformationAelf } from 'config/types/AelfApi'
 import { RootState } from 'red/reducers/RootReducer'
 import { connect, useDispatch } from 'react-redux'
-import {
-  stringTimeToReadable,
-  stringToTime,
-  timeToString
-} from 'utils/time/timeManager'
+import { stringTimeToReadable, timeToString } from 'utils/time/timeManager'
 import {
   registerForNotification,
   removeNotification
@@ -79,18 +75,16 @@ const HomeScreen = ({
         daysLeft: 0
       })
       const n = await registerForNotification(token, currentPrayer, t)
-      console.log('Notifs registered:', n)
       if (!n) return
       dispatch(addNotif(n))
-      // LocalNotification.registerForPrayer(currentPrayer, currentDate)
-      // setCurrentPrayer('')
     }
   }
 
   const effectCallback = () => {
     const pairTmp: TPrayerHome[] = []
     const inpairTmp: TPrayerHome[] = []
-    if (!prayers || prayers.length <= 0 || !notifs) return
+    if (!prayers || prayers.length <= 0 || !Array.isArray(prayers) || !notifs)
+      return
     prayers.forEach((prayer, index) => {
       const notif = notifs.find(
         (n) => n.notificationContent === prayer.notificationContent

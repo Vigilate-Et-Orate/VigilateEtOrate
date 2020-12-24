@@ -10,8 +10,6 @@ import { connect } from 'react-redux'
 import { RootState } from 'red/reducers/RootReducer'
 import { TPrayer } from 'config/types/Prayer'
 
-import * as Storage from 'utils/storage/StorageManager'
-
 const FavouriteScreen = ({
   favs,
   prayers
