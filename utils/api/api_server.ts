@@ -150,7 +150,7 @@ export const toggleFavourite = async (
     if (!data) return
     token = data
   }
-  const favs = await StorageManager.getDataAsync<TFavourite[]>(
+  let favs = await StorageManager.getDataAsync<TFavourite[]>(
     StorageManager.Stored.FAVOURITE
   )
   console.log('ADD FAV PRAYER =', prayerId)
@@ -166,14 +166,13 @@ export const toggleFavourite = async (
   if (res.error || !favs) return
   let changed = false
   console.log('TOGGLE FAV | res=', res)
-  favs.map((f) => {
+  favs = favs.map((f) => {
     if (f.id === res.id) {
       f.faved = res.faved
       changed = true
     }
     return f
   })
-  console.log('TOGGLE FAV | changed=', changed)
   if (!changed) favs.push(res)
   StorageManager.setDataAsync(StorageManager.Stored.FAVOURITE, favs)
   return res

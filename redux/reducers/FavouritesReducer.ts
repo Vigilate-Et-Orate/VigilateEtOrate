@@ -38,7 +38,7 @@ const favouriteReducer = (
       const id = act.favourite.id
       const favs = state.favourites
       const index = favs.findIndex((e) => e.id === id)
-      favs[index] = act.favourite
+      favs[index].faved = act.favourite.faved
       return { ...state, favourites: favs }
     }
     case CONST.FAVOURITES.FAVOURITES_DELETE: {

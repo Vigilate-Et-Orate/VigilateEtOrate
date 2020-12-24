@@ -55,6 +55,7 @@ const PrayerScreen = ({
   const toogleFav = async () => {
     const res = await toggleFavourite(!faved, prayer._id, userId || '', token)
     if (!res) return
+    console.log('ADDED FAV', res)
     dispatch(updateFavourite(res))
     setFaved(res.faved)
     forceReload()

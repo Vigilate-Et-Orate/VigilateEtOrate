@@ -246,8 +246,10 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   useEffect(() => {
     loadData(dispatch, setProgress, setIsReady)
     Storage.getDataAsync(Storage.Stored.TOKEN).then((data) => {
-      setIsReady(true)
-      if (!data) navigation.navigate('Welcome')
+      if (!data) {
+        setIsReady(true)
+        navigation.navigate('Welcome')
+      }
     })
     if (!loadedOnce) {
       const subRes = Notifications.addNotificationResponseReceivedListener(
