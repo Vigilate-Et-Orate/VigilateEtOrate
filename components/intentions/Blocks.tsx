@@ -7,38 +7,35 @@ import {
   StyleSheet
 } from 'react-native'
 import * as Analytics from 'expo-firebase-analytics'
-import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
 
-import { Intention } from 'config/types/Intention'
+import { TIntention } from 'config/types/Intention'
 import { RoundedFilledButton } from 'elements/buttons/Buttons'
 import theme from 'config/theme'
+import { removeIntentions } from 'utils/api/api_firebase'
+import { useDispatch } from 'react-redux'
+import { deleteIntentions } from 'red/actions/IntentionsActions'
 
 // Types
 export type IntentionCardProps = {
-  intention: Intention
-  removeIntention: (slug: string) => void
-  key: string
+  intention: TIntention
+  onLongPress: () => void
 }
 
 export type WriteIntentionProps = {
-  addIntention: (title: string, intention: string) => void
+  addIntention: (intention: string) => void
 }
 
 // Components
 export const IntentionCard = ({
   intention,
-  removeIntention
+  onLongPress
 }: IntentionCardProps): JSX.Element => {
-  const navigation = useNavigation()
+  const dispatch = useDispatch()
 
   return (
-    <TouchableOpacity
-      style={styles.cardIntention}
-      onLongPress={() => navigation.navigate('Intention', { intention })}
-    >
+    <TouchableOpacity style={styles.cardIntention} onLongPress={onLongPress}>
       <View style={styles.cardIntentionLeft}>
-        <Text style={styles.title}>{intention.title}</Text>
         <Text>{intention.intention}</Text>
       </View>
       <TouchableOpacity
@@ -47,12 +44,11 @@ export const IntentionCard = ({
           Analytics.logEvent('intention', {
             type: 'dismissed'
           })
-          removeIntention(intention.slug)
+          removeIntentions(intention.id)
+          dispatch(deleteIntentions(intention))
         }}
       >
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <MaterialIcons name="done" size={20} color="green" />
-        </View>
+        <MaterialIcons name="done" size={20} color="green" />
       </TouchableOpacity>
     </TouchableOpacity>
   )
@@ -61,19 +57,10 @@ export const IntentionCard = ({
 export const WriteIntention = ({
   addIntention
 }: WriteIntentionProps): JSX.Element => {
-  const [title, onTitleChange] = useState('')
   const [intention, onIntentionChange] = useState('')
-  const [error, setError] = useState(false)
 
   return (
     <View style={styles.card}>
-      <TextInput
-        placeholderTextColor={theme.colors.green}
-        style={styles.input}
-        onChangeText={onTitleChange}
-        value={title}
-        placeholder="Titre de l'intention"
-      />
       <TextInput
         placeholderTextColor={theme.colors.green}
         style={styles.input}
@@ -81,21 +68,6 @@ export const WriteIntention = ({
         value={intention}
         placeholder="Intention"
       />
-      {error && (
-        <View
-          style={{
-            flexDirection: 'row',
-            backgroundColor: theme.colors.red,
-            borderRadius: 15,
-            paddingHorizontal: 20,
-            paddingVertical: 5
-          }}
-        >
-          <Text style={{ color: theme.colors.white }}>
-            Veuilez bien remplir les deux champs !
-          </Text>
-        </View>
-      )}
       <View style={{ flexDirection: 'row-reverse', marginTop: 25 }}>
         <RoundedFilledButton
           style={{ backgroundColor: theme.colors.lightGreen }}
@@ -103,13 +75,7 @@ export const WriteIntention = ({
             Analytics.logEvent('intention', {
               type: 'new'
             })
-            if (!title || !intention) {
-              setError(true)
-              return
-            }
-            addIntention(title, intention)
-            setError(false)
-            onTitleChange('')
+            addIntention(intention)
             onIntentionChange('')
           }}
         >
@@ -131,13 +97,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: '100%',
     width: '100%',
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#d7d7d7c0'
   },
   cardIntentionLeft: {
     flex: 10,
     flexDirection: 'column',
-    borderRightWidth: 1,
-    borderRightColor: theme.colors.green + 'c4',
     paddingVertical: 10,
     paddingRight: 10
   },
@@ -155,12 +123,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   cardIntention: {
-    paddingHorizontal: 10,
-    borderRadius: 15,
-    borderColor: theme.colors.green,
-    borderWidth: 1,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 12,
+    elevation: 17,
     backgroundColor: theme.colors.white,
-    marginVertical: 5,
+    marginVertical: 3,
     flexDirection: 'row'
   },
   input: {

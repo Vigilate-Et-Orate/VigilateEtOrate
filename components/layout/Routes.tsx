@@ -6,14 +6,15 @@ enableScreens()
 import * as Analytics from 'expo-firebase-analytics'
 
 // Screens
-import Home from 'screens/HomeScreen'
+import Home from 'components/layout/HomeRoutes'
 import GospelScreen from 'screens/GospelScreen'
 import PrayerScreen from 'screens/PrayerScreen'
 import MyPrayerScreen from 'screens/MyPrayerScreen'
-import IntentionScreen from 'screens/IntentionScreen'
 import SettingsScreen from 'screens/SettingsScreen'
 import StartUnboarding from 'screens/Unboarding/Unboarding'
 import Unboarding from 'components/layout/UnboardingRoutes'
+import SignInScreen from 'screens/SignIn'
+import RegisterScreen from 'screens/Register'
 
 // Parameters Type
 type MainStack = {
@@ -49,7 +50,9 @@ const Stack = (): JSX.Element => {
           headerShown: false
         }}
       >
-        <MainStack.Screen name="StartUnboard" component={StartUnboarding} />
+        <MainStack.Screen name="SignIn" component={SignInScreen} />
+        <MainStack.Screen name="Register" component={RegisterScreen} />
+        <MainStack.Screen name="Welcome" component={StartUnboarding} />
         <MainStack.Screen name="Unboarding" component={Unboarding} />
         <MainStack.Screen
           name="Home"
@@ -65,11 +68,6 @@ const Stack = (): JSX.Element => {
           name="Prayer"
           component={PrayerScreen}
           options={{ title: 'Prière' }}
-        />
-        <MainStack.Screen
-          name="Intention"
-          component={IntentionScreen}
-          options={{ title: 'Intention de Prière' }}
         />
         <MainStack.Screen
           name="MyPrayer"

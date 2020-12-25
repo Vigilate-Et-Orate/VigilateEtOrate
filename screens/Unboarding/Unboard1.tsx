@@ -33,7 +33,6 @@ const Unboard = (): JSX.Element => {
           plus tard dans les paramètres
         </Text>
       </View>
-      )
       <FirstnameBlock />
       <View style={{ marginVertical: 20 }}></View>
       <MyPrayerBlock />

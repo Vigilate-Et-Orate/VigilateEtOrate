@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "222667035685",
-    "firebase_url": "https://prayer-notification-app.firebaseio.com",
-    "project_id": "prayer-notification-app",
-    "storage_bucket": "prayer-notification-app.appspot.com"
+    "project_number": "378663841206",
+    "firebase_url": "https://vigilate-et-orate.firebaseio.com",
+    "project_id": "vigilate-et-orate",
+    "storage_bucket": "vigilate-et-orate.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:222667035685:android:6b87b8af5ca133410b5bcc",
+        "mobilesdk_app_id": "1:378663841206:android:c80e9b839b72640bb46517",
         "android_client_info": {
-          "package_name": "com.prayernotifs.app"
+          "package_name": "com.vigilateetorate.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "222667035685-kgmi8gfnr4fugejati0ipgkfffpoa3ho.apps.googleusercontent.com",
+          "client_id": "378663841206-80vt7p00k9llr7h2tq23s4farur8sng4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBeW-aBhKRcCkQ6sFQHG_WPddLAn5pxZvU"
+          "current_key": "AIzaSyA2tUK5RHchEKXW14eQws5o_q_VDdDdXMo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "222667035685-kgmi8gfnr4fugejati0ipgkfffpoa3ho.apps.googleusercontent.com",
+              "client_id": "378663841206-80vt7p00k9llr7h2tq23s4farur8sng4.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

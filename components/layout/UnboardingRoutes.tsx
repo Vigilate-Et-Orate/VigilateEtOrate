@@ -1,15 +1,17 @@
 import React from 'react'
 import { View, TouchableOpacity } from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
+import { connect } from 'react-redux'
 
 import theme from 'config/theme'
 
 const Unboard = createMaterialTopTabNavigator()
 
 // Unboard Screens
-import Unboard1 from 'screens/Unboarding/Unboard1'
+// import Unboard1 from 'screens/Unboarding/Unboard1'
 import Unboard2 from 'screens/Unboarding/Unboard2'
 import Unboard3 from 'screens/Unboarding/Unboard3'
+import { RootState } from 'red/reducers/RootReducer'
 
 type TabBarProps = {
   state: any
@@ -78,17 +80,19 @@ const TabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   )
 }
 
-const Routes = (): JSX.Element => {
+const Routes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   return (
     <Unboard.Navigator
-      keyboardDismissMode="none"
-      tabBar={(props) => <TabBar {...props} />}
+      tabBar={(props) => (keyboard ? <View></View> : <TabBar {...props} />)}
     >
-      <Unboard.Screen name="Un1" component={Unboard1} />
       <Unboard.Screen name="Un2" component={Unboard2} />
       <Unboard.Screen name="Un3" component={Unboard3} />
     </Unboard.Navigator>
   )
 }
 
-export default Routes
+const mapToProps = (state: RootState) => ({
+  keyboard: state.keyboard
+})
+
+export default connect(mapToProps)(Routes)

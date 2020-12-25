@@ -19,7 +19,8 @@ module.exports = function(api) {
         'screens': './screens',
         'utils': './utils',
         'components': './components',
-        'data': './data'
+        'data': './data',
+        'red': './redux'
       }
     }
   ]];

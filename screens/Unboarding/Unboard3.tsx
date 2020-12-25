@@ -1,48 +1,99 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Platform
+} from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
 import theme from 'config/theme'
 import { useNavigation } from '@react-navigation/native'
 import { PrayerBlockRegister } from 'components/prayers/Block'
-import { Prayer } from 'config/types/Prayer'
-import allPrayers from 'data/prayers.json'
-import * as LocalNotification from 'utils/notification/LocalNotification'
+import { TPrayer } from 'config/types/Prayer'
+import { useDispatch } from 'react-redux'
+import { TNotif } from 'config/types/TNotif'
+import { stringTimeToReadable, timeToString } from 'utils/time/timeManager'
+import {
+  registerForNotification,
+  removeNotification
+} from 'utils/api/api_server'
+import { removeNotif, addNotif } from 'red/actions/NotifsActions'
 
-const Unboard = (): JSX.Element => {
+type TPrayerUnboard = {
+  notif: boolean
+  time: string
+} & TPrayer
+
+const Unboard = ({
+  prayers,
+  notifs,
+  token
+}: {
+  prayers: TPrayer[]
+  notifs: TNotif[]
+  token: string
+}): JSX.Element => {
   const navigation = useNavigation()
-  const [prayers, setPrayers] = useState<Prayer[]>([])
+  const dispatch = useDispatch()
+
+  const [prays, setPrayers] = useState<TPrayerUnboard[]>([])
   const [showModal, setShowModal] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState('')
   const [date, setDate] = useState(new Date(Date.now()))
 
   useEffect(() => {
-    const tmp = allPrayers.filter(
+    const p = prayers.filter(
       (p) =>
-        p.name == 'angelus' ||
-        p.name == 'consecration' ||
-        p.name == 'je-vous-salue-marie'
+        p.name === 'angelus' ||
+        p.name === 'je-vous-salue-marie' ||
+        p.name === 'consecration'
     )
-    setPrayers(tmp)
+    const prs = p.map((pr) => {
+      const not = notifs.find(
+        (n) => n.notificationContent === pr.notificationContent
+      )
+      let time = ''
+      if (not) time = stringTimeToReadable((not.time as string) || 'Error|R')
+      return {
+        ...pr,
+        notif: not ? true : false,
+        time
+      }
+    })
+    setPrayers(prs)
   }, [])
 
-  const onDateChange = (event: any, selectedDate?: Date | undefined) => {
+  const onDateChange = async (event: any, selectedDate?: Date | undefined) => {
     if (!event) return
-    const currentdate = selectedDate || date
-    setDate(currentdate)
-    setShowModal(false)
-    if (currentPrayer && currentPrayer.length > 0) {
-      LocalNotification.registerForPrayer(currentPrayer, currentdate)
-      setCurrentPrayer('')
+    const currentDate = selectedDate || date
+    setShowModal(Platform.OS === 'ios')
+    setDate(currentDate)
+    if (currentPrayer) {
+      const t = timeToString({
+        hour: currentDate.getHours() + currentDate.getTimezoneOffset() / 60,
+        minute: currentDate.getMinutes(),
+        repeat: true,
+        daysLeft: 0
+      })
+      const n = await registerForNotification(token, currentPrayer, t)
+      if (!n) return
+      dispatch(addNotif(n))
     }
   }
 
-  const register = async (prayer: Prayer) => {
-    if (prayer.times && prayer.times.length == 0) {
-      setShowModal(true)
-      setCurrentPrayer(prayer.name)
+  const register = async (prayer: TPrayerUnboard) => {
+    if (prayer.notificationContent) {
+      const not = notifs?.find(
+        (n) => n.notificationContent === prayer.notificationContent
+      )
+      if (!not) return
+      const no = await removeNotification(token, not._id)
+      dispatch(removeNotif(no || not))
     } else {
-      LocalNotification.registerForPrayer(prayer.name, new Date(Date.now()))
+      setCurrentPrayer(prayer.notificationContent)
+      setShowModal(true)
     }
   }
 
@@ -58,25 +109,25 @@ const Unboard = (): JSX.Element => {
         />
       )}
       <Text style={styles.title}>Les Notifications les plus utilisées</Text>
-      {prayers.length > 0 && (
+      {prays.length > 0 && (
         <View style={styles.container}>
           <View style={styles.column}>
             <PrayerBlockRegister
-              prayer={prayers[0]}
+              prayer={prays[0]}
               index={1}
-              onPress={() => register(prayers[0])}
+              onPress={() => register(prays[0])}
             />
             <PrayerBlockRegister
-              prayer={prayers[2]}
+              prayer={prays[2]}
               index={1}
-              onPress={() => register(prayers[2])}
+              onPress={() => register(prays[2])}
             />
           </View>
           <View style={styles.column}>
             <PrayerBlockRegister
-              prayer={prayers[1]}
+              prayer={prays[1]}
               index={0}
-              onPress={() => register(prayers[1])}
+              onPress={() => register(prays[1])}
             />
           </View>
         </View>

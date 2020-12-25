@@ -18,7 +18,7 @@ const Unboarding = (): JSX.Element => {
       />
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Unboarding')}
+        onPress={() => navigation.navigate('SignIn')}
       >
         <Text style={styles.text}>Continuer</Text>
       </TouchableOpacity>

@@ -14,7 +14,12 @@
     "prettier"
   ],
   "rules": {
-    "no-console": 1,
+    "no-console": [
+      2,
+      {
+        "allow": ["warn", "error", "info"]
+      }
+    ],
     "prettier/prettier": 2,
     "@typescript-eslint/no-explicit-any": 0,
     "react/display-name": 0

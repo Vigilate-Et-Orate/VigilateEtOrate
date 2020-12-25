@@ -2,52 +2,56 @@
  * Storage Manager
  */
 
-import { AsyncStorage } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export enum Stored {
-  SUBS = 'subscriptions',
+  NOTIFS = 'notifications',
   EVANGILE = 'evangile',
-  MY_PRAYER = 'my-prayer',
+  // MY_PRAYER = 'my-prayer',
   DAY_INFO = 'day-info',
-  FIRSTNAME = 'firstname',
   INTENTIONS = 'intentions',
   FAVOURITE = 'favourites',
-  LATEST_MIGRATION = 'migration'
+  LATEST_MIGRATION = 'migration',
+  PRAYERS = 'prayers',
+  USER = 'user',
+  TOKEN = 'token'
 }
 
-/**
- * Save data
- *
- * @param {string} key - key of item
- * @param {any} data - data to be saved
- */
-export const setDataAsync = async (
-  key: Stored | string,
-  data: string
-): Promise<void> => {
+export const setDataAsync = async (key: Stored, data: any): Promise<void> => {
   try {
-    await AsyncStorage.setItem(key, data)
+    await AsyncStorage.setItem(key, JSON.stringify(data))
   } catch (e) {
     throw new Error('Failed to store ' + key)
   }
 }
 
-/**
- * Retrieve data
- *
- * @param {string} key - key of item to be retreived
- *
- * @return {any}
- */
-export const getDataAsync = async (
-  key: Stored | string
-): Promise<string | null> => {
-  return await AsyncStorage.getItem(key)
+export const getSeveralAsync = async (
+  keys: Stored[]
+): Promise<[string, string | null][]> => {
+  try {
+    const data = await AsyncStorage.multiGet(keys)
+    return data
+  } catch (e) {
+    throw new Error('Failed to get several keys')
+  }
 }
 
-/**
- * Clear all Stored keys and values
- */
+export const getDataAsync = async <T>(
+  key: Stored | string
+): Promise<T | null> => {
+  const data = await AsyncStorage.getItem(key)
+  if (!data) return null
+  return JSON.parse(data) as T
+}
+
+export const removeDataAsync = async (key: Stored): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(key)
+  } catch (e) {
+    throw new Error('Failed to delete key=' + key)
+  }
+}
+
 export const clear = async (): Promise<void> => {
   await AsyncStorage.clear()
 }
