@@ -3,7 +3,7 @@
     "name": "Vigilate & Orate",
     "description": "Get notifications for prayer",
     "slug": "vigilate-et-orate",
-    "version": "1.0.6",
+    "version": "2.0.0",
     "sdkVersion": "40.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -36,7 +36,7 @@
       "icon": "./assets/icon-medium.png",
       "backgroundColor": "#35415A",
       "useNextNotificationsApi": true,
-      "versionCode": 6,
+      "versionCode": 7,
       "splash": {
         "mdpi": "./assets/splash.png",
         "resizeMode": "contain",
