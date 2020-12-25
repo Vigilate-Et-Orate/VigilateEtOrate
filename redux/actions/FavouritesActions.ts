@@ -2,7 +2,6 @@ import CONST from 'config/constants'
 import { TFavourite, TFavouritesActionTypes } from 'config/types/Favourite'
 
 export function addFavourite(favourite: TFavourite): TFavouritesActionTypes {
-  console.log('FAV ADD')
   return {
     type: CONST.FAVOURITES.FAVOURITES_ADD,
     favourite
@@ -26,7 +25,6 @@ export function updateFavourite(favourite: TFavourite): TFavouritesActionTypes {
 }
 
 export function deleteFavourite(favourite: TFavourite): TFavouritesActionTypes {
-  console.log('FAV DELETE')
   return {
     type: CONST.FAVOURITES.FAVOURITES_DELETE,
     favourite

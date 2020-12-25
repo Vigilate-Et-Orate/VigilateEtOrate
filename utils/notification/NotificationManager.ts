@@ -19,9 +19,7 @@ export const isNotificationPermittedAsync = async (): Promise<boolean> => {
 /**
  * Get Notification Token
  */
-export const getExponentToken = async (): Promise<
-  Notifications.ExpoPushToken
-> => {
+export const getExponentToken = async (): Promise<Notifications.ExpoPushToken> => {
   return await Notifications.getExpoPushTokenAsync()
 }
 

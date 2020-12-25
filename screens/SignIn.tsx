@@ -9,7 +9,7 @@ import { TextInput } from 'react-native-gesture-handler'
 import { signInCredentials } from 'utils/api/api_server'
 import { connect, useDispatch } from 'react-redux'
 import { RootState } from 'red/reducers/RootReducer'
-import { updateUser, userLogin } from 'red/actions/UserActions'
+import { userLogin } from 'red/actions/UserActions'
 import { loadData } from 'components/layout/HomeRoutes'
 
 const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
@@ -18,6 +18,7 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars  */
   const signIn = async () => {
     const res = await signInCredentials(email, password)
     await firebase.auth().signInWithEmailAndPassword(email, password)
@@ -31,6 +32,7 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
       navigation.navigate('Home')
     }
   }
+  /* eslint-enable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars  */
 
   return (
     <View style={styles.background}>

@@ -20,6 +20,7 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
   const register = async () => {
     const res = await registerCredentials(email, firstname, lastname, password)
     await firebase.auth().signInWithEmailAndPassword(email, password)
@@ -34,6 +35,7 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
       navigation.navigate('Home')
     }
   }
+  /* eslint-enable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
 
   return (
     <View style={styles.background}>

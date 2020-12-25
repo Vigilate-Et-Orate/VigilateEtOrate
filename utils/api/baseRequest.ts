@@ -1,7 +1,12 @@
 import URL from 'config/url.config.json'
 import { ToastAndroid } from 'react-native'
 
-export const post = async <T>(url: string, body: any, token?: string) => {
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+export const post = async <T>(
+  url: string,
+  body: any,
+  token?: string
+): Promise<T> => {
   const headers: { [key: string]: string } = {
     'Content-Type': 'application/json',
     Accept: 'application/json'
@@ -22,7 +27,7 @@ export const post = async <T>(url: string, body: any, token?: string) => {
   return res as T
 }
 
-export const get = async <T>(url: string, token?: string) => {
+export const get = async <T>(url: string, token?: string): Promise<T> => {
   const headers: { [key: string]: string } = {
     Accept: 'application/json'
   }
@@ -35,8 +40,9 @@ export const get = async <T>(url: string, token?: string) => {
   if (res.status !== 200) ToastAndroid.show(data.error, ToastAndroid.SHORT)
   return data as T
 }
+/* eslint-enable @typescript-eslint/explicit-module-boundary-types */
 
-export const del = async <T>(url: string, token: string) => {
+export const del = async <T>(url: string, token: string): Promise<T> => {
   const headers = {
     Accept: 'apaplication/json',
     Authorization: token

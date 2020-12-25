@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import {
   View,
@@ -67,7 +67,6 @@ const HomeScreen = ({
     setShow(Platform.OS === 'ios')
     setDate(currentDate)
     if (currentPrayer) {
-      console.log('Offset', currentDate.getTimezoneOffset())
       const t = timeToString({
         hour: currentDate.getHours() + currentDate.getTimezoneOffset() / 60,
         minute: currentDate.getMinutes(),

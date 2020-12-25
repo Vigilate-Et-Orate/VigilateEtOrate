@@ -1,11 +1,11 @@
-import { ToastAndroid } from 'react-native'
-import * as Notifications from 'expo-notifications'
+// import { ToastAndroid } from 'react-native'
+// import * as Notifications from 'expo-notifications'
 
-import * as Storage from '../storage/StorageManager'
-import { TPrayer, TNotifTime } from 'config/types/Prayer'
-import { NotificationContent } from 'config/types/NotificationTypes'
-import prayers from 'data/prayers.json'
-import { DailyTriggerInput } from 'expo-notifications'
+// import * as Storage from '../storage/StorageManager'
+// import { TPrayer, TNotifTime } from 'config/types/Prayer'
+// import { NotificationContent } from 'config/types/NotificationTypes'
+// import prayers from 'data/prayers.json'
+// import { DailyTriggerInput } from 'expo-notifications'
 
 // /**
 //  * Send Notification

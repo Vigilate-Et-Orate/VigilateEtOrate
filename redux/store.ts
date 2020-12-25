@@ -5,7 +5,8 @@ import rootReducer from './reducers/RootReducer'
 
 let store: any
 
-const initialState = {
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+const initialState: any = {
   user: {
     token: '',
     user: undefined,
@@ -17,11 +18,11 @@ const initialState = {
   }
 }
 
-const initStore = (preloadedState = initialState) => {
+const initStore = (preloadedState = initialState): any => {
   return createStore(rootReducer, preloadedState)
 }
 
-const initializeStore = (preloadedState: any) => {
+const initializeStore = (preloadedState: any): any => {
   let _store = store ?? initStore(preloadedState)
 
   if (preloadedState && store) {
@@ -38,7 +39,8 @@ const initializeStore = (preloadedState: any) => {
   return _store
 }
 
-export function useStore(initialState: any) {
+export function useStore(initialState: any): any {
   const store = useMemo(() => initializeStore(initialState), initialState)
   return store
 }
+/* eslint-enable @typescript-eslint/explicit-module-boundary-types */

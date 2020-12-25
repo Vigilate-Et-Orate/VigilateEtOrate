@@ -2,7 +2,7 @@
  * Storage Manager
  */
 
-import { AsyncStorage } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export enum Stored {
   NOTIFS = 'notifications',
@@ -27,10 +27,9 @@ export const setDataAsync = async (key: Stored, data: any): Promise<void> => {
 
 export const getSeveralAsync = async (
   keys: Stored[]
-): Promise<[string, string][]> => {
+): Promise<[string, string | null][]> => {
   try {
     const data = await AsyncStorage.multiGet(keys)
-    console.log('data multi get', data)
     return data
   } catch (e) {
     throw new Error('Failed to get several keys')

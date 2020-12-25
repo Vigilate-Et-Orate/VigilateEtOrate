@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
-import { View, TouchableOpacity, StyleSheet, Text, Switch } from 'react-native'
+import React from 'react'
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
 
 import { TPrayer } from 'config/types/Prayer'
 import theme from 'config/theme'
-import * as LocalNotification from 'utils/notification/LocalNotification'
 
 export type PrayerBlockProps = {
   prayer: TPrayer

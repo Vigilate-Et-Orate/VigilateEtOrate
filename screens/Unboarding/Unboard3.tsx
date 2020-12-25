@@ -78,7 +78,6 @@ const Unboard = ({
         daysLeft: 0
       })
       const n = await registerForNotification(token, currentPrayer, t)
-      console.log('Notifs registered:', n)
       if (!n) return
       dispatch(addNotif(n))
     }

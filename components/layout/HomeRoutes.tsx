@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import {
-  View,
-  TouchableOpacity,
-  Keyboard,
-  Image,
-  Text,
-  ToastAndroid
-} from 'react-native'
+import { View, TouchableOpacity, Keyboard, Image, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { FontAwesome5 } from '@expo/vector-icons'
 import * as Notifications from 'expo-notifications'
@@ -55,7 +48,6 @@ const loadLocal = async (
   setProgress: (n: number) => void,
   setIsReady: (b: boolean) => void
 ) => {
-  console.log('LOCAL')
   try {
     const user = await Storage.getDataAsync<TUser>(Storage.Stored.USER)
     setProgress(10)
@@ -146,11 +138,9 @@ export async function loadData(
   dispatch: Dispatch<any>,
   setProgress: (n: number) => void,
   setIsReady: (b: boolean) => void
-) {
-  console.log('LOAD DATA')
+): Promise<void> {
   const status = await getNetworkStateAsync()
   const token = await Storage.getDataAsync<string>(Storage.Stored.TOKEN)
-  console.log('TOKEN LOAD DATA=', token)
   if (status.isInternetReachable && token)
     await loadOnline(dispatch, token, setProgress, setIsReady)
   else await loadLocal(dispatch, setProgress, setIsReady)

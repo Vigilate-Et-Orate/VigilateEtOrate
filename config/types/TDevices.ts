@@ -1,5 +1,3 @@
-import { ExpoPushToken } from 'expo-notifications'
-
 export type TDevice = {
   id: ''
   name?: string

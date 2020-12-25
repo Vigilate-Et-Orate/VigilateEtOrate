@@ -7,7 +7,6 @@ import {
   StyleSheet
 } from 'react-native'
 import * as Analytics from 'expo-firebase-analytics'
-import { useNavigation } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
 
 import { TIntention } from 'config/types/Intention'

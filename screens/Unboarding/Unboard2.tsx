@@ -12,7 +12,6 @@ import { RootState } from 'red/reducers/RootReducer'
 const Unboard = ({ userId }: { userId: string | undefined }): JSX.Element => {
   const dispatch = useDispatch()
   const addIntention = async (intention: string) => {
-    console.log('Adding Intention UserId:', userId)
     await postIntention(intention, userId)
     dispatch(addIntentions(intention, userId))
   }

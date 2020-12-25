@@ -74,7 +74,6 @@ export const registerCredentials = async (
 export const getUserData = async (
   token: string
 ): Promise<TUser | undefined> => {
-  console.log('USER TOKEN=', token)
   const res = await api.get<IMeResponse>('/me', token)
   if (res.error) return
   StorageManager.setDataAsync(StorageManager.Stored.USER, res.user)
@@ -88,7 +87,6 @@ export const registerDevice = async (
   token: string,
   deviceToken: string
 ): Promise<TDevice | undefined> => {
-  console.log('REGISTER DEVICE=', token, deviceToken)
   const res = await api.post<TDeviceResponse>(
     '/devices',
     {
@@ -153,7 +151,6 @@ export const toggleFavourite = async (
   let favs = await StorageManager.getDataAsync<TFavourite[]>(
     StorageManager.Stored.FAVOURITE
   )
-  console.log('ADD FAV PRAYER =', prayerId)
   const res = await api.post<TToggleFavResponse>(
     '/favourites',
     {
@@ -165,7 +162,6 @@ export const toggleFavourite = async (
   )
   if (res.error || !favs) return
   let changed = false
-  console.log('TOGGLE FAV | res=', res)
   favs = favs.map((f) => {
     if (f.id === res.id) {
       f.faved = res.faved
