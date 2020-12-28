@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native'
+import {
+  ActivityIndicator,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image
+} from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import firebase from 'firebase'
@@ -15,6 +22,8 @@ import { loadData } from 'components/layout/HomeRoutes'
 const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+
+  const [loading, setLoading] = useState(false)
   const [firstname, setFirsname] = useState('')
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
@@ -22,7 +31,9 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
 
   /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
   const register = async () => {
+    setLoading(true)
     const res = await registerCredentials(email, firstname, lastname, password)
+    if (!res) setLoading(false)
     await firebase.auth().signInWithEmailAndPassword(email, password)
     if (res) {
       dispatch(userLogin(res.token, res.user, true))
@@ -32,6 +43,7 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
         (_n: number) => {},
         (_b: boolean) => {}
       )
+      setLoading(false)
       navigation.navigate('Home')
     }
   }
@@ -39,28 +51,32 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
 
   return (
     <View style={styles.background}>
-      <Image
-        style={{
-          position: 'absolute',
-          top: '8%',
-          left: '10%',
-          width: '30%',
-          height: '25%',
-          zIndex: 12
-        }}
-        source={require('../assets/icon.png')}
-      />
-      <Image
-        style={{
-          position: 'absolute',
-          top: '8%',
-          right: '10%',
-          width: '15%',
-          height: '25%',
-          zIndex: 10
-        }}
-        source={require('../assets/candle.png')}
-      />
+      {!keyboard && (
+        <>
+          <Image
+            style={{
+              position: 'absolute',
+              top: '8%',
+              left: '10%',
+              width: '30%',
+              height: '25%',
+              zIndex: 12
+            }}
+            source={require('../assets/icon.png')}
+          />
+          <Image
+            style={{
+              position: 'absolute',
+              top: '8%',
+              right: '10%',
+              width: '15%',
+              height: '25%',
+              zIndex: 10
+            }}
+            source={require('../assets/candle.png')}
+          />
+        </>
+      )}
       <View style={[styles.card, keyboard ? styles.cardUp : styles.cardDown]}>
         <Text style={styles.title}>Créer un compte</Text>
         <View style={styles.inputs}>
@@ -96,11 +112,16 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
         </View>
         <View style={styles.actions}>
           <TouchableOpacity style={styles.arrowButton} onPress={register}>
-            <FontAwesome5
-              name="arrow-right"
-              size={40}
-              color={theme.colors.blue}
-            />
+            {loading && (
+              <ActivityIndicator size="large" color={theme.colors.blue} />
+            )}
+            {!loading && (
+              <FontAwesome5
+                name="arrow-right"
+                size={40}
+                color={theme.colors.blue}
+              />
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -120,8 +141,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.blue
   },
   cardUp: {
-    height: '90%',
-    marginTop: '35%'
+    height: '100%',
+    marginTop: '5%'
   },
   cardDown: {
     height: '60%',

@@ -32,10 +32,7 @@ export const signInCredentials = async (
   if (res.error) return
   ToastAndroid.show('Bienvenue' + res.user.firstname, ToastAndroid.SHORT)
   StorageManager.setDataAsync(StorageManager.Stored.TOKEN, res.token)
-  StorageManager.setDataAsync(
-    StorageManager.Stored.USER,
-    JSON.stringify(res.user)
-  )
+  StorageManager.setDataAsync(StorageManager.Stored.USER, res.user)
   return {
     user: res.user,
     token: res.token
@@ -58,10 +55,7 @@ export const registerCredentials = async (
   if (res.error) return
   ToastAndroid.show('Bienvenue' + res.user.firstname, ToastAndroid.SHORT)
   StorageManager.setDataAsync(StorageManager.Stored.TOKEN, res.token)
-  StorageManager.setDataAsync(
-    StorageManager.Stored.USER,
-    JSON.stringify(res.user)
-  )
+  StorageManager.setDataAsync(StorageManager.Stored.USER, res.user)
   return {
     user: res.user,
     token: res.token
@@ -107,10 +101,7 @@ export const getPrayers = async (): Promise<TPrayer[] | undefined> => {
   const res = await api.get<TPrayerResponse>('/prayers')
 
   if (res.error) return
-  StorageManager.setDataAsync(
-    StorageManager.Stored.PRAYERS,
-    JSON.stringify(res.prayers)
-  )
+  StorageManager.setDataAsync(StorageManager.Stored.PRAYERS, res.prayers)
   return res.prayers as TPrayer[]
 }
 
