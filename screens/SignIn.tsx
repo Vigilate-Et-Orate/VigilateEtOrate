@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native'
+import {
+  ActivityIndicator,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image
+} from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import firebase from 'firebase'
@@ -15,12 +22,16 @@ import { loadData } from 'components/layout/HomeRoutes'
 const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+
+  const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars  */
   const signIn = async () => {
+    setLoading(true)
     const res = await signInCredentials(email, password)
+    if (!res) setLoading(false)
     await firebase.auth().signInWithEmailAndPassword(email, password)
     if (res) {
       dispatch(userLogin(res.token, res.user, false))
@@ -29,6 +40,7 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
         (_n: number) => {},
         (_b: boolean) => {}
       )
+      setLoading(false)
       navigation.navigate('Home')
     }
   }
@@ -79,11 +91,16 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
         </View>
         <View style={styles.actions}>
           <TouchableOpacity style={styles.arrowButton} onPress={signIn}>
-            <FontAwesome5
-              name="arrow-right"
-              size={40}
-              color={theme.colors.blue}
-            />
+            {loading && (
+              <ActivityIndicator size="large" color={theme.colors.blue} />
+            )}
+            {!loading && (
+              <FontAwesome5
+                name="arrow-right"
+                size={40}
+                color={theme.colors.blue}
+              />
+            )}
           </TouchableOpacity>
         </View>
       </View>

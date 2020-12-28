@@ -16,7 +16,7 @@
       "fallbackToCacheTimeout": 300
     },
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splashScreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#35415A"
     },
@@ -36,10 +36,14 @@
       "icon": "./assets/icon-medium.png",
       "backgroundColor": "#35415A",
       "useNextNotificationsApi": true,
-      "versionCode": 7,
+      "versionCode": 8,
       "splash": {
-        "mdpi": "./assets/splash.png",
-        "resizeMode": "contain",
+        "mdpi": "./assets/splashScreen.png",
+        "hdpi": "./assets/splashScreen.png",
+        "xhdpi": "./assets/splashScreen.png",
+        "xxhdpi": "./assets/splashScreen.png",
+        "xxxhdpi": "./assets/splashScreen.png",
+        "resizeMode": "cover",
         "backgroundColor": "#35415A"
       },
       "adaptiveIcon": {

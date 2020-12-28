@@ -50,6 +50,7 @@ const loadLocal = async (
 ) => {
   try {
     const user = await Storage.getDataAsync<TUser>(Storage.Stored.USER)
+    if (user) dispatch(updateUser(user))
     setProgress(10)
     const intentions = await Storage.getDataAsync<TIntention[]>(
       Storage.Stored.INTENTIONS
@@ -78,7 +79,6 @@ const loadLocal = async (
       !notifs
     )
       return
-    dispatch(updateUser(user))
     dispatch(updateIntentions(intentions))
     dispatch(updatePrayers(prayers))
     dispatch(updateEvangile(evangile))
@@ -305,7 +305,7 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
         </View>
         <Image
           style={{ width: '100%', height: '100%', zIndex: 30 }}
-          source={require('../../assets/splash.png')}
+          source={require('../../assets/splashScreen.png')}
         />
       </View>
     )

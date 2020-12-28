@@ -20,10 +20,13 @@ export const post = async <T>(
   })
     .then(async (res) => {
       const data = await res.json()
-      if (res.status !== 200) ToastAndroid.show(data.error, ToastAndroid.SHORT)
+      if (res.status !== 200) {
+        console.error(`[POST ERROR] - ${url} - `, data.error)
+        ToastAndroid.show(data.error, ToastAndroid.SHORT)
+      }
       return data
     })
-    .catch((e) => console.error('ERROOOOOOR=', e.message))
+    .catch((e) => console.error(`[POST ERROR] - ${url} - `, e.message))
   return res as T
 }
 
@@ -37,7 +40,10 @@ export const get = async <T>(url: string, token?: string): Promise<T> => {
     mode: 'cors'
   })
   const data = await res.json()
-  if (res.status !== 200) ToastAndroid.show(data.error, ToastAndroid.SHORT)
+  if (res.status !== 200) {
+    console.error(`[GET ERROR] - ${url} -`, data.error)
+    ToastAndroid.show(data.error, ToastAndroid.SHORT)
+  }
   return data as T
 }
 /* eslint-enable @typescript-eslint/explicit-module-boundary-types */
@@ -53,6 +59,9 @@ export const del = async <T>(url: string, token: string): Promise<T> => {
     mode: 'cors'
   })
   const data = await res.json()
-  if (res.status !== 200) ToastAndroid.show(data.error, ToastAndroid.SHORT)
+  if (res.status !== 200) {
+    console.error(`[DELETE ERROR] - ${url} -`, data.error)
+    ToastAndroid.show(data.error, ToastAndroid.SHORT)
+  }
   return data as T
 }
