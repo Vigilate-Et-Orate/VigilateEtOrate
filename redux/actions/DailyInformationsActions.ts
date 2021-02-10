@@ -1,11 +1,9 @@
 import CONST from 'config/constants'
-import {
-  TInformationAelf,
-  TInformationsActionTypes
-} from 'config/types/AelfApi'
+import { TInformationsActionTypes } from 'config/types/AelfApi'
+import { TNominisSaint } from 'config/types/Nominis'
 
 export function updateInformations(
-  infos: TInformationAelf
+  infos: TNominisSaint
 ): TInformationsActionTypes {
   return {
     type: CONST.DAILY_INFOS.UPDATE_INFOS,

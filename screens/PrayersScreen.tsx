@@ -6,6 +6,7 @@ import { PrayerBlock } from 'components/prayers/Block'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
 import { connect } from 'react-redux'
+import Page from 'components/layout/Page'
 
 const PrayersScreen = ({ prayers }: { prayers: TPrayer[] }): JSX.Element => {
   const pair: TPrayer[] = []
@@ -17,54 +18,27 @@ const PrayersScreen = ({ prayers }: { prayers: TPrayer[] }): JSX.Element => {
   })
 
   return (
-    <View style={styles.background}>
-      <View style={styles.header}>
-        <View
-          style={{ flexDirection: 'row', height: '60%', position: 'relative' }}
-        >
-          <View style={{ position: 'absolute', top: 20, left: '15%' }}>
-            <Image
-              style={{ width: 80, height: 70 }}
-              source={require('../assets/newIconolive.png')}
-            />
-          </View>
+    <Page title="Prières" backgroundColor={theme.colors.blue}>
+      <View style={{ flexDirection: 'row', display: 'flex' }}>
+        <View style={styles.column}>
+          {pair &&
+            pair.map((prayer: TPrayer, index: number) => (
+              <PrayerBlock key={prayer.name} prayer={prayer} index={index} />
+            ))}
         </View>
-        <View
-          style={{
-            flexDirection: 'row-reverse',
-            height: '40%',
-            paddingHorizontal: 40
-          }}
-        >
-          <Text style={{ color: '#f6f4f4', fontSize: 32 }}>Prières</Text>
+        <View style={styles.column}>
+          {inpair &&
+            inpair.map((prayer: TPrayer, index: number) => (
+              <PrayerBlock
+                key={prayer.name}
+                prayer={prayer}
+                index={index}
+                inpair
+              />
+            ))}
         </View>
       </View>
-      <ScrollView style={styles.body}>
-        <View
-          style={
-            prayers.length > 4 ? styles.roundedView : styles.roundedViewHeight
-          }
-        >
-          <View style={styles.column}>
-            {pair &&
-              pair.map((prayer: TPrayer, index: number) => (
-                <PrayerBlock key={prayer.name} prayer={prayer} index={index} />
-              ))}
-          </View>
-          <View style={styles.column}>
-            {inpair &&
-              inpair.map((prayer: TPrayer, index: number) => (
-                <PrayerBlock
-                  key={prayer.name}
-                  prayer={prayer}
-                  index={index}
-                  inpair
-                />
-              ))}
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+    </Page>
   )
 }
 

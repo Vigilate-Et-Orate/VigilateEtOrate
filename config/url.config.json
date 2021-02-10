@@ -1,4 +1,5 @@
 {
   "API": "https://api.vigilateetorate.tech",
-  "AELF": "https://api.aelf.org/v1"
+  "AELF": "https://api.aelf.org/v1",
+  "NOMINIS_RSS": "https://nominis.cef.fr/rss/nominis.php"
 }

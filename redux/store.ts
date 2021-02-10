@@ -8,8 +8,16 @@ let store: any
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const initialState: any = {
   user: {
-    token: '',
-    user: undefined,
+    token: 'faketoken',
+    user: {
+      email: 'test@test.me',
+      fistname: 'Preprod',
+      lastname: 'Test',
+      id: 'fake',
+      admin: true,
+      devices: [],
+      personnalPrayer: ''
+    },
     loggedIn: false
   },
   prayers: {

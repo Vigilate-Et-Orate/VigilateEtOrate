@@ -1,69 +1,130 @@
-import React from 'react'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import React, { useState } from 'react'
+import { connect, useDispatch } from 'react-redux'
+import {
+  Image,
+  Linking,
+  StyleSheet,
+  Text,
+  ScrollView,
+  View,
+  RefreshControl
+} from 'react-native'
+import { AntDesign } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
 import theme from 'config/theme'
+import { RootState } from 'red/reducers/RootReducer'
+import { TNominisSaint } from 'config/types/Nominis'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { loadData } from 'utils/loadData/loadData'
 
 export type PageProps = {
   title: string
-  children: JSX.Element
-  heart?: boolean
-  onPress?: () => Promise<void>
-  faved?: boolean
+  backgroundColor: string
+  foregroundColor?: string
+  rightComponent?: JSX.Element
+  home?: boolean
+  saint: TNominisSaint | undefined
+  children: JSX.Element | JSX.Element[]
 }
 
 const Page = ({
   title,
-  heart,
-  onPress,
-  faved,
+  backgroundColor,
+  foregroundColor,
+  rightComponent,
+  home,
+  saint,
   children
 }: PageProps): JSX.Element => {
   const navigation = useNavigation()
+  const dispatch = useDispatch()
+
+  const [open, setOpen] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const onRefresh = () => {
+    setRefreshing(true)
+    loadData(
+      dispatch,
+      (_n: number) => {
+        _n === _n
+      },
+      setRefreshing
+    )
+  }
 
   return (
-    <View style={styles.background}>
+    <ScrollView
+      contentContainerStyle={StyleSheet.compose(styles.background, {
+        height: '100%',
+        backgroundColor: backgroundColor
+      })}
+      refreshControl={
+        <RefreshControl
+          colors={[theme.colors.yellow, theme.colors.blue, theme.colors.red]}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      }
+    >
       <View style={styles.header}>
-        {heart && (
-          <TouchableOpacity
-            style={{ position: 'absolute', top: '30%', right: '5%' }}
-            onPress={onPress}
-          >
-            <MaterialCommunityIcons
-              name="heart"
-              color={faved ? theme.colors.red : theme.colors.white}
-              size={40}
-            />
-          </TouchableOpacity>
-        )}
-        <View style={{ flexDirection: 'row', height: '30%' }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <MaterialCommunityIcons name="arrow-left" size={40} color="white" />
-          </TouchableOpacity>
+        <View style={styles.leftComponent}>
+          <Text style={styles.title}>{title}</Text>
+          <Image
+            style={{ width: 55, height: 50, marginLeft: 25 }}
+            source={require('../../assets/newIconolive.png')}
+          />
         </View>
-        <View
-          style={{ flexDirection: 'row', height: '30%', position: 'relative' }}
-        >
-          <View style={{ position: 'absolute', top: 0, left: '25%' }}>
-            <Image
-              style={{ width: 80, height: 70 }}
-              source={require('../../assets/newIconolive.png')}
-            />
-          </View>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row-reverse',
-            height: '40%',
-            paddingHorizontal: 40
-          }}
-        >
-          <Text style={{ color: '#f6f4f4', fontSize: 32 }}>{title}</Text>
-        </View>
+        <View>{rightComponent}</View>
       </View>
-      <View style={styles.roundedView}>{children}</View>
-    </View>
+      {home && (
+        <View
+          style={[
+            styles.saintBar,
+            open ? styles.saintBarOpened : styles.saintBar
+          ]}
+        >
+          <View style={{ flex: 1, display: 'flex', flexDirection: 'row' }}>
+            <Text style={{ color: theme.colors.white }}>
+              {saint?.saint || ''}
+            </Text>
+            <TouchableOpacity
+              style={{ padding: 5 }}
+              onPress={() => setOpen(!open)}
+            >
+              <AntDesign
+                name={open ? 'up' : 'down'}
+                size={15}
+                color={theme.colors.yellow}
+              />
+            </TouchableOpacity>
+          </View>
+          {open && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={async () => {
+                if (!saint) return
+                const suported = await Linking.canOpenURL(saint.url)
+                if (suported) await Linking.openURL(saint.url)
+              }}
+            >
+              <Text style={{ color: theme.colors.blue }}>Voir sur Nominis</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+      <View
+        style={[
+          styles.roundedView,
+          foregroundColor
+            ? { backgroundColor: foregroundColor }
+            : { backgroundColor: theme.colors.white }
+        ]}
+      >
+        {children}
+      </View>
+    </ScrollView>
   )
 }
 
@@ -72,18 +133,68 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: theme.colors.blue
   },
+  button: {
+    marginHorizontal: 10,
+    backgroundColor: theme.colors.yellow,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 20
+  },
+  saintBar: {
+    marginVertical: 15,
+    height: 50,
+    flexDirection: 'row',
+    backgroundColor: theme.colors.lightBlue,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    elevation: 8,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 2,
+    paddingHorizontal: 15
+  },
+  saintBarOpened: {
+    marginVertical: 15,
+    height: 100,
+    backgroundColor: theme.colors.lightBlue,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    elevation: 8,
+    display: 'flex',
+    flexDirection: 'column',
+    paddingVertical: 15,
+    paddingHorizontal: 15
+  },
+  title: {
+    color: theme.colors.white,
+    fontSize: 24
+  },
+  leftComponent: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   header: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingTop: 30
+    paddingHorizontal: 25,
+    paddingTop: 30,
+    flexDirection: 'row',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 15
   },
   roundedView: {
-    backgroundColor: '#f6f4f4',
-    flex: 5,
-    borderRadius: 30,
+    flex: 12,
+    borderRadius: 20,
     paddingTop: 20,
     paddingHorizontal: 20
   }
 })
 
-export default Page
+const mapToProps = (state: RootState) => ({
+  saint: state.dailyInfos.informations
+})
+
+export default connect(mapToProps)(Page)
