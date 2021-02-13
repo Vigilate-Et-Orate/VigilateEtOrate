@@ -52,6 +52,9 @@ const Page = ({
       },
       setRefreshing
     )
+    setTimeout(() => {
+      if (!refreshing) setRefreshing(false)
+    }, 5000)
   }
 
   return (
@@ -85,7 +88,14 @@ const Page = ({
             open ? styles.saintBarOpened : styles.saintBar
           ]}
         >
-          <View style={{ flex: 1, display: 'flex', flexDirection: 'row' }}>
+          <View
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between'
+            }}
+          >
             <Text style={{ color: theme.colors.white }}>
               {saint?.saint || ''}
             </Text>

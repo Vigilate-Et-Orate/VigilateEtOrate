@@ -8,8 +8,7 @@ export type TNotif = {
   userId: string
   notificationContent: string
   type: 'intention' | 'prayer'
-  intention?: TIntention
-  prayer?: TPrayer
+  itemId: string | TIntention | TPrayer
   time: TTime | string
 }
 
