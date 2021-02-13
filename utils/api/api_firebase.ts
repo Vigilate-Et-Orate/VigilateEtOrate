@@ -50,6 +50,13 @@ export const postIntention = async (
   }
 }
 
+export const updateIntention = async (intention: TIntention): Promise<void> => {
+  const intRef = firebase.firestore().collection('intentions').doc(intention.id)
+  await intRef.update({
+    intention: intention.intention
+  })
+}
+
 export const removeIntentions = async (id: string): Promise<void> => {
   const intRef = await firebase
     .firestore()

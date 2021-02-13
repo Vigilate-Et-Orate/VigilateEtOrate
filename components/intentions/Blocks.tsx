@@ -10,11 +10,11 @@ import * as Analytics from 'expo-firebase-analytics'
 import { MaterialIcons } from '@expo/vector-icons'
 
 import { TIntention } from 'config/types/Intention'
-import { RoundedFilledButton } from 'elements/buttons/Buttons'
 import theme from 'config/theme'
 import { removeIntentions } from 'utils/api/api_firebase'
-import { useDispatch } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import { deleteIntentions } from 'red/actions/IntentionsActions'
+import { RootState } from 'red/reducers/RootReducer'
 
 // Types
 export type IntentionCardProps = {
@@ -24,6 +24,7 @@ export type IntentionCardProps = {
 
 export type WriteIntentionProps = {
   addIntention: (intention: string) => void
+  keyboard: boolean
 }
 
 // Components
@@ -54,43 +55,60 @@ export const IntentionCard = ({
   )
 }
 
-export const WriteIntention = ({
-  addIntention
+const WriteIntentionComp = ({
+  addIntention,
+  keyboard
 }: WriteIntentionProps): JSX.Element => {
   const [intention, onIntentionChange] = useState('')
+
+  const handleAddingIntention = () => {
+    addIntention(intention)
+    onIntentionChange('')
+  }
 
   return (
     <View style={styles.card}>
       <TextInput
-        placeholderTextColor={theme.colors.green}
-        style={styles.input}
+        placeholderTextColor={theme.colors.white + 'd4'}
+        style={[
+          styles.input,
+          keyboard || intention !== '' ? { width: '75%' } : { width: '100%' }
+        ]}
         onChangeText={onIntentionChange}
         value={intention}
-        placeholder="Intention"
+        multiline
+        placeholder="Ajouter une intention"
       />
-      <View style={{ flexDirection: 'row-reverse', marginTop: 25 }}>
-        <RoundedFilledButton
-          style={{ backgroundColor: theme.colors.lightGreen }}
-          onPress={() => {
-            Analytics.logEvent('intention', {
-              type: 'new'
-            })
-            addIntention(intention)
-            onIntentionChange('')
-          }}
-        >
-          <Text>Ajouter</Text>
-        </RoundedFilledButton>
-      </View>
+      {(keyboard || intention !== '') && (
+        <View style={{ display: 'flex', justifyContent: 'center' }}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleAddingIntention}
+          >
+            <Text style={{ color: theme.colors.white }}>Ajouter</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   )
 }
+const mapToProps = (state: RootState) => ({
+  keyboard: state.keyboard
+})
+export const WriteIntention = connect(mapToProps)(WriteIntentionComp)
 
 const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 6,
     color: theme.colors.green
+  },
+  button: {
+    paddingHorizontal: 15,
+    paddingVertical: 7,
+    backgroundColor: theme.colors.green,
+    borderRadius: 20,
+    elevation: 12
   },
   cardRightButton: {
     flex: 1,
@@ -101,7 +119,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#d7d7d7c0'
+    backgroundColor: '#c4c4c4'
   },
   cardIntentionLeft: {
     flex: 10,
@@ -110,35 +128,31 @@ const styles = StyleSheet.create({
     paddingRight: 10
   },
   card: {
-    paddingHorizontal: 20,
-    paddingVertical: 25,
-    borderRadius: 15,
-    backgroundColor: theme.colors.white + 'd4',
-    shadowOffset: { width: 0, height: 5 },
-    shadowColor: '#000',
-    shadowOpacity: 0.6,
-    shadowRadius: 10,
-    elevation: 20,
-    margin: 10,
-    flexDirection: 'column'
-  },
-  cardIntention: {
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 30,
+    backgroundColor: theme.colors.blue,
+    borderWidth: 1,
+    borderColor: theme.colors.white + 'd4',
+    marginTop: 10,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row'
+  },
+  cardIntention: {
+    paddingHorizontal: 25,
+    paddingVertical: 10,
+    borderRadius: 30,
     elevation: 17,
-    backgroundColor: theme.colors.white,
-    marginVertical: 3,
+    backgroundColor: theme.colors.white + 'd4',
+    marginVertical: 5,
     flexDirection: 'row'
   },
   input: {
-    backgroundColor: theme.colors.white + 'a4',
     opacity: 5,
     borderRadius: 3,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    marginVertical: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: theme.colors.green
+    color: theme.colors.white
   }
 })
