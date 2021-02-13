@@ -10,12 +10,10 @@ import { stringToTimestamp, timeToTimestamp } from 'utils/time/timeManager'
 
 type DayNotif = {
   time: number
-  data:
-    | {
-        text: string
-        key: string
-      }
-    | undefined
+  data: {
+    text: string
+    key: string
+  }
 }
 
 const DayLign = ({ time, data }: DayNotif) => {
@@ -36,7 +34,7 @@ const DayLign = ({ time, data }: DayNotif) => {
 
 const DaySummary = ({
   notifs,
-  // intentions,
+  intentions,
   prayers
 }: {
   notifs: TNotif[]
@@ -50,24 +48,24 @@ const DaySummary = ({
         typeof n.time === 'string'
           ? stringToTimestamp(n.time)
           : timeToTimestamp(n.time)
-      // if (n.type === 'intention') {
-      //   const int = intentions.find(i => i.id === n.intention?.id)
-      //   if (!int) return { time, data: { text: '' } }
-      //   return ({
-      //     time,
-      //     data: { text: int.intention }
-      //   })
-      // } else if (n.type === 'prayer') {
-      const prayer = prayers.find(
-        (p) => p.notificationContent === n.notificationContent
-      )
-      if (!prayer) return { time, data: { text: '', key: '' } }
-      return {
-        time,
-        data: { text: prayer.displayName, key: prayer._id }
+      if (n.type === 'intention') {
+        const int = intentions.find((i) => i.id === n.itemId)
+        if (!int) return { time, data: { text: '', key: '' } }
+        return {
+          time,
+          data: { text: int.intention, key: n.itemId as string }
+        }
+      } else if (n.type === 'prayer') {
+        const prayer = prayers.find(
+          (p) => p.notificationContent === n.notificationContent
+        )
+        if (!prayer) return { time, data: { text: '', key: '' } }
+        return {
+          time,
+          data: { text: prayer.displayName, key: n.itemId as string }
+        }
       }
-      // }
-      // return { time, data: { text: '' } }
+      return { time, data: { text: '', key: '' } }
     })
     if (!populated) return
     populated.sort((a, b) => a?.time - b?.time)

@@ -61,7 +61,7 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
         const color = !isFocused
           ? theme.colors.white
           : route.name == 'Intentions'
-          ? theme.colors.lightGreen
+          ? theme.colors.blue
           : route.name == 'Favourite'
           ? theme.colors.red
           : theme.colors.yellow
