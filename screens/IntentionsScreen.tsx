@@ -1,14 +1,5 @@
 import React, { useState } from 'react'
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  Modal,
-  Pressable,
-  Vibration
-} from 'react-native'
-import { FontAwesome5 } from '@expo/vector-icons'
+import { StyleSheet, View, Text, Vibration } from 'react-native'
 
 import { TIntention } from 'config/types/Intention'
 import { WriteIntention, IntentionCard } from 'components/intentions/Blocks'
@@ -17,6 +8,7 @@ import { connect, useDispatch } from 'react-redux'
 import { RootState } from 'red/reducers/RootReducer'
 import { postIntention } from 'utils/api/api_firebase'
 import { addIntentions } from 'red/actions/IntentionsActions'
+import Page from 'components/layout/Page'
 
 const IntentionsScreen = ({
   intentions,
@@ -41,65 +33,30 @@ const IntentionsScreen = ({
   }
 
   return (
-    <View style={styles.background}>
-      <Modal animationType="fade" visible={open} transparent>
-        <Pressable style={styles.modalCenter} onPress={() => openModal(false)}>
-          <View style={styles.modal}>
-            <Text>{selectedIntention?.intention || ''}</Text>
-          </View>
-        </Pressable>
-      </Modal>
-      <View style={styles.header}>
-        <View style={{ height: '100%', flexDirection: 'column-reverse' }}>
-          <View
-            style={{
-              width: '100%',
-              paddingHorizontal: 40,
-              paddingVertical: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between'
-            }}
-          >
-            <View>
-              <FontAwesome5 name="pray" size={70} color="white" />
-            </View>
-            <View style={{ flexDirection: 'column-reverse' }}>
-              <Text style={{ fontSize: 32, color: theme.colors.white }}>
-                Mes Intentions
-              </Text>
-            </View>
-          </View>
-        </View>
+    <Page
+      title="Mes Intentions"
+      backgroundColor={theme.colors.green}
+      foregroundColor={theme.colors.blue}
+    >
+      <Text style={styles.h3}>Ecrire une intention</Text>
+      <WriteIntention addIntention={addIntention} />
+      <Text style={styles.h3}>Intentions</Text>
+      <View>
+        {Array.isArray(intentions) &&
+          intentions.map((int) => (
+            <IntentionCard
+              key={int.id}
+              intention={int}
+              onLongPress={() => focusIntention(int.id)}
+            />
+          ))}
+        {intentions.length <= 0 && (
+          <Text style={{ color: theme.colors.white, paddingLeft: 30 }}>
+            Pas d&apos;intentions...
+          </Text>
+        )}
       </View>
-      <ScrollView style={styles.body}>
-        <View
-          style={
-            intentions.length > 6
-              ? styles.roundedView
-              : styles.roundedViewHeight
-          }
-        >
-          <Text style={styles.h3}>Ecrire une intention</Text>
-          <WriteIntention addIntention={addIntention} />
-          <Text style={styles.h3}>Intentions</Text>
-          <View>
-            {Array.isArray(intentions) &&
-              intentions.map((int) => (
-                <IntentionCard
-                  key={int.id}
-                  intention={int}
-                  onLongPress={() => focusIntention(int.id)}
-                />
-              ))}
-            {intentions.length <= 0 && (
-              <Text style={{ color: theme.colors.white, paddingLeft: 30 }}>
-                Pas d&apos;intentions...
-              </Text>
-            )}
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+    </Page>
   )
 }
 

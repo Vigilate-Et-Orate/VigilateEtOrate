@@ -17,7 +17,11 @@ const FavouriteScreen = ({
   favs: TFavourite[]
   prayers: TPrayer[]
 }): JSX.Element => (
-  <Page title="Favoris">
+  <Page
+    title="Favoris"
+    backgroundColor={theme.colors.red}
+    foregroundColor={theme.colors.blue}
+  >
     <View>
       {favs.length > 0 &&
         favs.map((f) => {

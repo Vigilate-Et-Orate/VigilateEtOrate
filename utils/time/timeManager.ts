@@ -26,6 +26,23 @@ export const stringToTime = (time: string): TTime | undefined => {
   }
 }
 
+export const timeToTimestamp = (time: TTime): number => {
+  const date = new Date()
+  date.setHours(time.hour)
+  date.setMinutes(time.minute)
+  return date.getTime()
+}
+
+export const stringToTimestamp = (time: string): number => {
+  const parsed = time.split('|')
+  if (parsed.length < 2) return -1
+  const dateParsed = parsed[0].split(':')
+  const date = new Date(Date.now())
+  date.setHours(+dateParsed[0] - date.getTimezoneOffset() / 60)
+  date.setMinutes(+dateParsed[1])
+  return date.getTime()
+}
+
 export const stringTimeToReadable = (time: string): string => {
   const date = new Date(Date.now())
   const t = time.split('|')[0]

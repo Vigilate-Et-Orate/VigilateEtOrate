@@ -186,6 +186,8 @@ export const getNotifs = async (tok: string): Promise<TNotif[] | undefined> => {
 export const registerForNotification = async (
   tok: string,
   notifContent: string,
+  itemId: string,
+  type: 'intention' | 'prayer',
   time: string
 ): Promise<TNotif | undefined> => {
   let token = tok
@@ -200,7 +202,9 @@ export const registerForNotification = async (
     '/notifications',
     {
       time,
-      prayerContentId: notifContent
+      prayerContentId: notifContent,
+      itemId,
+      type
     },
     token
   )

@@ -1,4 +1,5 @@
 import CONST from 'config/constants'
+import { TNominisSaint } from './Nominis'
 
 export type TLectureAelf = {
   type: 'lecture_1' | 'psaume' | 'lecture_2' | 'evangile'
@@ -36,7 +37,7 @@ export interface IEvangileState {
 }
 
 export interface IDailyInfosState {
-  informations: TInformationAelf | undefined
+  informations: TNominisSaint | undefined
 }
 
 export interface ILectureUpdate {
@@ -48,7 +49,7 @@ export type TEvangileActionTypes = ILectureUpdate
 
 export interface IDailyInfosUpdate {
   type: typeof CONST.DAILY_INFOS.UPDATE_INFOS
-  informations: TInformationAelf
+  informations: TNominisSaint
 }
 
 export type TInformationsActionTypes = IDailyInfosUpdate

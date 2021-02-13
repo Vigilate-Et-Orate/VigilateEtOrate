@@ -1,10 +1,14 @@
 import { TTime } from 'utils/time/timeManager'
 import CONST from 'config/constants'
+import { TIntention } from './Intention'
+import { TPrayer } from './Prayer'
 
 export type TNotif = {
   _id: string
   userId: string
   notificationContent: string
+  type: 'intention' | 'prayer'
+  itemId: string | TIntention | TPrayer
   time: TTime | string
 }
 
