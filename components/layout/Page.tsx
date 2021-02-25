@@ -10,7 +10,6 @@ import {
   RefreshControl
 } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
 
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
@@ -37,7 +36,6 @@ const Page = ({
   saint,
   children
 }: PageProps): JSX.Element => {
-  const navigation = useNavigation()
   const dispatch = useDispatch()
 
   const [open, setOpen] = useState(false)
@@ -93,7 +91,8 @@ const Page = ({
               flex: 1,
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'space-between'
+              justifyContent: 'space-between',
+              width: '100%'
             }}
           >
             <Text style={{ color: theme.colors.white }}>
@@ -197,7 +196,8 @@ const styles = StyleSheet.create({
   },
   roundedView: {
     flex: 12,
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     paddingTop: 20,
     paddingHorizontal: 20
   }

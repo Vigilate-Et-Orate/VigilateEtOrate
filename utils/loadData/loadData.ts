@@ -14,7 +14,7 @@ import {
 } from 'utils/api/api_server'
 import { getIntentions } from 'utils/api/api_firebase'
 import { updatePrayers } from 'red/actions/PrayersActions'
-import { getDailyGospel, getDailySaint } from 'utils/api/api_aelf'
+import { getDailyGospel } from 'utils/api/api_aelf'
 import { updateEvangile } from 'red/actions/EvangileActions'
 import { updateInformations } from 'red/actions/DailyInformationsActions'
 import { TIntention } from 'config/types/Intention'

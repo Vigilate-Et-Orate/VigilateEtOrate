@@ -43,11 +43,15 @@ export const stringToTimestamp = (time: string): number => {
   return date.getTime()
 }
 
+export const timestampToReadable = (time: number): string => {
+  const date = new Date(time)
+  const dateString = `${date.getHours()}:${date.getMinutes()}${
+    date.getMinutes() > 9 ? '' : '0'
+  }`
+  return dateString
+}
+
 export const stringTimeToReadable = (time: string): string => {
-  const date = new Date(Date.now())
-  const t = time.split('|')[0]
-  const ti = t.split(':')
-  let hour = +ti[0]
-  hour -= date.getTimezoneOffset() / 60
-  return `${hour}:${ti[1]}`
+  const timestamp = stringToTimestamp(time)
+  return timestampToReadable(timestamp)
 }

@@ -1,101 +1,135 @@
-import React from 'react'
-import { StyleSheet, ScrollView, View, Text, Image } from 'react-native'
+import React, { useState } from 'react'
+import { View, Platform } from 'react-native'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 import { TPrayer } from 'config/types/Prayer'
 import { PrayerBlock } from 'components/prayers/Block'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import Page from 'components/layout/Page'
+import { TNotif } from 'config/types/TNotif'
+import { isFavourite } from 'utils/favourites/favourites'
+import { TFavourite } from 'config/types/Favourite'
+import { updateFavourite } from 'red/actions/FavouritesActions'
+import {
+  registerForNotification,
+  removeNotification,
+  toggleFavourite
+} from 'utils/api/api_server'
+import { stringToTime, timeToString } from 'utils/time/timeManager'
+import { addNotif, removeNotif } from 'red/actions/NotifsActions'
 
-const PrayersScreen = ({ prayers }: { prayers: TPrayer[] }): JSX.Element => {
-  const pair: TPrayer[] = []
-  const inpair: TPrayer[] = []
+type PrayersScreenProps = {
+  prayers: TPrayer[]
+  notifs: TNotif[]
+  favs: TFavourite[]
+  userId: string | undefined
+  token: string
+}
 
-  prayers.forEach((prayer: TPrayer, index: number) => {
-    if (index % 2 == 0) pair.push(prayer)
-    else inpair.push(prayer)
-  })
+const PrayersScreen = ({
+  prayers,
+  notifs,
+  favs,
+  userId,
+  token
+}: PrayersScreenProps): JSX.Element => {
+  const dispatch = useDispatch()
+
+  const [date, setDate] = useState(new Date(Date.now()))
+  const [show, setShow] = useState(false)
+  const [currentPrayer, setCurrentPrayer] = useState<TPrayer>()
+  const [i, si] = useState(false)
+
+  const forceReload = () => si(!i)
+  const toggleFav = async (id: string, fav: boolean) => {
+    const res = await toggleFavourite(!fav, id, userId || '', token)
+    if (!res) return
+    dispatch(updateFavourite(res))
+    forceReload()
+  }
+  const onDateChange = async (event: any, selectedDate?: Date | undefined) => {
+    if (!event || event.type === 'dismissed') {
+      setShow(false)
+      return
+    }
+    const currentDate = selectedDate || date
+    setShow(Platform.OS === 'ios')
+    setDate(currentDate)
+    if (currentPrayer) {
+      const t = timeToString({
+        hour: currentDate.getHours() + currentDate.getTimezoneOffset() / 60,
+        minute: currentDate.getMinutes(),
+        repeat: true,
+        daysLeft: 0
+      })
+      const n = await registerForNotification(
+        token,
+        currentPrayer.notificationContent,
+        currentPrayer._id,
+        'prayer',
+        t
+      )
+      if (!n) return
+      dispatch(addNotif(n))
+    }
+  }
+  const addNotification = (prayer: TPrayer) => {
+    setCurrentPrayer(prayer)
+    setShow(true)
+  }
+  const removeN = async (id: string) => {
+    await removeNotification(token, id)
+    const n = notifs.find((n) => n._id === id)
+    if (!n) return
+    dispatch(removeNotif(n))
+  }
 
   return (
-    <Page title="Prières" backgroundColor={theme.colors.blue}>
-      <View style={{ flexDirection: 'row', display: 'flex' }}>
-        <View style={styles.column}>
-          {pair &&
-            pair.map((prayer: TPrayer, index: number) => (
-              <PrayerBlock key={prayer.name} prayer={prayer} index={index} />
-            ))}
-        </View>
-        <View style={styles.column}>
-          {inpair &&
-            inpair.map((prayer: TPrayer, index: number) => (
-              <PrayerBlock
-                key={prayer.name}
-                prayer={prayer}
-                index={index}
-                inpair
-              />
-            ))}
-        </View>
+    <Page
+      title="Prières"
+      backgroundColor={theme.colors.yellow}
+      foregroundColor={theme.colors.blue}
+    >
+      <View>
+        {show && (
+          <DateTimePicker
+            mode="time"
+            value={date}
+            is24Hour
+            display="default"
+            onChange={onDateChange}
+          />
+        )}
+        {prayers.map((p) => (
+          <PrayerBlock
+            key={p._id}
+            prayer={p}
+            fav={isFavourite(p._id, favs)}
+            notifs={notifs
+              .filter((n) => n.itemId === p._id)
+              .sort(
+                (a, b) =>
+                  (stringToTime(a.time as string)?.hour || 0) -
+                  (stringToTime(b.time as string)?.hour || 1)
+              )}
+            toggleFav={toggleFav}
+            addNotification={addNotification}
+            removeNotif={removeN}
+          />
+        ))}
       </View>
     </Page>
   )
 }
 
-const styles = StyleSheet.create({
-  column: {
-    marginHorizontal: 10,
-    width: '45%',
-    flexDirection: 'column'
-  },
-  description: {
-    fontSize: 14,
-    color: theme.colors.blue
-  },
-  background: {
-    height: '100%',
-    backgroundColor: theme.colors.blue
-  },
-  body: {
-    height: '125%'
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 0,
-    width: '100%',
-    height: '15%',
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingTop: 30
-  },
-  roundedView: {
-    marginTop: '40%',
-    backgroundColor: theme.colors.lightBlue,
-    borderRadius: 30,
-    paddingTop: 50,
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    justifyContent: 'center',
-    paddingBottom: 35,
-    height: '100%'
-  },
-  roundedViewHeight: {
-    marginTop: '40%',
-    backgroundColor: theme.colors.lightBlue,
-    flexDirection: 'row',
-    borderRadius: 30,
-    paddingTop: 20,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 35,
-    height: 750
-  }
-})
-
 const mapToProps = (state: RootState) => ({
-  prayers: state.prayers.prayers
+  prayers: state.prayers.prayers,
+  notifs: state.notifs.notifs,
+  favs: state.favourites.favourites,
+  userId: state.user.user?.id,
+  token: state.user.token
 })
 
 export default connect(mapToProps)(PrayersScreen)

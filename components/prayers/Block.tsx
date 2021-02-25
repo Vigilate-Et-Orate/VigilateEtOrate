@@ -1,21 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { MaterialIcons } from '@expo/vector-icons'
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 
 import { TPrayer } from 'config/types/Prayer'
 import theme from 'config/theme'
+import { TNotif } from 'config/types/TNotif'
+import { stringTimeToReadable } from 'utils/time/timeManager'
 
 export type PrayerBlockProps = {
   prayer: TPrayer
-  index: number
-  inpair?: boolean
-  fav?: boolean
-}
-
-export type PrayerBlockManageNotifProps = {
-  prayer: TPrayer
-  onReactivate: (name: string) => void
+  fav: boolean
+  notifs: TNotif[]
+  toggleFav: (id: string, fav: boolean) => Promise<void>
+  addNotification: (prayer: TPrayer) => void
+  removeNotif: (id: string) => void
 }
 
 export type PrayerBlockRegisterProps = {
@@ -29,123 +28,172 @@ export type PrayerBlockRegisterProps = {
 
 export const PrayerBlock = ({
   prayer,
-  index,
-  inpair,
-  fav
+  fav,
+  notifs,
+  toggleFav,
+  addNotification,
+  removeNotif
 }: PrayerBlockProps): JSX.Element => {
   const navigation = useNavigation()
-  const isBig = index % 2 == (inpair ? 1 : 0)
-  return (
-    <TouchableOpacity
-      style={isBig ? styles.bigCard : fav ? styles.favCard : styles.card}
-      onPress={() => navigation.navigate('Prayer', { prayer: prayer })}
-    >
-      <View style={{ width: '80%' }}>
-        <Text style={styles.title}>{prayer.displayName}</Text>
-        <Text numberOfLines={isBig ? 11 : 3}>
-          {isBig ? prayer.content : prayer.description}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  )
-}
 
-export const PrayerBlockRegister = ({
-  prayer,
-  index,
-  inpair,
-  onPress,
-  notif,
-  time
-}: PrayerBlockRegisterProps): JSX.Element => {
-  const isBig = index % 2 == (inpair ? 1 : 0)
+  const [open, setOpen] = useState(false)
+
+  const removeAllNotif = () => {
+    notifs.forEach((n) => {
+      removeNotif(n._id)
+    })
+  }
+
   return (
-    <View style={isBig ? styles.bigCard : styles.card}>
-      <View style={{ width: '80%' }}>
-        <Text style={styles.title}>{prayer.displayName}</Text>
-        <Text numberOfLines={isBig ? 10 : 3}>
-          {isBig ? prayer.content : prayer.description}
-        </Text>
+    <View>
+      <View style={styles.container}>
+        <View style={styles.action}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => addNotification(prayer)}
+          >
+            <MaterialIcons
+              name="notifications-on"
+              size={25}
+              color={theme.colors.white}
+            />
+            <Text style={styles.actionButtonText}>
+              Ajouter une notification
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={removeAllNotif}
+          >
+            <MaterialIcons
+              name="notifications-off"
+              size={25}
+              color={theme.colors.white}
+            />
+            <Text style={styles.actionButtonText}>Arrêt des notifications</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => toggleFav(prayer._id, fav)}
+          >
+            <MaterialCommunityIcons
+              name="heart"
+              size={25}
+              color={fav ? theme.colors.red : theme.colors.white}
+            />
+            <Text style={styles.actionButtonText}>
+              {fav ? 'Retirer' : 'Ajouter'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={[
+            styles.card,
+            open ? { transform: [{ translateX: -280 }] } : {}
+          ]}
+        >
+          <TouchableOpacity
+            style={styles.text}
+            onPress={() =>
+              navigation.navigate('Prayer', { prayer: prayer.name })
+            }
+          >
+            <Text style={styles.title}>{prayer.displayName}</Text>
+            <Text>{prayer.description}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actions}
+            onPress={() => setOpen(!open)}
+          >
+            <MaterialCommunityIcons
+              name="dots-vertical"
+              size={25}
+              backgroundColor={theme.colors.white}
+              color={theme.colors.blue}
+              borderRadius={100}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.actions}>
-        <TouchableOpacity style={styles.registerButton} onPress={onPress}>
-          <MaterialIcons
-            name={notif ? 'notifications-off' : 'notifications-active'}
-            size={20}
-            color={theme.colors.white}
-          />
-        </TouchableOpacity>
-        {notif && <Text style={{ fontStyle: 'italic' }}>{time}</Text>}
-      </View>
+      {open && (
+        <View>
+          {notifs.map((n) => (
+            <View key={n._id} style={styles.singleNotifLign}>
+              <Text style={{ color: theme.colors.white }}>
+                {stringTimeToReadable(n.time as string)}
+              </Text>
+              <MaterialIcons.Button
+                name="notifications-off"
+                backgroundColor={theme.colors.blue}
+                onPress={() => removeNotif(n._id)}
+              >
+                <Text style={{ color: theme.colors.white }}>Supprimer</Text>
+              </MaterialIcons.Button>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  actions: {
+  singleNotifLign: {
     display: 'flex',
-    flexDirection: 'row-reverse',
-    position: 'absolute',
-    bottom: 10,
-    left: 10,
+    flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingHorizontal: 25
   },
-  registerButton: {
-    backgroundColor: theme.colors.blue,
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    borderRadius: 100
+  container: {
+    marginVertical: 10,
+    borderColor: '#fff',
+    borderWidth: 1,
+    position: 'relative',
+    borderRadius: 21
   },
-  title: {
-    color: theme.colors.blue,
-    fontSize: 20,
-    marginBottom: 7
+  actionButton: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '30%',
+    alignItems: 'center',
+    padding: 10
   },
-  manageNotifCard: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: theme.colors.white,
-    elevation: 2,
-    flexDirection: 'row',
-    borderRadius: 15,
-    marginVertical: 10
+  actionButtonText: {
+    color: theme.colors.white,
+    textAlign: 'center'
+  },
+  action: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    alignItems: 'center'
   },
   card: {
-    paddingHorizontal: 10,
-    paddingVertical: 17,
+    paddingLeft: 20,
     borderRadius: 15,
     backgroundColor: theme.colors.white,
-    marginVertical: 10,
-    flexDirection: 'column',
-    shadowColor: '#000',
     elevation: 15,
-    height: 200,
-    overflow: 'hidden'
+    display: 'flex',
+    flexDirection: 'row'
   },
-  favCard: {
-    paddingHorizontal: '7%',
-    paddingVertical: 17,
-    borderRadius: 15,
-    backgroundColor: theme.colors.white,
-    marginVertical: 10,
-    flexDirection: 'row',
-    shadowColor: '#000',
-    elevation: 15,
-    height: 100,
-    overflow: 'hidden'
+  text: {
+    paddingVertical: 15,
+    width: '85%',
+    flexDirection: 'column'
   },
-  bigCard: {
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    borderRadius: 15,
-    backgroundColor: theme.colors.white,
-    marginVertical: 10,
+  actions: {
+    width: '10%',
     flexDirection: 'column',
-    shadowColor: '#000',
-    elevation: 15,
-    height: 350,
-    overflow: 'hidden'
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 5,
+    color: theme.colors.blue
   }
 })

@@ -9,7 +9,6 @@ import * as Analytics from 'expo-firebase-analytics'
 import Home from 'components/layout/HomeRoutes'
 import GospelScreen from 'screens/GospelScreen'
 import PrayerScreen from 'screens/PrayerScreen'
-import MyPrayerScreen from 'screens/MyPrayerScreen'
 import SettingsScreen from 'screens/SettingsScreen'
 import StartUnboarding from 'screens/Unboarding/Unboarding'
 import Unboarding from 'components/layout/UnboardingRoutes'
@@ -68,11 +67,6 @@ const Stack = (): JSX.Element => {
           name="Prayer"
           component={PrayerScreen}
           options={{ title: 'Prière' }}
-        />
-        <MainStack.Screen
-          name="MyPrayer"
-          component={MyPrayerScreen}
-          options={{ title: 'Ma Prière' }}
         />
         <MainStack.Screen
           name="Settings"

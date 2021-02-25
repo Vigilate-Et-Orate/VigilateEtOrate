@@ -1,8 +1,14 @@
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ScrollView
+} from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
-import { connect, useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 
 import { WelcomeCard } from 'elements/layout/Card'
 import Page from 'components/layout/Page'
@@ -21,7 +27,6 @@ type THomeScreenProps = {
 
 const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
   const navigation = useNavigation()
-  const dispatch = useDispatch()
 
   return (
     <Page
@@ -58,7 +63,9 @@ const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
           </React.Fragment>
         )}
         <Text style={styles.h3}>Résumé de la journée</Text>
-        <DaySummary />
+        <ScrollView style={{ height: 230 }}>
+          <DaySummary />
+        </ScrollView>
       </View>
     </Page>
   )
