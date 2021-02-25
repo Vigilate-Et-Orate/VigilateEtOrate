@@ -4,9 +4,9 @@ import { connect } from 'react-redux'
 
 import { TLectureAelf } from 'config/types/AelfApi'
 
-import { Header } from 'elements/text/Text'
 import Page from 'components/layout/Page'
 import { RootState } from 'red/reducers/RootReducer'
+import theme from 'config/theme'
 
 const GospelScreen = ({
   evangile
@@ -14,9 +14,9 @@ const GospelScreen = ({
   evangile: TLectureAelf | undefined
 }): JSX.Element => {
   return (
-    <Page title="Evangile">
+    <Page title="Evangile" backgroundColor={theme.colors.blue}>
       <ScrollView style={{ paddingTop: 25, paddingHorizontal: 20 }}>
-        <Header>{evangile?.titre}</Header>
+        <Text style={{ fontSize: 26 }}>{evangile?.titre}</Text>
         <Text style={{ justifyContent: 'flex-end', marginBottom: 15 }}>
           {evangile?.ref}
         </Text>

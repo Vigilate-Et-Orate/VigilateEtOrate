@@ -1,15 +1,14 @@
 import theme from 'config/theme'
-import React, { useState } from 'react'
+import React from 'react'
 import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 type TBaseModal = {
   open: boolean
   onClose: () => void
   children: JSX.Element | JSX.Element[]
-  intention?: boolean
 }
 
-const BaseModal = ({ children, open, onClose, intention }: TBaseModal) => (
+const BaseModal = ({ children, open, onClose }: TBaseModal): JSX.Element => (
   <Modal
     visible={open}
     animationType="slide"

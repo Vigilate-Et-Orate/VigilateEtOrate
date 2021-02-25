@@ -3,7 +3,7 @@ import { ScrollView, Text, StyleSheet } from 'react-native'
 import { PinchGestureHandler } from 'react-native-gesture-handler'
 import * as Analytics from 'expo-firebase-analytics'
 
-import Page from 'components/layout/Page'
+import Page from 'components/layout/PagePrayer'
 import { isFavourite } from 'utils/favourites/favourites'
 import theme from 'config/theme'
 import { TPrayer } from 'config/types/Prayer'
@@ -17,7 +17,7 @@ type Route = {
   key: string
   name: string
   params: {
-    prayer: TPrayer
+    prayer: string
   }
 }
 
@@ -25,14 +25,16 @@ const PrayerScreen = ({
   route,
   userId,
   token,
-  favourites
+  favourites,
+  prayers
 }: {
   route: Route
+  prayers: TPrayer[]
   userId: string | undefined
   token: string
   favourites: TFavourite[]
 }): JSX.Element => {
-  const prayer = route.params.prayer
+  const prayer = prayers.find((p) => p.name === route.params.prayer)
   const dispatch = useDispatch()
   const [faved, setFaved] = useState(false)
   const [size, setSize] = useState(16)
@@ -46,14 +48,15 @@ const PrayerScreen = ({
 
   useEffect(() => {
     if (!prayer) return
-    isFavourite(prayer._id, favourites).then((res) => setFaved(res))
+    setFaved(isFavourite(prayer._id, favourites))
     Analytics.logEvent('ReadingPrayer', {
       prayerName: prayer?.name
     })
   }, [])
 
   const toogleFav = async () => {
-    const res = await toggleFavourite(!faved, prayer._id, userId || '', token)
+    if (!prayer || !prayer._id || !userId) return
+    const res = await toggleFavourite(!faved, prayer._id, userId, token)
     if (!res) return
     dispatch(updateFavourite(res))
     setFaved(res.faved)
@@ -84,7 +87,8 @@ const styles = StyleSheet.create({
 const mapToProps = (state: RootState) => ({
   userId: state.user.user?.id,
   token: state.user.token,
-  favourites: state.favourites.favourites
+  favourites: state.favourites.favourites,
+  prayers: state.prayers.prayers
 })
 
 export default connect(mapToProps)(PrayerScreen)

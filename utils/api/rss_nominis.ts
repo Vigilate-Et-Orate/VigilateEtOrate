@@ -23,7 +23,7 @@ export const getNominisSaint = async (): Promise<TNominisSaint | undefined> => {
   if (!rss) return
   const rssSaint = rss.items[0]
   const saint: TNominisSaint = {
-    saint: rssSaint.title,
+    saint: rssSaint.title.split(' - ')[0],
     url: rssSaint.links[0].url,
     description: rssSaint.description
   }
