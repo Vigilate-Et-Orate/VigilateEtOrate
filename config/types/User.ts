@@ -24,6 +24,13 @@ export interface IMeResponse {
   user: TUser
 }
 
+export interface IMeUpdateResponse {
+  firstname: string
+  lastname: string
+  email: string
+  error?: string
+}
+
 export interface IUserState {
   token: string
   loggedIn: boolean

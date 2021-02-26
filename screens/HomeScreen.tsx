@@ -63,7 +63,7 @@ const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
           </React.Fragment>
         )}
         <Text style={styles.h3}>Résumé de la journée</Text>
-        <ScrollView style={{ height: 230 }}>
+        <ScrollView style={{ height: 250 }}>
           <DaySummary />
         </ScrollView>
       </View>
