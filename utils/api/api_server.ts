@@ -7,7 +7,12 @@ import * as Device from 'expo-device'
 
 import * as StorageManager from 'utils/storage/StorageManager'
 import * as api from 'utils/api/baseRequest'
-import { ISignInResponse, TUser, IMeResponse } from 'config/types/User'
+import {
+  ISignInResponse,
+  TUser,
+  IMeResponse,
+  IMeUpdateResponse
+} from 'config/types/User'
 import { TPrayerResponse, TPrayer } from 'config/types/Prayer'
 import {
   TFavourite,
@@ -74,6 +79,38 @@ export const getUserData = async (
   return res.user as TUser
 }
 
+export const updateUserInfo = async (
+  token: string,
+  lastname: string,
+  firstname: string,
+  email: string
+): Promise<IMeUpdateResponse | undefined> => {
+  if (!token) {
+    const t = await StorageManager.getDataAsync<string>(
+      StorageManager.Stored.TOKEN
+    )
+    if (!t) return
+    token = t
+  }
+  const res = await api.patch<IMeUpdateResponse>(
+    '/me',
+    {
+      firstname,
+      lastname,
+      email
+    },
+    token
+  )
+  if (res.error) return
+  const u = await StorageManager.getDataAsync<TUser>(StorageManager.Stored.USER)
+  if (!u) return
+  u.firstname = res.firstname
+  u.lastname = res.lastname
+  u.email = res.email
+  StorageManager.setDataAsync(StorageManager.Stored.USER, u)
+  return u as TUser
+}
+
 /**
  * Device
  */
@@ -81,6 +118,13 @@ export const registerDevice = async (
   token: string,
   deviceToken: string
 ): Promise<TDevice | undefined> => {
+  if (!token) {
+    const t = await StorageManager.getDataAsync<string>(
+      StorageManager.Stored.TOKEN
+    )
+    if (!t) return
+    token = t
+  }
   const res = await api.post<TDeviceResponse>(
     '/devices',
     {
@@ -90,6 +134,22 @@ export const registerDevice = async (
     token
   )
 
+  if (res.error) return
+  return res
+}
+
+export const removeDevice = async (
+  token: string,
+  id: string
+): Promise<TDevice | undefined> => {
+  if (!token) {
+    const t = await StorageManager.getDataAsync<string>(
+      StorageManager.Stored.TOKEN
+    )
+    if (!t) return
+    token = t
+  }
+  const res = await api.del<TDeviceResponse>('/devices/' + id, token)
   if (res.error) return
   return res
 }

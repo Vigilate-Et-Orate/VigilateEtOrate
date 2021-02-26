@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, Text, StyleSheet } from 'react-native'
+import { ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { PinchGestureHandler } from 'react-native-gesture-handler'
 import * as Analytics from 'expo-firebase-analytics'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
-import Page from 'components/layout/PagePrayer'
+import Page from 'components/layout/Page'
 import { isFavourite } from 'utils/favourites/favourites'
 import theme from 'config/theme'
 import { TPrayer } from 'config/types/Prayer'
@@ -64,7 +65,20 @@ const PrayerScreen = ({
   }
 
   return (
-    <Page title="Prière" heart onPress={toogleFav} faved={faved}>
+    <Page
+      title="Prière"
+      backgroundColor={theme.colors.blue}
+      back
+      rightComponent={
+        <TouchableOpacity onPress={toogleFav}>
+          <MaterialCommunityIcons
+            name="heart"
+            size={35}
+            color={faved ? theme.colors.red : theme.colors.white}
+          />
+        </TouchableOpacity>
+      }
+    >
       <PinchGestureHandler onGestureEvent={onGestureChange}>
         <ScrollView style={{ paddingHorizontal: 20 }}>
           <Text style={styles.title}>{prayer?.displayName}</Text>

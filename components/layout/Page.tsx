@@ -16,6 +16,7 @@ import { RootState } from 'red/reducers/RootReducer'
 import { TNominisSaint } from 'config/types/Nominis'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { loadData } from 'utils/loadData/loadData'
+import { useNavigation } from '@react-navigation/native'
 
 export type PageProps = {
   title: string
@@ -23,6 +24,7 @@ export type PageProps = {
   foregroundColor?: string
   rightComponent?: JSX.Element
   home?: boolean
+  back?: boolean
   saint: TNominisSaint | undefined
   children: JSX.Element | JSX.Element[]
 }
@@ -33,9 +35,11 @@ const Page = ({
   foregroundColor,
   rightComponent,
   home,
+  back,
   saint,
   children
 }: PageProps): JSX.Element => {
+  const nav = useNavigation()
   const dispatch = useDispatch()
 
   const [open, setOpen] = useState(false)
@@ -71,6 +75,18 @@ const Page = ({
     >
       <View style={styles.header}>
         <View style={styles.leftComponent}>
+          {back && (
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              onPress={() => nav.goBack()}
+            >
+              <AntDesign
+                name="arrowleft"
+                size={35}
+                color={theme.colors.white}
+              />
+            </TouchableOpacity>
+          )}
           <Text style={styles.title}>{title}</Text>
           <Image
             style={{ width: 55, height: 50, marginLeft: 25 }}

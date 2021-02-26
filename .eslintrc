@@ -4,13 +4,15 @@
   "plugins": [
     "@typescript-eslint",
     "prettier",
-    "react"
+    "react",
+    "react-native"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
+    // "plugin:react-native/all",
     "prettier"
   ],
   "rules": {
