@@ -23,7 +23,7 @@ const DeviceBlock = ({
   return (
     <View style={styles.card}>
       <View style={styles.cardLeft}>
-        <Text style={styles.text}>{device.name || device.id}</Text>
+        <Text style={styles.text}>{device.name || device._id}</Text>
         {expoToken && expoToken.data === device.token && (
           <Text style={styles.thisText}>- This Device</Text>
         )}
