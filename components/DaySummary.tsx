@@ -35,6 +35,7 @@ const empty: DayNotif = {
 
 const DayLign = ({ time, data }: DayNotif) => {
   const navigation = useNavigation()
+  const date = new Date(Date.now())
   const nav = () => {
     if (data.prayer && data.smug)
       navigation.navigate('Prayer', { prayer: data.smug })
@@ -43,13 +44,18 @@ const DayLign = ({ time, data }: DayNotif) => {
   return (
     <TouchableOpacity
       style={styles.lignContainer}
-      disabled={!data.prayer}
+      disabled={!data.prayer || date.getTime() > time}
       onPress={nav}
     >
       <View style={styles.time}>
         <Text>{timestampToReadable(time)}</Text>
       </View>
-      <View style={styles.card}>
+      <View
+        style={[
+          styles.card,
+          date.getTime() > time ? { backgroundColor: theme.colors.gray } : {}
+        ]}
+      >
         {data && <Text style={styles.cardText}>{data.text}</Text>}
       </View>
     </TouchableOpacity>
