@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { View, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
@@ -19,7 +19,6 @@ import {
 } from 'utils/api/api_server'
 import { stringToTime, timeToString } from 'utils/time/timeManager'
 import { addNotif, removeNotif } from 'red/actions/NotifsActions'
-import { useFocusEffect } from '@react-navigation/native'
 
 type PrayersScreenProps = {
   prayers: TPrayer[]
