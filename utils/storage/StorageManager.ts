@@ -17,6 +17,7 @@ export enum Stored {
   TOKEN = 'token'
 }
 
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 export const setDataAsync = async (key: Stored, data: any): Promise<void> => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(data))
@@ -24,6 +25,7 @@ export const setDataAsync = async (key: Stored, data: any): Promise<void> => {
     throw new Error('Failed to store ' + key)
   }
 }
+/* eslint-enable @typescript-eslint/explicit-module-boundary-types */
 
 export const getSeveralAsync = async (
   keys: Stored[]

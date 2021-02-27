@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 
-import { TPrayer } from 'config/types/Prayer'
+import { TPrayer } from 'config/types/TPrayer'
 import theme from 'config/theme'
 import { TNotif } from 'config/types/TNotif'
 import { stringTimeToReadable } from 'utils/time/timeManager'
@@ -138,62 +138,62 @@ export const PrayerBlock = ({
 }
 
 const styles = StyleSheet.create({
-  singleNotifLign: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%',
+  action: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 25
-  },
-  container: {
-    marginVertical: 10,
-    borderColor: '#fff',
-    borderWidth: 1,
-    position: 'relative',
-    borderRadius: 21
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    position: 'absolute',
+    right: 0,
+    top: 0
   },
   actionButton: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
-    width: '30%',
-    alignItems: 'center',
-    padding: 10
+    padding: 10,
+    width: '30%'
   },
   actionButtonText: {
     color: theme.colors.white,
     textAlign: 'center'
   },
-  action: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
+  actions: {
     display: 'flex',
-    flexDirection: 'row-reverse',
-    alignItems: 'center'
+    flexDirection: 'column',
+    justifyContent: 'center',
+    width: '10%'
   },
   card: {
-    paddingLeft: 20,
-    borderRadius: 15,
     backgroundColor: theme.colors.white,
-    elevation: 15,
+    borderRadius: 15,
     display: 'flex',
-    flexDirection: 'row'
+    elevation: 15,
+    flexDirection: 'row',
+    paddingLeft: 20
+  },
+  container: {
+    borderColor: theme.colors.white,
+    borderRadius: 21,
+    borderWidth: 1,
+    marginVertical: 10,
+    position: 'relative'
+  },
+  singleNotifLign: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 25,
+    width: '100%'
   },
   text: {
-    paddingVertical: 15,
-    width: '85%',
-    flexDirection: 'column'
-  },
-  actions: {
-    width: '10%',
     flexDirection: 'column',
-    display: 'flex',
-    justifyContent: 'center'
+    paddingVertical: 15,
+    width: '85%'
   },
   title: {
+    color: theme.colors.blue,
     fontSize: 20,
-    marginBottom: 5,
-    color: theme.colors.blue
+    marginBottom: 5
   }
 })

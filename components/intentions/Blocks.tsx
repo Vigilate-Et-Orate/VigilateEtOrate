@@ -9,7 +9,7 @@ import {
 import * as Analytics from 'expo-firebase-analytics'
 import { MaterialIcons } from '@expo/vector-icons'
 
-import { TIntention } from 'config/types/Intention'
+import { TIntention } from 'config/types/TIntention'
 import theme from 'config/theme'
 import { removeIntentions } from 'utils/api/api_firebase'
 import { connect, useDispatch } from 'react-redux'
@@ -72,7 +72,9 @@ const WriteIntentionComp = ({
         placeholderTextColor={theme.colors.white + 'd4'}
         style={[
           styles.input,
-          keyboard || intention !== '' ? { width: '75%' } : { width: '100%' }
+          keyboard || intention !== ''
+            ? styles.inputClosedWidth
+            : styles.inputOpenedWidth
         ]}
         onChangeText={onIntentionChange}
         value={intention}
@@ -80,12 +82,12 @@ const WriteIntentionComp = ({
         placeholder="Ajouter une intention"
       />
       {(keyboard || intention !== '') && (
-        <View style={{ display: 'flex', justifyContent: 'center' }}>
+        <View style={styles.buttonView}>
           <TouchableOpacity
             style={styles.button}
             onPress={handleAddingIntention}
           >
-            <Text style={{ color: theme.colors.white }}>Ajouter</Text>
+            <Text style={styles.buttonText}>Ajouter</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -98,17 +100,46 @@ const mapToProps = (state: RootState) => ({
 export const WriteIntention = connect(mapToProps)(WriteIntentionComp)
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    marginBottom: 6,
-    color: theme.colors.green
-  },
   button: {
-    paddingHorizontal: 15,
-    paddingVertical: 7,
     backgroundColor: theme.colors.green,
     borderRadius: 20,
-    elevation: 12
+    elevation: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 7
+  },
+  buttonText: {
+    color: theme.colors.white
+  },
+  buttonView: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  card: {
+    backgroundColor: theme.colors.blue,
+    borderColor: theme.colors.white + 'd4',
+    borderRadius: 30,
+    borderWidth: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10
+  },
+  cardIntention: {
+    backgroundColor: theme.colors.white + 'd4',
+    borderRadius: 30,
+    elevation: 17,
+    flexDirection: 'row',
+    marginVertical: 5,
+    paddingHorizontal: 25,
+    paddingVertical: 10
+  },
+  cardIntentionLeft: {
+    flex: 10,
+    flexDirection: 'column',
+    paddingVertical: 10,
+    paddingRight: 10
   },
   cardRightButton: {
     flex: 1,
@@ -119,40 +150,19 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#c4c4c4'
-  },
-  cardIntentionLeft: {
-    flex: 10,
-    flexDirection: 'column',
-    paddingVertical: 10,
-    paddingRight: 10
-  },
-  card: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 30,
-    backgroundColor: theme.colors.blue,
-    borderWidth: 1,
-    borderColor: theme.colors.white + 'd4',
-    marginTop: 10,
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexDirection: 'row'
-  },
-  cardIntention: {
-    paddingHorizontal: 25,
-    paddingVertical: 10,
-    borderRadius: 30,
-    elevation: 17,
-    backgroundColor: theme.colors.white + 'd4',
-    marginVertical: 5,
-    flexDirection: 'row'
+    backgroundColor: theme.colors.gray
   },
   input: {
-    opacity: 5,
     borderRadius: 3,
+    color: theme.colors.white,
+    opacity: 5,
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    color: theme.colors.white
+    paddingVertical: 5
+  },
+  inputClosedWidth: {
+    width: '75%'
+  },
+  inputOpenedWidth: {
+    width: '100%'
   }
 })

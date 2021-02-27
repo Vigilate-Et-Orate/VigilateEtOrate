@@ -1,5 +1,5 @@
 import CONST from 'config/constants'
-import { IPrayersState, TPrayersActionTypes } from 'config/types/Prayer'
+import { IPrayersState, TPrayersActionTypes } from 'config/types/TPrayer'
 
 const initialState: IPrayersState = {
   prayers: [],

@@ -8,21 +8,21 @@ import {
 } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { connect, useDispatch } from 'react-redux'
+import { getExpoPushTokenAsync } from 'expo-notifications'
 import Constant from 'expo-constants'
 
 import theme from 'config/theme'
-import { RootState } from 'red/reducers/RootReducer'
-import { connect, useDispatch } from 'react-redux'
 import { TUser } from 'config/types/User'
-import { updateUser, userLogout } from 'red/actions/UserActions'
 import Page from 'components/layout/Page'
 import Device from 'components/Device/Block'
+import { RootState } from 'red/reducers/RootReducer'
+import { updateUser, userLogout } from 'red/actions/UserActions'
 import {
   registerDevice,
   removeDevice,
   updateUserInfo
 } from 'utils/api/api_server'
-import { getExpoPushTokenAsync } from 'expo-notifications'
 
 const Settings = ({
   user,
@@ -102,17 +102,15 @@ const Settings = ({
       <View>
         {user && (
           <View style={styles.userRow}>
-            <View style={{ width: '30%', height: '100%' }}>
+            <View style={styles.userRowLeft}>
               <View style={styles.avatar}>
-                <Text style={{ color: theme.colors.white, fontSize: 30 }}>
-                  {getInitials()}
-                </Text>
+                <Text style={styles.avatarText}>{getInitials()}</Text>
               </View>
             </View>
-            <View style={{ width: '70%', paddingLeft: 10 }}>
+            <View style={styles.userRowRight}>
               {!edit && (
                 <View>
-                  <Text style={{ fontSize: 26 }}>
+                  <Text style={styles.userRowText}>
                     {user.firstname + ' ' + user.lastname}
                   </Text>
                   <Text>{user.email}</Text>
@@ -120,7 +118,7 @@ const Settings = ({
               )}
               {edit && (
                 <View>
-                  <View style={{ display: 'flex', flexDirection: 'row' }}>
+                  <View style={styles.editRowInfos}>
                     <TextInput
                       style={styles.input}
                       value={firstname}
@@ -139,13 +137,7 @@ const Settings = ({
                   />
                 </View>
               )}
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between'
-                }}
-              >
+              <View style={styles.userRowActions}>
                 <TouchableOpacity style={styles.logoutButton} onPress={logout}>
                   <Text>Se Deconnecter</Text>
                 </TouchableOpacity>
@@ -153,7 +145,7 @@ const Settings = ({
             </View>
           </View>
         )}
-        <View style={{ marginBottom: 20 }}>
+        <View style={styles.devices}>
           {user?.devices &&
             user.devices.map((d) => (
               <Device key={d._id} device={d} deleteDevice={deleteDevice} />
@@ -183,37 +175,38 @@ const Settings = ({
 }
 
 const styles = StyleSheet.create({
-  version: {
-    position: 'absolute',
-    bottom: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    width: '110%',
-    justifyContent: 'center'
-  },
-  versionText: {
-    color: theme.colors.blue
-  },
-  text: {
-    color: theme.colors.blue
-  },
   addDevice: {
     marginHorizontal: '10%'
   },
-  logoutButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 20,
+  avatar: {
+    alignItems: 'center',
     backgroundColor: theme.colors.ultraLightGrey,
-    marginTop: 10
+    borderRadius: 100,
+    display: 'flex',
+    height: 100,
+    justifyContent: 'center',
+    width: 100
   },
+  avatarText: { color: theme.colors.white, fontSize: 30 },
+  devices: { marginBottom: 20 },
+  editRowInfos: { display: 'flex', flexDirection: 'row' },
   input: {
     borderBottomColor: theme.colors.yellow,
     borderBottomWidth: 1,
-    paddingHorizontal: 3,
-    paddingVertical: 1,
+    fontSize: 15,
     marginHorizontal: 5,
-    fontSize: 15
+    paddingHorizontal: 3,
+    paddingVertical: 1
+  },
+  logoutButton: {
+    backgroundColor: theme.colors.ultraLightGrey,
+    borderRadius: 20,
+    marginTop: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10
+  },
+  text: {
+    color: theme.colors.blue
   },
   userRow: {
     display: 'flex',
@@ -221,14 +214,24 @@ const styles = StyleSheet.create({
     height: 200,
     marginTop: 10
   },
-  avatar: {
-    borderRadius: 100,
-    width: 100,
-    height: 100,
+  userRowActions: {
     display: 'flex',
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  userRowLeft: { height: '100%', width: '30%' },
+  userRowRight: { paddingLeft: 10, width: '70%' },
+  userRowText: { fontSize: 26 },
+  version: {
+    bottom: 10,
+    display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor: theme.colors.ultraLightGrey
+    position: 'absolute',
+    width: '110%'
+  },
+  versionText: {
+    color: theme.colors.blue
   }
 })
 

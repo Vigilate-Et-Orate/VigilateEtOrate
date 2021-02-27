@@ -3,7 +3,7 @@ import iconv from 'iconv-lite'
 import axios from 'axios'
 import { Buffer } from 'buffer'
 
-import { TNominisSaint } from 'config/types/Nominis'
+import { TNominisSaint } from 'config/types/TNominis'
 import * as Storage from 'utils/storage/StorageManager'
 import URL from 'config/url.config.json'
 

@@ -27,23 +27,23 @@ const BaseModal = ({ children, open, onClose }: TBaseModal): JSX.Element => (
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    backgroundColor: theme.colors.transparentBlack,
     display: 'flex',
     flexDirection: 'column-reverse',
-    backgroundColor: '#000000a4'
-  },
-  modal: {
-    backgroundColor: theme.colors.blue,
-    height: '40%',
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    paddingTop: 15,
-    paddingHorizontal: 25,
-    display: 'flex',
-    flexDirection: 'column'
+    height: '100%'
   },
   dissmiss: {
     height: '60%'
+  },
+  modal: {
+    backgroundColor: theme.colors.blue,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    height: '40%',
+    paddingHorizontal: 25,
+    paddingTop: 15
   }
 })
 

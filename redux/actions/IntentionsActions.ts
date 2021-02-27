@@ -1,5 +1,5 @@
 import constants from 'config/constants'
-import { TIntention, TIntentionsActionsTypes } from 'config/types/Intention'
+import { TIntention, TIntentionsActionsTypes } from 'config/types/TIntention'
 
 export function addIntentions(
   content: string,

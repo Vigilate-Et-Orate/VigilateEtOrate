@@ -1,5 +1,5 @@
 import CONST from 'config/constants'
-import { IEvangileState, TEvangileActionTypes } from 'config/types/AelfApi'
+import { IEvangileState, TEvangileActionTypes } from 'config/types/TAelfApi'
 
 const initialState: IEvangileState = {
   evangile: undefined

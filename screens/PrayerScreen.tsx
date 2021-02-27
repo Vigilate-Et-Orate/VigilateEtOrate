@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { PinchGestureHandler } from 'react-native-gesture-handler'
 import * as Analytics from 'expo-firebase-analytics'
+import { connect, useDispatch } from 'react-redux'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
-import Page from 'components/layout/Page'
-import { isFavourite } from 'utils/favourites/favourites'
 import theme from 'config/theme'
-import { TPrayer } from 'config/types/Prayer'
-import { connect, useDispatch } from 'react-redux'
+import { TFavourite } from 'config/types/TFavourite'
+import { TPrayer } from 'config/types/TPrayer'
+import Page from 'components/layout/Page'
 import { updateFavourite } from 'red/actions/FavouritesActions'
-import { toggleFavourite } from 'utils/api/api_server'
 import { RootState } from 'red/reducers/RootReducer'
-import { TFavourite } from 'config/types/Favourite'
+import { toggleFavourite } from 'utils/api/api_server'
+import { isFavourite } from 'utils/favourites/favourites'
 
 type Route = {
   key: string
@@ -80,10 +80,10 @@ const PrayerScreen = ({
       }
     >
       <PinchGestureHandler onGestureEvent={onGestureChange}>
-        <ScrollView style={{ paddingHorizontal: 20 }}>
+        <ScrollView style={styles.scroll}>
           <Text style={styles.title}>{prayer?.displayName}</Text>
           <Text style={{ fontSize: size }}>{prayer?.content}</Text>
-          <Text style={{ marginTop: 10, fontSize: size }}>Amen.</Text>
+          <Text style={[styles.text, { fontSize: size }]}>Amen.</Text>
         </ScrollView>
       </PinchGestureHandler>
     </Page>
@@ -91,10 +91,16 @@ const PrayerScreen = ({
 }
 
 const styles = StyleSheet.create({
+  scroll: {
+    paddingHorizontal: 20
+  },
+  text: {
+    marginTop: 10
+  },
   title: {
-    marginVertical: 20,
+    color: theme.colors.blue,
     fontSize: 32,
-    color: theme.colors.blue
+    marginVertical: 20
   }
 })
 

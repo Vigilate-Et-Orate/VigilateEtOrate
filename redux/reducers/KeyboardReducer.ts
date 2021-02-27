@@ -1,5 +1,5 @@
 import CONST from 'config/constants'
-import { IKeyboardState, TKeyboardActionTypes } from 'config/types/Keyboard'
+import { IKeyboardState, TKeyboardActionTypes } from 'config/types/TKeyboard'
 
 const initialState: IKeyboardState = false
 

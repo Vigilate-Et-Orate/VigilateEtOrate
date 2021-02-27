@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import { View, TouchableOpacity, Keyboard, Image, Text } from 'react-native'
+import {
+  View,
+  TouchableOpacity,
+  Keyboard,
+  Text,
+  StyleSheet,
+  ImageBackground
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { FontAwesome5 } from '@expo/vector-icons'
 import * as Notifications from 'expo-notifications'
@@ -11,6 +18,7 @@ import { useDispatch, connect } from 'react-redux'
 import * as Storage from 'utils/storage/StorageManager'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
+import { updateKeyboard } from 'red/actions/KeyboardActions'
 import { loadData } from 'utils/loadData/loadData'
 
 // Screens
@@ -18,7 +26,6 @@ import PrayersScreen from 'screens/PrayersScreen'
 import FavouriteScreen from 'screens/FavouriteScreen'
 import IntentionsScreen from 'screens/IntentionsScreen'
 import Home from 'screens/HomeScreen'
-import { updateKeyboard } from 'red/actions/KeyboardActions'
 
 // Tabs
 const Tabs = createMaterialTopTabNavigator()
@@ -39,19 +46,13 @@ const tabsNameIcon = [
 const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   return (
     <View
-      style={{
-        elevation: 20,
-        position: 'absolute',
-        bottom: 40,
-        left: '10%',
-        borderRadius: 40,
-        width: '80%',
-        flexDirection: 'row',
-        height: 60,
-        zIndex: 40,
-        backgroundColor:
-          state.index == 1 ? theme.colors.green : theme.colors.blue
-      }}
+      style={[
+        styles.navBackground,
+        {
+          backgroundColor:
+            state.index == 1 ? theme.colors.green : theme.colors.blue
+        }
+      ]}
     >
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key]
@@ -89,7 +90,7 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
             testID={options.tabBarTestID}
             onPress={onPressNav}
             onLongPress={onLongPress}
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+            style={styles.navButtons}
             key={route.key}
           >
             <FontAwesome5 name={name} size={25} color={color} />
@@ -146,42 +147,24 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   if (!isReady) {
     SplashScreen.hideAsync()
     return (
-      <View style={{ width: '100%', height: '100%' }}>
-        <View
-          style={{
-            width: '100%',
-            zIndex: 40,
-            position: 'absolute',
-            bottom: '20%',
-            paddingHorizontal: '15%'
-          }}
-        >
-          <View
-            style={{
-              height: 10,
-              width: '100%',
-              borderRadius: 20,
-              borderColor: '#fff',
-              borderWidth: 1
-            }}
-          >
+      <ImageBackground
+        source={require('../../assets/splashScreen.png')}
+        style={styles.image}
+      >
+        <View style={styles.loadingContainer}>
+          <View style={styles.loadingBar}>
             <View
-              style={{
-                width: `${progress}%`,
-                height: '100%',
-                backgroundColor: 'white'
-              }}
+              style={[
+                styles.loadingFill,
+                {
+                  width: `${progress}%`
+                }
+              ]}
             ></View>
           </View>
-          <Text style={{ color: 'white', textAlign: 'center' }}>
-            {progress}%
-          </Text>
+          <Text style={styles.loadingText}>{progress}%</Text>
         </View>
-        <Image
-          style={{ width: '100%', height: '100%', zIndex: 30 }}
-          source={require('../../assets/splashScreen.png')}
-        />
-      </View>
+      </ImageBackground>
     )
   }
 
@@ -212,6 +195,49 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
     </Tabs.Navigator>
   )
 }
+
+const styles = StyleSheet.create({
+  image: {
+    flex: 1,
+    justifyContent: 'center',
+    resizeMode: 'cover'
+  },
+  loadingBar: {
+    borderColor: theme.colors.white,
+    borderRadius: 20,
+    borderWidth: 1,
+    height: 10,
+    width: '100%'
+  },
+  loadingContainer: {
+    bottom: '20%',
+    paddingHorizontal: '15%',
+    position: 'absolute',
+    width: '100%',
+    zIndex: 40
+  },
+  loadingFill: {
+    backgroundColor: theme.colors.yellow,
+    borderRadius: 20,
+    height: '100%'
+  },
+  loadingText: {
+    color: theme.colors.white,
+    textAlign: 'center'
+  },
+  navBackground: {
+    borderRadius: 40,
+    bottom: 40,
+    elevation: 20,
+    flexDirection: 'row',
+    height: 60,
+    left: '10%',
+    position: 'absolute',
+    width: '80%',
+    zIndex: 40
+  },
+  navButtons: { alignItems: 'center', flex: 1, justifyContent: 'center' }
+})
 
 const mapToProps = (state: RootState) => ({
   keyboard: state.keyboard

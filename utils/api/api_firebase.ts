@@ -1,6 +1,6 @@
 import firebase from 'utils/firebase'
 import 'firebase/firestore'
-import { TIntention } from 'config/types/Intention'
+import { TIntention } from 'config/types/TIntention'
 import { TUser } from 'config/types/User'
 import * as StorageManager from 'utils/storage/StorageManager'
 

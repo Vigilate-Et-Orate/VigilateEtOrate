@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { View, Platform } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
-import { TPrayer } from 'config/types/Prayer'
+import { TPrayer } from 'config/types/TPrayer'
 import { PrayerBlock } from 'components/prayers/Block'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
@@ -10,7 +10,7 @@ import { connect, useDispatch } from 'react-redux'
 import Page from 'components/layout/Page'
 import { TNotif } from 'config/types/TNotif'
 import { isFavourite } from 'utils/favourites/favourites'
-import { TFavourite } from 'config/types/Favourite'
+import { TFavourite } from 'config/types/TFavourite'
 import { updateFavourite } from 'red/actions/FavouritesActions'
 import {
   registerForNotification,
@@ -117,6 +117,7 @@ const PrayersScreen = ({
             toggleFav={toggleFav}
             addNotification={addNotification}
             removeNotif={removeN}
+            displayActions
           />
         ))}
       </View>

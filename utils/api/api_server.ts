@@ -13,12 +13,12 @@ import {
   IMeResponse,
   IMeUpdateResponse
 } from 'config/types/User'
-import { TPrayerResponse, TPrayer } from 'config/types/Prayer'
+import { TPrayerResponse, TPrayer } from 'config/types/TPrayer'
 import {
   TFavourite,
   TFavouriteResponse,
   TToggleFavResponse
-} from 'config/types/Favourite'
+} from 'config/types/TFavourite'
 import { TDevice, TDeviceResponse } from 'config/types/TDevices'
 import { TNotif, TNotifResponse, TNotifsResponse } from 'config/types/TNotif'
 

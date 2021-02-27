@@ -1,6 +1,6 @@
 import CONST from 'config/constants'
-import { TInformationsActionTypes } from 'config/types/AelfApi'
-import { TNominisSaint } from 'config/types/Nominis'
+import { TInformationsActionTypes } from 'config/types/TAelfApi'
+import { TNominisSaint } from 'config/types/TNominis'
 
 export function updateInformations(
   infos: TNominisSaint

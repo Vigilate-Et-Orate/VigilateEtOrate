@@ -38,7 +38,7 @@ export const WelcomeCard = ({ evangile }: WelcomeCardProps): JSX.Element => {
       <Text style={styles.Title}>Phrase de l&apos;Evangile du Jour</Text>
       <Text style={styles.description}>{evangile}</Text>
       <TouchableOpacity
-        style={{ alignSelf: 'flex-end', padding: 10 }}
+        style={styles.button}
         onPress={() => navigation.navigate('Evangile')}
       >
         <Text style={styles.see}>Voir l&apos;Evangile</Text>
@@ -48,38 +48,42 @@ export const WelcomeCard = ({ evangile }: WelcomeCardProps): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
+  Title: {
+    color: theme.colors.blue,
+    fontSize: 20,
+    marginBottom: 5
+  },
+  button: {
+    alignSelf: 'flex-end',
+    padding: 10
+  },
   card: {
+    backgroundColor: theme.colors.white,
+    borderRadius: 15,
+    elevation: 10,
+    margin: 10,
+    paddingBottom: 10,
     paddingHorizontal: 15,
     paddingTop: 15,
-    paddingBottom: 10,
-    borderRadius: 15,
-    backgroundColor: '#ffffff',
-    margin: 10,
     shadowOffset: {
       width: 50,
       height: 50
-    },
-    elevation: 10
-  },
-  Title: {
-    fontSize: 20,
-    marginBottom: 5,
-    color: theme.colors.blue
-  },
-  see: {
-    marginVertical: 5,
-    alignItems: 'flex-end',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: theme.colors.blue,
-    color: theme.colors.yellow
+    }
   },
   description: {
+    color: theme.colors.blue,
     fontSize: 15,
-    marginLeft: 10,
     marginBottom: 12,
-    color: theme.colors.blue
+    marginLeft: 10
+  },
+  see: {
+    alignItems: 'flex-end',
+    backgroundColor: theme.colors.blue,
+    borderRadius: 20,
+    color: theme.colors.yellow,
+    marginVertical: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 10
   }
 })
 

@@ -5,7 +5,7 @@ import {
   IIntentionsState,
   IIntentionsUpdate,
   TIntentionsActionsTypes
-} from 'config/types/Intention'
+} from 'config/types/TIntention'
 
 const initialState: IIntentionsState = {
   intentions: [],

@@ -1,5 +1,5 @@
 import CONST from 'config/constants'
-import { TLectureAelf, TEvangileActionTypes } from 'config/types/AelfApi'
+import { TLectureAelf, TEvangileActionTypes } from 'config/types/TAelfApi'
 
 export function updateEvangile(evangile: TLectureAelf): TEvangileActionTypes {
   return {

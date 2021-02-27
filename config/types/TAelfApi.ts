@@ -1,5 +1,5 @@
 import CONST from 'config/constants'
-import { TNominisSaint } from './Nominis'
+import { TNominisSaint } from './TNominis'
 
 export type TLectureAelf = {
   type: 'lecture_1' | 'psaume' | 'lecture_2' | 'evangile'

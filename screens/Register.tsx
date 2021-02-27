@@ -5,19 +5,19 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image
+  Image,
+  TextInput
 } from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { connect, useDispatch } from 'react-redux'
 import firebase from 'firebase'
 
 import theme from 'config/theme'
-import { TextInput } from 'react-native-gesture-handler'
-import { registerCredentials } from 'utils/api/api_server'
-import { connect, useDispatch } from 'react-redux'
 import { userLogin } from 'red/actions/UserActions'
 import { RootState } from 'red/reducers/RootReducer'
-import { loadData } from 'components/layout/HomeRoutes'
+import { registerCredentials } from 'utils/api/api_server'
+import { loadData } from 'utils/loadData/loadData'
 
 const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
@@ -53,26 +53,9 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
     <View style={styles.background}>
       {!keyboard && (
         <>
+          <Image style={styles.image2} source={require('../assets/icon.png')} />
           <Image
-            style={{
-              position: 'absolute',
-              top: '8%',
-              left: '10%',
-              width: '30%',
-              height: '25%',
-              zIndex: 12
-            }}
-            source={require('../assets/icon.png')}
-          />
-          <Image
-            style={{
-              position: 'absolute',
-              top: '8%',
-              right: '10%',
-              width: '15%',
-              height: '25%',
-              zIndex: 10
-            }}
+            style={styles.image}
             source={require('../assets/candle.png')}
           />
         </>
@@ -136,73 +119,89 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    height: '100%',
-    backgroundColor: theme.colors.blue
+  actions: {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'row-reverse'
   },
-  cardUp: {
-    height: '100%',
-    marginTop: '5%'
+  arrowButton: {
+    alignItems: 'center',
+    backgroundColor: theme.colors.lightBlue,
+    borderRadius: 500,
+    display: 'flex',
+    elevation: 7,
+    height: 90,
+    justifyContent: 'center',
+    width: 90
+  },
+  background: {
+    backgroundColor: theme.colors.blue,
+    height: '100%'
+  },
+  card: {
+    backgroundColor: theme.colors.white,
+    borderRadius: 30,
+    paddingHorizontal: '10%',
+    zIndex: 30
   },
   cardDown: {
     height: '60%',
     marginTop: '65%'
   },
-  card: {
-    borderRadius: 30,
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: '10%',
-    zIndex: 30
-  },
-  title: {
-    textAlign: 'left',
-    fontSize: 36,
-    color: theme.colors.blue,
-    marginVertical: '7%'
+  cardUp: {
+    height: '100%',
+    marginTop: '5%'
   },
   hidden: {
     display: 'none'
   },
-  register: {
+  image: {
+    height: '25%',
     position: 'absolute',
-    left: 0,
-    bottom: 20,
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '6%',
-    zIndex: 40
+    right: '10%',
+    top: '8%',
+    width: '15%',
+    zIndex: 10
+  },
+  image2: {
+    height: '25%',
+    left: '10%',
+    position: 'absolute',
+    top: '8%',
+    width: '30%',
+    zIndex: 12
   },
   input: {
     backgroundColor: theme.colors.white + '33',
-    opacity: 5,
-    borderRadius: 3,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginVertical: 10,
+    borderBottomColor: theme.colors.blue,
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.blue
+    borderRadius: 3,
+    marginVertical: 10,
+    opacity: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5
   },
   inputs: {
-    marginTop: '8%',
-    marginBottom: '15%'
+    marginBottom: '15%',
+    marginTop: '8%'
   },
-  actions: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'row-reverse'
-  },
-  arrowButton: {
-    borderRadius: 500,
-    backgroundColor: theme.colors.lightBlue,
-    width: 90,
-    height: 90,
-    display: 'flex',
+  register: {
     alignItems: 'center',
+    bottom: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    height: '6%',
     justifyContent: 'center',
-    elevation: 7
+    left: 0,
+    position: 'absolute',
+    width: '100%',
+    zIndex: 40
+  },
+  title: {
+    color: theme.colors.blue,
+    fontSize: 36,
+    marginVertical: '7%',
+    textAlign: 'left'
   }
 })
 

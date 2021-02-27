@@ -2,7 +2,7 @@ import CONST from 'config/constants'
 import {
   IDailyInfosState,
   TInformationsActionTypes
-} from 'config/types/AelfApi'
+} from 'config/types/TAelfApi'
 
 const initialState: IDailyInfosState = {
   informations: undefined

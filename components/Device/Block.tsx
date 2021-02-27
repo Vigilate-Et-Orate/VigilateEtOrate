@@ -43,26 +43,26 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.blue,
     borderRadius: 15,
-    elevation: 15,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
     display: 'flex',
+    elevation: 15,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15
   },
   cardLeft: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     flexDirection: 'row'
   },
-  thisText: {
-    fontSize: 15,
-    color: theme.colors.yellow,
-    marginLeft: 10
-  },
   text: {
-    fontSize: 18,
-    color: theme.colors.white
+    color: theme.colors.white,
+    fontSize: 18
+  },
+  thisText: {
+    color: theme.colors.yellow,
+    fontSize: 15,
+    marginLeft: 10
   }
 })
 

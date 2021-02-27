@@ -12,7 +12,7 @@
     "plugin:react/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    // "plugin:react-native/all",
+    "plugin:react-native/all",
     "prettier"
   ],
   "rules": {
@@ -24,6 +24,7 @@
     ],
     "prettier/prettier": 2,
     "@typescript-eslint/no-explicit-any": 0,
-    "react/display-name": 0
+    "react/display-name": 0,
+    "react-native/split-platform-components": 0
   }
 }

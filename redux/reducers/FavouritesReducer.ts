@@ -6,7 +6,7 @@ import {
   IFavouritesUpdate,
   TFavouriteState,
   TFavouritesActionTypes
-} from 'config/types/Favourite'
+} from 'config/types/TFavourite'
 
 const initialState: TFavouriteState = {
   favourites: [],

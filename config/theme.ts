@@ -7,7 +7,9 @@ const theme = {
     green: '#bcbfd8',
     yellow: '#EDB04E',
     red: '#9C0C2E',
-    ultraLightGrey: '#DDDDDD'
+    ultraLightGrey: '#DDDDDD',
+    gray: '#c4c4c4',
+    transparentBlack: '#000000a4'
   }
 }
 

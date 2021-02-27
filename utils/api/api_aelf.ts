@@ -3,7 +3,7 @@ import {
   TLectureAelf,
   TInformationAelf,
   IResponseAelf
-} from 'config/types/AelfApi'
+} from 'config/types/TAelfApi'
 import URL from 'config/url.config.json'
 
 export function getformatedDate(): string {

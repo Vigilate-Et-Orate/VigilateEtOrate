@@ -10,7 +10,7 @@ import {
 import { Feather } from '@expo/vector-icons'
 
 import Modal from 'components/layout/Modal'
-import { TIntention } from 'config/types/Intention'
+import { TIntention } from 'config/types/TIntention'
 import { WriteIntention, IntentionCard } from 'components/intentions/Blocks'
 import theme from 'config/theme'
 import { connect, useDispatch } from 'react-redux'
@@ -121,7 +121,7 @@ const IntentionsScreen = ({
                 size={20}
                 onPress={updateInt}
               >
-                Sauvegarderr
+                <Text>Sauvegarder</Text>
               </Feather.Button>
             )}
           </View>
@@ -153,25 +153,25 @@ const IntentionsScreen = ({
 }
 
 const styles = StyleSheet.create({
-  modalText: {
-    fontSize: 14,
-    color: theme.colors.white
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
   actions: {
     display: 'flex',
     flexDirection: 'row-reverse',
     marginBottom: 15
   },
+  container: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
   inputEditing: {
     borderColor: theme.colors.white + '12',
     borderWidth: 1,
-    width: '100%',
     color: theme.colors.white,
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
+    width: '100%'
+  },
+  modalText: {
+    color: theme.colors.white,
+    fontSize: 14
   }
 })
 

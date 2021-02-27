@@ -1,14 +1,14 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, StyleSheet } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-
-import Page from 'components/layout/Page'
-import { TFavourite } from 'config/types/Favourite'
-import theme from 'config/theme'
-import { PrayerBlock } from 'components/prayers/Block'
 import { connect } from 'react-redux'
+
+import { TFavourite } from 'config/types/TFavourite'
+import theme from 'config/theme'
+import { TPrayer } from 'config/types/TPrayer'
+import Page from 'components/layout/Page'
+import { PrayerBlock } from 'components/prayers/Block'
 import { RootState } from 'red/reducers/RootReducer'
-import { TPrayer } from 'config/types/Prayer'
 
 const FavouriteScreen = ({
   favs,
@@ -27,20 +27,12 @@ const FavouriteScreen = ({
         favs.map((f) => {
           const p = prayers.find((p) => p._id === f.prayer)
           if (!p) return
-          return <PrayerBlock key={f.id} prayer={p} index={1} fav />
+          return <PrayerBlock key={f.id} prayer={p} />
         })}
       {favs.length === 0 && (
-        <View style={{ flexDirection: 'column' }}>
-          <Text style={{ fontSize: 20, color: theme.colors.blue }}>
-            Pas de prières favorites...
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              paddingTop: 30
-            }}
-          >
+        <View style={styles.noFavContainer}>
+          <Text style={styles.noFavText}>Pas de prières favorites...</Text>
+          <View style={styles.noFavHeart}>
             <MaterialCommunityIcons
               name="heart-broken"
               size={80}
@@ -52,6 +44,16 @@ const FavouriteScreen = ({
     </View>
   </Page>
 )
+
+const styles = StyleSheet.create({
+  noFavContainer: { flexDirection: 'column' },
+  noFavHeart: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 30
+  },
+  noFavText: { color: theme.colors.white, fontSize: 20 }
+})
 
 const mapToProps = (state: RootState) => ({
   favs: state.favourites.favourites.filter((f) => f.faved),

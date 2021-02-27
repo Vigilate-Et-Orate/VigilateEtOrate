@@ -1,8 +1,8 @@
 import React from 'react'
-import { ScrollView, Text } from 'react-native'
+import { ScrollView, StyleSheet, Text } from 'react-native'
 import { connect } from 'react-redux'
 
-import { TLectureAelf } from 'config/types/AelfApi'
+import { TLectureAelf } from 'config/types/TAelfApi'
 
 import Page from 'components/layout/Page'
 import { RootState } from 'red/reducers/RootReducer'
@@ -15,16 +15,21 @@ const GospelScreen = ({
 }): JSX.Element => {
   return (
     <Page title="Evangile" backgroundColor={theme.colors.blue}>
-      <ScrollView style={{ paddingTop: 25, paddingHorizontal: 20 }}>
-        <Text style={{ fontSize: 26 }}>{evangile?.titre}</Text>
-        <Text style={{ justifyContent: 'flex-end', marginBottom: 15 }}>
-          {evangile?.ref}
-        </Text>
-        <Text style={{ marginBottom: 15 }}>{evangile?.contenu}</Text>
+      <ScrollView style={styles.view}>
+        <Text style={styles.title}>{evangile?.titre}</Text>
+        <Text style={styles.reference}>{evangile?.ref}</Text>
+        <Text style={styles.content}>{evangile?.contenu}</Text>
       </ScrollView>
     </Page>
   )
 }
+
+const styles = StyleSheet.create({
+  content: { marginBottom: 15 },
+  reference: { justifyContent: 'flex-end', marginBottom: 15 },
+  title: { fontSize: 26 },
+  view: { paddingHorizontal: 20, paddingTop: 25 }
+})
 
 const mapToProps = (state: RootState) => ({
   evangile: state.evangile.evangile

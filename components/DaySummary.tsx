@@ -4,8 +4,8 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
 import { TNotif } from 'config/types/TNotif'
-import { TIntention } from 'config/types/Intention'
-import { TPrayer } from 'config/types/Prayer'
+import { TIntention } from 'config/types/TIntention'
+import { TPrayer } from 'config/types/TPrayer'
 import {
   stringToTimestamp,
   timestampToReadable,
@@ -107,7 +107,7 @@ const DaySummary = ({
       <View
         style={[
           styles.bar,
-          day.length > 5 ? { height: 52 * day.length } : { height: 250 }
+          day.length > 5 ? { height: 52 * day.length } : styles.containerHeight
         ]}
       ></View>
       <View style={styles.summary}>
@@ -121,32 +121,19 @@ const DaySummary = ({
 }
 
 const styles = StyleSheet.create({
-  lignContainer: {
-    display: 'flex',
-    width: '100%',
-    flexDirection: 'row',
-    height: 40,
-    paddingHorizontal: 15,
-    marginVertical: 6
-  },
-  time: {
-    width: '15%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 10
-  },
-  timeText: {
-    color: theme.colors.white
+  bar: {
+    borderColor: theme.colors.white,
+    borderRadius: 2,
+    borderWidth: 2
   },
   card: {
-    width: '80%',
-    borderRadius: 20,
     backgroundColor: theme.colors.white,
-    elevation: 10,
+    borderRadius: 20,
     display: 'flex',
+    elevation: 10,
+    justifyContent: 'center',
     paddingHorizontal: 15,
-    justifyContent: 'center'
+    width: '80%'
   },
   cardText: {
     color: theme.colors.blue
@@ -155,13 +142,26 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row'
   },
-  bar: {
-    borderColor: theme.colors.white,
-    borderWidth: 2,
-    borderRadius: 2
+  containerHeight: {
+    height: 250
+  },
+  lignContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    height: 40,
+    marginVertical: 6,
+    paddingHorizontal: 15,
+    width: '100%'
   },
   summary: {
     width: '100%'
+  },
+  time: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+    marginHorizontal: 10,
+    width: '15%'
   }
 })
 

@@ -10,8 +10,7 @@ import Home from 'components/layout/HomeRoutes'
 import GospelScreen from 'screens/GospelScreen'
 import PrayerScreen from 'screens/PrayerScreen'
 import SettingsScreen from 'screens/SettingsScreen'
-import StartUnboarding from 'screens/Unboarding/Unboarding'
-import Unboarding from 'components/layout/UnboardingRoutes'
+import StartUnboarding from 'screens/Unboarding'
 import SignInScreen from 'screens/SignIn'
 import RegisterScreen from 'screens/Register'
 
@@ -52,7 +51,6 @@ const Stack = (): JSX.Element => {
         <MainStack.Screen name="SignIn" component={SignInScreen} />
         <MainStack.Screen name="Register" component={RegisterScreen} />
         <MainStack.Screen name="Welcome" component={StartUnboarding} />
-        <MainStack.Screen name="Unboarding" component={Unboarding} />
         <MainStack.Screen
           name="Home"
           component={Home}

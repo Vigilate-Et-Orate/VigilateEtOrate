@@ -1,4 +1,4 @@
-import { TPrayer, TPrayersActionTypes } from 'config/types/Prayer'
+import { TPrayer, TPrayersActionTypes } from 'config/types/TPrayer'
 import CONST from 'config/constants'
 import * as Storage from 'utils/storage/StorageManager'
 

@@ -1,5 +1,5 @@
 import CONST from 'config/constants'
-import { TFavourite, TFavouritesActionTypes } from 'config/types/Favourite'
+import { TFavourite, TFavouritesActionTypes } from 'config/types/TFavourite'
 
 export function addFavourite(favourite: TFavourite): TFavouritesActionTypes {
   return {
