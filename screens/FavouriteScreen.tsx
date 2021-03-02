@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import { Text, View, StyleSheet, Platform } from 'react-native'
+import { Text, View, StyleSheet } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { connect, useDispatch } from 'react-redux'
-import DateTimePicker from '@react-native-community/datetimepicker'
 
 import { TFavourite } from 'config/types/TFavourite'
 import theme from 'config/theme'
 import { TPrayer } from 'config/types/TPrayer'
 import Page from 'components/layout/Page'
 import { PrayerBlock } from 'components/prayers/Block'
-import { RootState } from 'red/reducers/RootReducer'
+import TimePicker from 'components/TimePicker'
 import { TNotif } from 'config/types/TNotif'
-import { stringToTime, timeToString } from 'utils/time/timeManager'
+import { RootState } from 'red/reducers/RootReducer'
+import { stringToTime } from 'utils/time/timeManager'
 import { updateFavourite } from 'red/actions/FavouritesActions'
 import { addNotif, removeNotif } from 'red/actions/NotifsActions'
 import {
@@ -35,7 +35,6 @@ const FavouriteScreen = ({
 }): JSX.Element => {
   const dispatch = useDispatch()
 
-  const [date, setDate] = useState(new Date(Date.now()))
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState<TPrayer>()
   const [i, si] = useState(false)
@@ -47,32 +46,6 @@ const FavouriteScreen = ({
     dispatch(updateFavourite(res))
     forceReload()
   }
-  const onDateChange = async (event: any, selectedDate?: Date | undefined) => {
-    if (!event || event.type === 'dismissed') {
-      setShow(false)
-      return
-    }
-    const currentDate = selectedDate || date
-    setShow(Platform.OS === 'ios')
-    setDate(currentDate)
-    if (currentPrayer) {
-      const t = timeToString({
-        hour: currentDate.getHours() + currentDate.getTimezoneOffset() / 60,
-        minute: currentDate.getMinutes(),
-        repeat: true,
-        daysLeft: 0
-      })
-      const n = await registerForNotification(
-        token,
-        currentPrayer.notificationContent,
-        currentPrayer._id,
-        'prayer',
-        t
-      )
-      if (!n) return
-      dispatch(addNotif(n))
-    }
-  }
   const addNotification = (prayer: TPrayer) => {
     setCurrentPrayer(prayer)
     setShow(true)
@@ -83,6 +56,23 @@ const FavouriteScreen = ({
     if (!n) return
     dispatch(removeNotif(n))
   }
+  const addTheNotif = async (time: string | undefined) => {
+    if (!time || !currentPrayer) {
+      setShow(false)
+      return
+    }
+    const n = await registerForNotification(
+      token,
+      currentPrayer?.notificationContent,
+      currentPrayer?._id,
+      'prayer',
+      time
+    )
+    if (!n) return
+    dispatch(addNotif(n))
+    setShow(false)
+  }
+
   return (
     <Page
       title="Favoris"
@@ -90,15 +80,7 @@ const FavouriteScreen = ({
       foregroundColor={theme.colors.blue}
     >
       <View>
-        {show && (
-          <DateTimePicker
-            mode="time"
-            value={date}
-            is24Hour
-            display="default"
-            onChange={onDateChange}
-          />
-        )}
+        <TimePicker open={show} onClosePicker={addTheNotif} />
         {favs.length > 0 &&
           favs.map((f) => {
             const p = prayers.find((p) => p._id === f.prayer)
