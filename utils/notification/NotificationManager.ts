@@ -1,11 +1,13 @@
 /**
  * Notification Manager
  */
+import { Platform } from 'react-native'
 import Constants from 'expo-constants'
 import * as Notifications from 'expo-notifications'
+import theme from 'config/theme'
 
 /**
- * Notification Peermission
+ * Notification Permission
  */
 export const isNotificationPermittedAsync = async (): Promise<boolean> => {
   if (Constants.isDevice) {
@@ -30,28 +32,26 @@ export const getExponentToken = async (): Promise<Notifications.ExpoPushToken> =
  */
 export const registerForNotificationsAsync = async (): Promise<string> => {
   if (!(await isNotificationPermittedAsync())) {
-    await Notifications.requestPermissionsAsync({
-      ios: {
-        allowAlert: true,
-        allowBadge: true,
-        allowSound: true,
-        allowAnnouncements: true
-      }
-    })
-    // const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
-    // if (status !== Permissions.PermissionStatus.GRANTED) throw new Error('Notifications not allowed...')
+    const { status } = await Notifications.requestPermissionsAsync()
+    if (status !== 'granted') return ''
   }
 
   const token = (await Notifications.getExpoPushTokenAsync()).data
 
-  // if (Platform.OS === 'android') {
-  //   Notifications.setNotificationChannelAsync('angelus', {
-  //     name: 'angelus',
-  //     importance: Notifications.AndroidImportance.HIGH,
-  //     vibrationPattern: [100, 100, 200, 200, 200, 100, 100],
-  //     lightColor: '#FF231F7C'
-  //   })
-  // }
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('prayers', {
+      name: 'prayer',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [100, 100, 200, 200, 200, 100, 100],
+      lightColor: theme.colors.blue
+    })
+    Notifications.setNotificationChannelAsync('intentions', {
+      name: 'intention',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [100, 100, 100, 100, 200, 200],
+      lightColor: theme.colors.blue
+    })
+  }
 
   return token
 }

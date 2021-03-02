@@ -43,14 +43,20 @@ const tabsNameIcon = [
   { name: 'Favourite', iconName: 'heart' }
 ]
 
+const bgColours = [
+  theme.colors.blue,
+  theme.colors.purple,
+  theme.colors.yellow,
+  theme.colors.red
+]
+
 const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   return (
     <View
       style={[
         styles.navBackground,
         {
-          backgroundColor:
-            state.index == 1 ? theme.colors.green : theme.colors.blue
+          backgroundColor: bgColours[state.index]
         }
       ]}
     >
@@ -61,11 +67,9 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
         const isFocused = state.index == index
         const color = !isFocused
           ? theme.colors.white
-          : route.name == 'Intentions'
-          ? theme.colors.blue
-          : route.name == 'Favourite'
-          ? theme.colors.red
-          : theme.colors.yellow
+          : route.name == 'Home'
+          ? theme.colors.yellow
+          : theme.colors.blue
 
         const onPressNav = () => {
           const event = navigation.emit({
@@ -117,6 +121,13 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
       }
     })
     if (!loadedOnce) {
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldPlaySound: true,
+          shouldSetBadge: false,
+          shouldShowAlert: true
+        })
+      })
       const subRes = Notifications.addNotificationResponseReceivedListener(
         (event) => {
           const data = event.notification.request.content.data

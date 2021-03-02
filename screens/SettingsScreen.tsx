@@ -9,7 +9,6 @@ import {
 import { MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { connect, useDispatch } from 'react-redux'
-import { getExpoPushTokenAsync } from 'expo-notifications'
 import Constant from 'expo-constants'
 
 import theme from 'config/theme'
@@ -23,6 +22,7 @@ import {
   removeDevice,
   updateUserInfo
 } from 'utils/api/api_server'
+import { registerForNotificationsAsync } from 'utils/notification/NotificationManager'
 
 const Settings = ({
   user,
@@ -70,8 +70,8 @@ const Settings = ({
     forceReload()
   }
   const addThisDev = async () => {
-    const expoPushToken = await getExpoPushTokenAsync()
-    const dev = await registerDevice(token, expoPushToken.data)
+    const expoPushToken = await registerForNotificationsAsync()
+    const dev = await registerDevice(token, expoPushToken)
     const tmpUser = user
     if (!dev || !tmpUser) return
     tmpUser.devices.push(dev)
@@ -167,7 +167,7 @@ const Settings = ({
       <View style={styles.version}>
         <Text style={styles.versionText}>
           Version {Constant.nativeAppVersion} Build{' '}
-          {Constant.nativeBuildVersion}
+          {Constant.nativeBuildVersion}{' '}
         </Text>
       </View>
     </Page>
@@ -231,7 +231,8 @@ const styles = StyleSheet.create({
     width: '110%'
   },
   versionText: {
-    color: theme.colors.blue
+    color: theme.colors.blue,
+    fontSize: 12
   }
 })
 

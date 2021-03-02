@@ -101,7 +101,7 @@ export const WriteIntention = connect(mapToProps)(WriteIntentionComp)
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: theme.colors.green,
+    backgroundColor: theme.colors.purple,
     borderRadius: 20,
     elevation: 12,
     paddingHorizontal: 15,

@@ -21,7 +21,7 @@ import { TIntention } from 'config/types/TIntention'
 import { TPrayer } from 'config/types/TPrayer'
 import { TInformationAelf, TLectureAelf } from 'config/types/TAelfApi'
 import { updateFavourites } from 'red/actions/FavouritesActions'
-import { getExponentToken } from 'utils/notification/NotificationManager'
+import { registerForNotificationsAsync } from 'utils/notification/NotificationManager'
 import { TNotif } from 'config/types/TNotif'
 import { updateNotifs } from 'red/actions/NotifsActions'
 import { getNominisSaint } from 'utils/api/rss_nominis'
@@ -104,8 +104,8 @@ const loadOnline = async (
     if (!user) user = await Storage.getDataAsync(Storage.Stored.USER)
     if (!user) return
     if (!user.devices || user.devices.length <= 0) {
-      const expoToken = await getExponentToken()
-      const dev = await registerDevice(token, expoToken.data)
+      const expoToken = await registerForNotificationsAsync()
+      const dev = await registerDevice(token, expoToken)
       if (dev) user.devices.push(dev)
     }
     dispatch(updateUser(user))

@@ -21,20 +21,22 @@ const DeviceBlock = ({
   })
 
   return (
-    <View style={styles.card}>
-      <View style={styles.cardLeft}>
-        <Text style={styles.text}>{device.name || device._id}</Text>
-        {expoToken && expoToken.data === device.token && (
-          <Text style={styles.thisText}>- This Device</Text>
-        )}
+    <View>
+      <View style={styles.card}>
+        <View style={styles.cardLeft}>
+          <Text style={styles.text}>{device.name || device._id}</Text>
+          {expoToken && expoToken.data === device.token && (
+            <Text style={styles.thisText}>- This Device</Text>
+          )}
+        </View>
+        <MaterialIcons.Button
+          name="phonelink-erase"
+          size={25}
+          borderRadius={20}
+          backgroundColor={theme.colors.blue}
+          onPress={() => deleteDevice(device._id)}
+        />
       </View>
-      <MaterialIcons.Button
-        name="phonelink-erase"
-        size={25}
-        borderRadius={20}
-        backgroundColor={theme.colors.blue}
-        onPress={() => deleteDevice(device._id)}
-      />
     </View>
   )
 }
@@ -47,6 +49,7 @@ const styles = StyleSheet.create({
     elevation: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginVertical: 5,
     paddingHorizontal: 20,
     paddingVertical: 15
   },

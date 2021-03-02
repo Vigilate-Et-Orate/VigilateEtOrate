@@ -1,5 +1,12 @@
-import React, { useState } from 'react'
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
+import React, { useRef, useState } from 'react'
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Animated,
+  Easing
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 
@@ -35,6 +42,7 @@ export const PrayerBlock = ({
   removeNotif
 }: PrayerBlockProps): JSX.Element => {
   const navigation = useNavigation()
+  const slideAnim = useRef(new Animated.Value(0)).current
 
   const [open, setOpen] = useState(false)
 
@@ -42,6 +50,23 @@ export const PrayerBlock = ({
     notifs.forEach((n) => {
       removeNotif(n._id)
     })
+  }
+  const slideOpen = () => {
+    Animated.timing(slideAnim, {
+      toValue: -280,
+      duration: 500,
+      useNativeDriver: true,
+      easing: Easing.ease
+    } as Animated.TimingAnimationConfig).start(() => setOpen(true))
+  }
+  const slideClose = () => {
+    setOpen(false)
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+      easing: Easing.ease
+    } as Animated.TimingAnimationConfig).start()
   }
 
   return (
@@ -86,11 +111,8 @@ export const PrayerBlock = ({
             </Text>
           </TouchableOpacity>
         </View>
-        <View
-          style={[
-            styles.card,
-            open ? { transform: [{ translateX: -280 }] } : {}
-          ]}
+        <Animated.View
+          style={[styles.card, { transform: [{ translateX: slideAnim }] }]}
         >
           <TouchableOpacity
             style={styles.text}
@@ -103,7 +125,9 @@ export const PrayerBlock = ({
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actions}
-            onPress={() => setOpen(!open)}
+            onPress={() => {
+              open ? slideClose() : slideOpen()
+            }}
           >
             <MaterialCommunityIcons
               name="dots-vertical"
@@ -113,7 +137,7 @@ export const PrayerBlock = ({
               borderRadius={100}
             />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </View>
       {open && (
         <View>

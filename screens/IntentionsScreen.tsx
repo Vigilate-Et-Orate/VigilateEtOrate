@@ -26,16 +26,22 @@ import {
   updateIntentions
 } from 'red/actions/IntentionsActions'
 import Page from 'components/layout/Page'
+import TimePicker from 'components/TimePicker'
+import { registerForNotification } from 'utils/api/api_server'
+import { addNotif } from 'red/actions/NotifsActions'
 
 const IntentionsScreen = ({
   intentions,
-  userId
+  userId,
+  token
 }: {
   intentions: TIntention[]
   userId: string | undefined
+  token: string
 }): JSX.Element => {
   const dispatch = useDispatch()
   const [open, openModal] = useState(false)
+  const [show, setShow] = useState(false)
   const [selectedIntention, setSI] = useState<TIntention>()
   const [edit, setEdit] = useState(false)
   const [intentionEdit, setIE] = useState('')
@@ -79,11 +85,27 @@ const IntentionsScreen = ({
     openModal(true)
     Vibration.vibrate(20)
   }
+  const addTheNotif = async (time: string | undefined) => {
+    if (!time || !selectedIntention) {
+      setShow(false)
+      return
+    }
+    const n = await registerForNotification(
+      token,
+      '',
+      selectedIntention.id,
+      'intention',
+      time
+    )
+    if (!n) return
+    dispatch(addNotif(n))
+    setShow(false)
+  }
 
   return (
     <Page
       title="Mes Intentions"
-      backgroundColor={theme.colors.green}
+      backgroundColor={theme.colors.purple}
       foregroundColor={theme.colors.blue}
     >
       <Modal
@@ -124,6 +146,12 @@ const IntentionsScreen = ({
                 <Text>Sauvegarder</Text>
               </Feather.Button>
             )}
+            <Feather.Button
+              name="bell"
+              backgroundColor={theme.colors.blue}
+              size={20}
+              onPress={() => setShow(true)}
+            />
           </View>
           {edit ? (
             <TextInput
@@ -137,6 +165,7 @@ const IntentionsScreen = ({
           )}
         </View>
       </Modal>
+      <TimePicker open={show} onClosePicker={addTheNotif} />
       <View>
         {intentions &&
           intentions.map((int) => (

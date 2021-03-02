@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { View, Platform } from 'react-native'
-import DateTimePicker from '@react-native-community/datetimepicker'
+import { View } from 'react-native'
 
 import { TPrayer } from 'config/types/TPrayer'
 import { PrayerBlock } from 'components/prayers/Block'
@@ -17,8 +16,9 @@ import {
   removeNotification,
   toggleFavourite
 } from 'utils/api/api_server'
-import { stringToTime, timeToString } from 'utils/time/timeManager'
+import { stringToTime } from 'utils/time/timeManager'
 import { addNotif, removeNotif } from 'red/actions/NotifsActions'
+import TimePicker from 'components/TimePicker'
 
 type PrayersScreenProps = {
   prayers: TPrayer[]
@@ -37,7 +37,6 @@ const PrayersScreen = ({
 }: PrayersScreenProps): JSX.Element => {
   const dispatch = useDispatch()
 
-  const [date, setDate] = useState(new Date(Date.now()))
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState<TPrayer>()
   const [i, si] = useState(false)
@@ -49,31 +48,21 @@ const PrayersScreen = ({
     dispatch(updateFavourite(res))
     forceReload()
   }
-  const onDateChange = async (event: any, selectedDate?: Date | undefined) => {
-    if (!event || event.type === 'dismissed') {
+  const addTheNotif = async (time: string | undefined) => {
+    if (!time || !currentPrayer) {
       setShow(false)
       return
     }
-    const currentDate = selectedDate || date
-    setShow(Platform.OS === 'ios')
-    setDate(currentDate)
-    if (currentPrayer) {
-      const t = timeToString({
-        hour: currentDate.getHours() + currentDate.getTimezoneOffset() / 60,
-        minute: currentDate.getMinutes(),
-        repeat: true,
-        daysLeft: 0
-      })
-      const n = await registerForNotification(
-        token,
-        currentPrayer.notificationContent,
-        currentPrayer._id,
-        'prayer',
-        t
-      )
-      if (!n) return
-      dispatch(addNotif(n))
-    }
+    const n = await registerForNotification(
+      token,
+      currentPrayer?.notificationContent,
+      currentPrayer?._id,
+      'prayer',
+      time
+    )
+    if (!n) return
+    dispatch(addNotif(n))
+    setShow(false)
   }
   const addNotification = (prayer: TPrayer) => {
     setCurrentPrayer(prayer)
@@ -93,15 +82,7 @@ const PrayersScreen = ({
       foregroundColor={theme.colors.blue}
     >
       <View>
-        {show && (
-          <DateTimePicker
-            mode="time"
-            value={date}
-            is24Hour
-            display="default"
-            onChange={onDateChange}
-          />
-        )}
+        <TimePicker open={show} onClosePicker={addTheNotif} />
         {prayers.map((p) => (
           <PrayerBlock
             key={p._id}
