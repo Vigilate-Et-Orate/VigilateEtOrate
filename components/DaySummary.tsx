@@ -56,7 +56,11 @@ const DayLign = ({ time, data }: DayNotif) => {
           date.getTime() > time ? { backgroundColor: theme.colors.gray } : {}
         ]}
       >
-        {data && <Text style={styles.cardText}>{data.text}</Text>}
+        {data && (
+          <Text numberOfLines={1} style={styles.cardText}>
+            {data.text}
+          </Text>
+        )}
       </View>
     </TouchableOpacity>
   )
@@ -74,7 +78,7 @@ const DaySummary = ({
   const [day, setDay] = useState<DayNotif[]>([])
 
   useEffect(() => {
-    const populated = notifs.map((n) => {
+    let populated = notifs.map((n) => {
       const time =
         typeof n.time === 'string'
           ? stringToTimestamp(n.time)
@@ -105,6 +109,7 @@ const DaySummary = ({
     })
     if (!populated) return
     populated.sort((a, b) => a?.time - b?.time)
+    populated = populated.filter((p) => p.time !== 0)
     setDay(populated)
   }, [notifs])
 

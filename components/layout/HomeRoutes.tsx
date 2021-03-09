@@ -45,7 +45,7 @@ const tabsNameIcon = [
 
 const bgColours = [
   theme.colors.blue,
-  theme.colors.purple,
+  theme.colors.green,
   theme.colors.yellow,
   theme.colors.red
 ]
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   },
   navBackground: {
     borderRadius: 40,
-    bottom: 40,
+    bottom: 20,
     elevation: 20,
     flexDirection: 'row',
     height: 60,

@@ -129,6 +129,13 @@ export const PrayerBlock = ({
               open ? slideClose() : slideOpen()
             }}
           >
+            {notifs.length > 0 && (
+              <MaterialCommunityIcons
+                name="bell"
+                size={15}
+                color={theme.colors.blue}
+              />
+            )}
             <MaterialCommunityIcons
               name="dots-vertical"
               size={25}
@@ -182,8 +189,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   actions: {
+    alignItems: 'center',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     justifyContent: 'center',
     width: '10%'
   },

@@ -6,20 +6,18 @@ import {
   TouchableOpacity,
   StyleSheet
 } from 'react-native'
-import * as Analytics from 'expo-firebase-analytics'
-import { MaterialIcons } from '@expo/vector-icons'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import { TIntention } from 'config/types/TIntention'
 import theme from 'config/theme'
-import { removeIntentions } from 'utils/api/api_firebase'
-import { connect, useDispatch } from 'react-redux'
-import { deleteIntentions } from 'red/actions/IntentionsActions'
+import { connect } from 'react-redux'
 import { RootState } from 'red/reducers/RootReducer'
 
 // Types
 export type IntentionCardProps = {
   intention: TIntention
-  onLongPress: () => void
+  hasNotif: boolean
+  onPress: () => void
 }
 
 export type WriteIntentionProps = {
@@ -30,30 +28,25 @@ export type WriteIntentionProps = {
 // Components
 export const IntentionCard = ({
   intention,
-  onLongPress
-}: IntentionCardProps): JSX.Element => {
-  const dispatch = useDispatch()
-
-  return (
-    <TouchableOpacity style={styles.cardIntention} onLongPress={onLongPress}>
-      <View style={styles.cardIntentionLeft}>
-        <Text>{intention.intention}</Text>
-      </View>
-      <TouchableOpacity
-        style={styles.cardRightButton}
-        onPress={() => {
-          Analytics.logEvent('intention', {
-            type: 'dismissed'
-          })
-          removeIntentions(intention.id)
-          dispatch(deleteIntentions(intention))
-        }}
-      >
-        <MaterialIcons name="done" size={20} color="green" />
-      </TouchableOpacity>
+  hasNotif,
+  onPress
+}: IntentionCardProps): JSX.Element => (
+  <TouchableOpacity style={styles.cardIntention}>
+    <View style={styles.cardIntentionLeft}>
+      <Text>{intention.intention}</Text>
+    </View>
+    <TouchableOpacity style={styles.cardRightButton} onPress={onPress}>
+      {hasNotif && (
+        <MaterialCommunityIcons
+          name="bell"
+          size={15}
+          color={theme.colors.blue}
+        />
+      )}
+      <MaterialCommunityIcons name="dots-vertical" size={25} color="green" />
     </TouchableOpacity>
-  )
-}
+  </TouchableOpacity>
+)
 
 const WriteIntentionComp = ({
   addIntention,
@@ -101,7 +94,7 @@ export const WriteIntention = connect(mapToProps)(WriteIntentionComp)
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: theme.colors.purple,
+    backgroundColor: theme.colors.green,
     borderRadius: 20,
     elevation: 12,
     paddingHorizontal: 15,
@@ -149,8 +142,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     borderRadius: 50,
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theme.colors.gray
+    alignItems: 'center'
   },
   input: {
     borderRadius: 3,

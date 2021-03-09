@@ -34,6 +34,7 @@ const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
       backgroundColor={theme.colors.blue}
       foregroundColor={theme.colors.lightBlue}
       home
+      refresh
       rightComponent={
         <React.Fragment>
           <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
@@ -48,17 +49,17 @@ const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
     >
       <View>
         {user && (
-          <React.Fragment>
-            <Text style={styles.h2}>Bonjour</Text>
+          <View style={styles.row}>
+            <Text style={styles.h1}>Bonjour</Text>
             <Text style={styles.h1}>{user.firstname} !</Text>
-          </React.Fragment>
+          </View>
         )}
         {evangile && (
           <React.Fragment>
             <WelcomeCard evangile={evangile.titre} />
           </React.Fragment>
         )}
-        <Text style={styles.h3}>Résumé de la journée</Text>
+        <Text style={styles.h2}>Résumé de la journée</Text>
         <ScrollView style={styles.container}>
           <DaySummary />
         </ScrollView>
@@ -69,15 +70,17 @@ const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
 
 const styles = StyleSheet.create({
   container: { height: 250 },
-  h1: { color: theme.colors.white, fontSize: 26 },
+  h1: { color: theme.colors.white, fontSize: 24, marginRight: 10 },
   h2: {
     color: theme.colors.white,
-    fontSize: 18
+    fontSize: 18,
+    marginBottom: 10,
+    marginRight: 10
   },
-  h3: {
-    color: theme.colors.white,
-    fontSize: 28,
-    marginVertical: 10
+  row: {
+    alignItems: 'flex-end',
+    display: 'flex',
+    flexDirection: 'row'
   }
 })
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View } from 'react-native'
+import { ScrollView } from 'react-native'
 
 import { TPrayer } from 'config/types/TPrayer'
 import { PrayerBlock } from 'components/prayers/Block'
@@ -19,6 +19,7 @@ import {
 import { stringToTime } from 'utils/time/timeManager'
 import { addNotif, removeNotif } from 'red/actions/NotifsActions'
 import TimePicker from 'components/TimePicker'
+import BottomSpace from 'elements/layout/BottomSpace'
 
 type PrayersScreenProps = {
   prayers: TPrayer[]
@@ -81,7 +82,7 @@ const PrayersScreen = ({
       backgroundColor={theme.colors.yellow}
       foregroundColor={theme.colors.blue}
     >
-      <View>
+      <ScrollView>
         <TimePicker open={show} onClosePicker={addTheNotif} />
         {prayers.map((p) => (
           <PrayerBlock
@@ -100,7 +101,8 @@ const PrayersScreen = ({
             removeNotif={removeN}
           />
         ))}
-      </View>
+        <BottomSpace />
+      </ScrollView>
     </Page>
   )
 }

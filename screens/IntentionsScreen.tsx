@@ -27,20 +27,27 @@ import {
 } from 'red/actions/IntentionsActions'
 import Page from 'components/layout/Page'
 import TimePicker from 'components/TimePicker'
-import { registerForNotification } from 'utils/api/api_server'
-import { addNotif } from 'red/actions/NotifsActions'
+import {
+  registerForNotification,
+  removeNotification
+} from 'utils/api/api_server'
+import { addNotif, updateNotifs } from 'red/actions/NotifsActions'
+import { TNotif } from 'config/types/TNotif'
 
 const IntentionsScreen = ({
   intentions,
   userId,
-  token
+  token,
+  notifs
 }: {
   intentions: TIntention[]
   userId: string | undefined
   token: string
+  notifs: TNotif[]
 }): JSX.Element => {
   const dispatch = useDispatch()
   const [open, openModal] = useState(false)
+  const [preDelete, openPreDelete] = useState(false)
   const [show, setShow] = useState(false)
   const [selectedIntention, setSI] = useState<TIntention>()
   const [edit, setEdit] = useState(false)
@@ -101,11 +108,25 @@ const IntentionsScreen = ({
     dispatch(addNotif(n))
     setShow(false)
   }
+  const removeNotif = () => {
+    const tmpNotif = notifs.filter((n) => n.itemId !== id)
+    const id = selectedIntention?.id
+    const notifId = notifs.find((n) => n.itemId === id)?._id
+    if (!notifId) return
+    const res = removeNotification(token, notifId)
+    if (!res) return
+    dispatch(updateNotifs(tmpNotif))
+    openModal(false)
+  }
+  const hasNotif = (id: string): boolean => {
+    const n = notifs.find((n) => n.itemId === id)
+    return n ? true : false
+  }
 
   return (
     <Page
       title="Mes Intentions"
-      backgroundColor={theme.colors.purple}
+      backgroundColor={theme.colors.green}
       foregroundColor={theme.colors.blue}
     >
       <Modal
@@ -122,7 +143,7 @@ const IntentionsScreen = ({
               backgroundColor={theme.colors.blue}
               name="trash"
               size={20}
-              onPress={deleteIntention}
+              onPress={() => openPreDelete(true)}
             />
             <Feather.Button
               backgroundColor={theme.colors.blue}
@@ -136,6 +157,22 @@ const IntentionsScreen = ({
               size={20}
               onPress={shareIntention}
             />
+            {!hasNotif(selectedIntention?.id || '') && (
+              <Feather.Button
+                name="bell"
+                backgroundColor={theme.colors.blue}
+                size={20}
+                onPress={() => setShow(true)}
+              />
+            )}
+            {hasNotif(selectedIntention?.id || '') && (
+              <Feather.Button
+                name="bell-off"
+                backgroundColor={theme.colors.blue}
+                size={20}
+                onPress={removeNotif}
+              />
+            )}
             {edit && (
               <Feather.Button
                 backgroundColor={theme.colors.blue}
@@ -143,15 +180,9 @@ const IntentionsScreen = ({
                 size={20}
                 onPress={updateInt}
               >
-                <Text>Sauvegarder</Text>
+                <Text style={styles.buttonText}>Sauvegarder</Text>
               </Feather.Button>
             )}
-            <Feather.Button
-              name="bell"
-              backgroundColor={theme.colors.blue}
-              size={20}
-              onPress={() => setShow(true)}
-            />
           </View>
           {edit ? (
             <TextInput
@@ -165,6 +196,35 @@ const IntentionsScreen = ({
           )}
         </View>
       </Modal>
+      <Modal open={preDelete} onClose={() => openPreDelete(!preDelete)}>
+        <View style={styles.container}>
+          <View style={styles.actionsDelete}>
+            <Feather
+              name="trash"
+              size={20}
+              color={theme.colors.white}
+              onPress={() => {
+                removeNotif()
+                deleteIntention()
+                openPreDelete(false)
+              }}
+            >
+              <Text style={styles.buttonText}>Oui supprimer</Text>
+            </Feather>
+            <Feather
+              name="x"
+              size={20}
+              color={theme.colors.white}
+              onPress={() => openPreDelete(false)}
+            >
+              <Text style={styles.buttonText}>Oups ! Non je ne veux pas</Text>
+            </Feather>
+          </View>
+          <Text style={styles.modalText}>
+            Etes vous sûr de vouloir supprimer cette intention ?
+          </Text>
+        </View>
+      </Modal>
       <TimePicker open={show} onClosePicker={addTheNotif} />
       <View>
         {intentions &&
@@ -172,7 +232,8 @@ const IntentionsScreen = ({
             <IntentionCard
               key={int.id}
               intention={int}
-              onLongPress={() => focusIntention(int.id)}
+              hasNotif={hasNotif(int.id)}
+              onPress={() => focusIntention(int.id)}
             />
           ))}
       </View>
@@ -186,6 +247,17 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row-reverse',
     marginBottom: 15
+  },
+  actionsDelete: {
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    marginBottom: 25
+  },
+  buttonText: {
+    color: theme.colors.white,
+    fontSize: 14,
+    marginLeft: 5
   },
   container: {
     display: 'flex',
@@ -206,7 +278,8 @@ const styles = StyleSheet.create({
 
 const mapToProps = (state: RootState) => ({
   intentions: state.intentions.intentions,
-  userId: state.user.user?.id
+  userId: state.user.user?.id,
+  notifs: state.notifs.notifs
 })
 
 export default connect(mapToProps)(IntentionsScreen)

@@ -25,6 +25,7 @@ export type PageProps = {
   rightComponent?: JSX.Element
   home?: boolean
   back?: boolean
+  refresh?: boolean
   saint: TNominisSaint | undefined
   children: JSX.Element | JSX.Element[]
 }
@@ -36,6 +37,7 @@ const Page = ({
   rightComponent,
   home,
   back,
+  refresh,
   saint,
   children
 }: PageProps): JSX.Element => {
@@ -68,11 +70,13 @@ const Page = ({
         }
       ]}
       refreshControl={
-        <RefreshControl
-          colors={[theme.colors.yellow, theme.colors.blue, theme.colors.red]}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
+        refresh ? (
+          <RefreshControl
+            colors={[theme.colors.yellow, theme.colors.blue, theme.colors.red]}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        ) : undefined
       }
     >
       <View style={styles.header}>
@@ -201,7 +205,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'space-between',
     marginHorizontal: 20,
-    marginVertical: 15,
+    marginVertical: 10,
     paddingHorizontal: 15,
     paddingVertical: 2
   },

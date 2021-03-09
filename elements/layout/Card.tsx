@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
   button: {
     alignSelf: 'flex-end',
-    padding: 10
+    padding: 5
   },
   card: {
     backgroundColor: theme.colors.white,
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     elevation: 10,
     margin: 10,
     paddingBottom: 10,
-    paddingHorizontal: 15,
-    paddingTop: 15,
+    paddingHorizontal: 12,
+    paddingTop: 12,
     shadowOffset: {
       width: 50,
       height: 50

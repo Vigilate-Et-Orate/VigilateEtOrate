@@ -14,7 +14,7 @@ const GospelScreen = ({
   evangile: TLectureAelf | undefined
 }): JSX.Element => {
   return (
-    <Page title="Evangile" backgroundColor={theme.colors.blue}>
+    <Page title="Evangile" backgroundColor={theme.colors.blue} back>
       <ScrollView style={styles.view}>
         <Text style={styles.title}>{evangile?.titre}</Text>
         <Text style={styles.reference}>{evangile?.ref}</Text>
