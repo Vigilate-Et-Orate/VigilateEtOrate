@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
 import { TNotif } from 'config/types/TNotif'
@@ -12,6 +12,7 @@ import {
   timeToTimestamp
 } from 'utils/time/timeManager'
 import { useNavigation } from '@react-navigation/native'
+import { firestore } from 'firebase'
 
 type DayNotif = {
   time: number
@@ -83,12 +84,13 @@ const DaySummary = ({
         typeof n.time === 'string'
           ? stringToTimestamp(n.time)
           : timeToTimestamp(n.time)
+      const itemId = (n.item as firestore.DocumentReference).id
       if (n.type === 'intention') {
-        const int = intentions.find((i) => i.id === n.itemId)
+        const int = intentions.find((i) => i.id === itemId)
         if (!int) return empty
         return {
           time,
-          data: { text: int.intention, key: n.itemId as string, prayer: false }
+          data: { text: int.intention, key: itemId as string, prayer: false }
         }
       } else if (n.type === 'prayer') {
         const prayer = prayers.find(
@@ -99,7 +101,7 @@ const DaySummary = ({
           time,
           data: {
             text: prayer.displayName,
-            key: (n.itemId as string) + time,
+            key: (itemId as string) + time,
             prayer: true,
             smug: prayer.name
           }
@@ -110,6 +112,7 @@ const DaySummary = ({
     if (!populated) return
     populated.sort((a, b) => a?.time - b?.time)
     populated = populated.filter((p) => p.time !== 0)
+    // populated = populated.filter((p) => (Math.abs(p.time - now) / 36e5) > 2)
     setDay(populated)
   }, [notifs])
 
@@ -118,10 +121,14 @@ const DaySummary = ({
       <View
         style={[
           styles.bar,
-          day.length > 5 ? { height: 52 * day.length } : styles.containerHeight
+          { height: Dimensions.get('window').height * 0.25 }
+          // day.length > 5 ? { height: 52 * day.length } : styles.containerHeight
         ]}
       ></View>
-      <View style={styles.summary}>
+      <View style={[
+        styles.summary,
+        { height: Dimensions.get('window').height * 0.25 }
+      ]}>
         {day &&
           day.map((d) => (
             <DayLign key={d.data?.key} time={d.time} data={d.data} />

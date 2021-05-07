@@ -15,9 +15,18 @@ import firebase from 'firebase'
 
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
-import { userLogin } from 'red/actions/UserActions'
+import { updateUser } from 'red/actions/UserActions'
 import { loadData } from 'utils/loadData/loadData'
-import { signInCredentials } from 'utils/api/api_server'
+import VOFire from 'utils/api/api_firebase'
+
+export const formatEmail = (s: string) => {
+    const char = s.charAt(s.length - 1)
+    let final = s;
+    if (char === ' ')
+      final = s.slice(0, -1)
+    final = final.toLowerCase()
+    return final
+  }
 
 const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
@@ -29,12 +38,15 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
 
   /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars  */
   const signIn = async () => {
+    const api = new VOFire()
     setLoading(true)
-    const res = await signInCredentials(email, password)
+    let _email = formatEmail(email)
+    setEmail(_email)
+    const res = await api.users.signIn(_email, password)
     if (!res) setLoading(false)
-    await firebase.auth().signInWithEmailAndPassword(email, password)
     if (res) {
-      dispatch(userLogin(res.token, res.user, false))
+      const user = await api.users.get()
+      if (user) dispatch(updateUser(user, false))
       loadData(
         dispatch,
         (_n: number) => {},
@@ -48,8 +60,12 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
 
   return (
     <View style={styles.background}>
-      <Image style={styles.image2} source={require('../assets/icon.png')} />
-      <Image style={styles.image} source={require('../assets/candle.png')} />
+      {!keyboard && 
+        <>
+          <Image style={styles.image2} source={require('../assets/icon.png')} />
+          <Image style={styles.image} source={require('../assets/candle.png')} />
+        </>
+      }
       <View style={[styles.card, keyboard ? styles.cardUp : styles.cardDown]}>
         <Text style={styles.title}>Se Connecter</Text>
         <View style={styles.inputs}>
@@ -129,7 +145,7 @@ const styles = StyleSheet.create({
   },
   cardUp: {
     height: '90%',
-    marginTop: '35%'
+    marginTop: '5%'
   },
   image: {
     height: '25%',

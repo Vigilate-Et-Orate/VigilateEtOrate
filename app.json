@@ -36,7 +36,7 @@
       "icon": "./assets/icon-medium.png",
       "backgroundColor": "#35415A",
       "useNextNotificationsApi": true,
-      "versionCode": 9,
+      "versionCode": 10,
       "splash": {
         "mdpi": "./assets/splashScreen.png",
         "hdpi": "./assets/splashScreen.png",

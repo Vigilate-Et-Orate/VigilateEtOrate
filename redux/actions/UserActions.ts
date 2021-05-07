@@ -24,21 +24,21 @@ export function updateUserToken(
   }
 }
 
-export function userLogin(
-  token: string,
-  user: TUser,
-  store?: boolean
-): TUserActionTypes {
-  if (store) {
-    Storage.setDataAsync(Storage.Stored.TOKEN, token)
-    Storage.setDataAsync(Storage.Stored.USER, user)
-  }
-  return {
-    type: CONST.USER.USER_LOGIN,
-    token,
-    user
-  }
-}
+// export function userLogin(
+//   token: string,
+//   user: TUser,
+//   store?: boolean
+// ): TUserActionTypes {
+//   if (store) {
+//     Storage.setDataAsync(Storage.Stored.TOKEN, token)
+//     Storage.setDataAsync(Storage.Stored.USER, user)
+//   }
+//   return {
+//     type: CONST.USER.USER_LOGIN,
+//     token,
+//     user
+//   }
+// }
 
 export function userLogout(): TUserActionTypes {
   Storage.removeDataAsync(Storage.Stored.USER)

@@ -18,6 +18,7 @@ import { userLogin } from 'red/actions/UserActions'
 import { RootState } from 'red/reducers/RootReducer'
 import { registerCredentials } from 'utils/api/api_server'
 import { loadData } from 'utils/loadData/loadData'
+import { formatEmail } from 'screens/SignIn'
 
 const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
@@ -32,9 +33,11 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
   const register = async () => {
     setLoading(true)
-    const res = await registerCredentials(email, firstname, lastname, password)
+    let _email = formatEmail(email)
+    setEmail(_email)
+    const res = await registerCredentials(_email, firstname, lastname, password)
     if (!res) setLoading(false)
-    await firebase.auth().signInWithEmailAndPassword(email, password)
+    await firebase.auth().signInWithEmailAndPassword(_email, password)
     if (res) {
       dispatch(userLogin(res.token, res.user, true))
       setTimeout(() => {}, 500)

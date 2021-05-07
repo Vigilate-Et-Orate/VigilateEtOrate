@@ -1,18 +1,8 @@
 import { Dispatch } from 'redux'
-import { getNetworkStateAsync } from 'expo-network'
-
 import * as Storage from 'utils/storage/StorageManager'
 import { TUser } from 'config/types/User'
 import { updateUser } from 'red/actions/UserActions'
 import { updateIntentions } from 'red/actions/IntentionsActions'
-import {
-  getFavourites,
-  getNotifs,
-  getPrayers,
-  getUserData,
-  registerDevice
-} from 'utils/api/api_server'
-import { getIntentions } from 'utils/api/api_firebase'
 import { updatePrayers } from 'red/actions/PrayersActions'
 import { getDailyGospel } from 'utils/api/api_aelf'
 import { updateEvangile } from 'red/actions/EvangileActions'
@@ -25,6 +15,7 @@ import { registerForNotificationsAsync } from 'utils/notification/NotificationMa
 import { TNotif } from 'config/types/TNotif'
 import { updateNotifs } from 'red/actions/NotifsActions'
 import { getNominisSaint } from 'utils/api/rss_nominis'
+import VOFire from 'utils/api/api_firebase'
 
 const loadLocal = async (
   dispatch: Dispatch<any>,
@@ -75,15 +66,18 @@ const loadLocal = async (
 
 const loadOnline = async (
   dispatch: Dispatch<any>,
-  token: string,
+  // token: string,
   setProgress: (n: number) => void,
   setIsReady: (b: boolean) => void
 ) => {
   try {
-    let user: TUser | undefined | null = await getUserData(token)
+    console.warn('LOADING DATA')
+    const api = new VOFire()
+    let user: TUser | undefined | null = await api.users.get()
+    console.log('USER', user)
     if (user) dispatch(updateUser(user))
     setProgress(10)
-    const prayers = await getPrayers()
+    const prayers = await api.prayers.get()
     if (prayers) dispatch(updatePrayers(prayers))
     setProgress(30)
     const informations = await getNominisSaint()
@@ -92,23 +86,25 @@ const loadOnline = async (
     const evangile = await getDailyGospel()
     if (evangile) dispatch(updateEvangile(evangile))
     setProgress(50)
-    const favs = await getFavourites(token)
+    const favs = await api.favourites.getFavs()
+    console.log('FAVS', favs)
     if (favs) dispatch(updateFavourites(favs))
     setProgress(60)
-    const notifs = await getNotifs(token)
-    if (notifs) dispatch(updateNotifs(notifs))
-    setProgress(70)
-    const intentions = await getIntentions()
+    // const notifs = await api.notifications.get()
+    // console.log('NOTIFS', notifs)
+    // if (notifs) dispatch(updateNotifs(notifs))
+    // setProgress(70)
+    const intentions = await api.intentions.get()
     if (intentions) dispatch(updateIntentions(intentions))
     setProgress(80)
-    if (!user) user = await Storage.getDataAsync(Storage.Stored.USER)
-    if (!user) return
-    if (!user.devices || user.devices.length <= 0) {
-      const expoToken = await registerForNotificationsAsync()
-      const dev = await registerDevice(token, expoToken)
-      if (dev) user.devices.push(dev)
-    }
-    dispatch(updateUser(user))
+    // if (!user) user = await Storage.getDataAsync(Storage.Stored.USER)
+    // if (!user) return
+    // if (!user.devices || user.devices.length <= 0) {
+    //   const expoToken = await registerForNotificationsAsync()
+    //   const dev = await api.devices.add(expoToken)
+    //   if (dev) user.devices.push(dev)
+    // }
+    // dispatch(updateUser(user))
     setProgress(100)
     setIsReady(true)
   } catch (e) {
@@ -122,9 +118,9 @@ export async function loadData(
   setProgress: (n: number) => void,
   setIsReady: (b: boolean) => void
 ): Promise<void> {
-  const status = await getNetworkStateAsync()
-  const token = await Storage.getDataAsync<string>(Storage.Stored.TOKEN)
-  if (status.isInternetReachable && token)
-    await loadOnline(dispatch, token, setProgress, setIsReady)
-  else await loadLocal(dispatch, setProgress, setIsReady)
+  // const status = await getNetworkStateAsync()
+  // const token = await Storage.getDataAsync<string>(Storage.Stored.TOKEN)
+  // if (status.isInternetReachable && token)
+  await loadOnline(dispatch, setProgress, setIsReady)
+  // else await loadLocal(dispatch, setProgress, setIsReady)
 }

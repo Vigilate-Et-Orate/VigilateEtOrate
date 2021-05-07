@@ -7,7 +7,7 @@ export type TNotifTime = {
 }
 
 export type TPrayer = {
-  _id: string
+  id: string
   displayName: string
   name: string
   description: string

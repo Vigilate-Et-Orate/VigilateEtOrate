@@ -11,8 +11,8 @@ import { TPrayer } from 'config/types/TPrayer'
 import Page from 'components/layout/Page'
 import { updateFavourite } from 'red/actions/FavouritesActions'
 import { RootState } from 'red/reducers/RootReducer'
-import { toggleFavourite } from 'utils/api/api_server'
 import { isFavourite } from 'utils/favourites/favourites'
+import VOFire from 'utils/api/api_firebase'
 
 type Route = {
   key: string
@@ -49,15 +49,16 @@ const PrayerScreen = ({
 
   useEffect(() => {
     if (!prayer) return
-    setFaved(isFavourite(prayer._id, favourites))
+    setFaved(isFavourite(prayer.id, favourites))
     Analytics.logEvent('ReadingPrayer', {
       prayerName: prayer?.name
     })
   }, [])
 
   const toogleFav = async () => {
-    if (!prayer || !prayer._id || !userId) return
-    const res = await toggleFavourite(!faved, prayer._id, userId, token)
+    if (!prayer || !prayer.id || !userId) return
+    const api = new VOFire().favourites
+    const res = await api.toggle(prayer.id, !faved)
     if (!res) return
     dispatch(updateFavourite(res))
     setFaved(res.faved)

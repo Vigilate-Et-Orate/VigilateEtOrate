@@ -1,9 +1,10 @@
 import CONST from 'config/constants'
+import { firestore } from 'firebase'
 
 export type TIntention = {
   id: string
   intention: string
-  userId: string
+  user: firestore.DocumentReference
 }
 
 // Redux

@@ -26,6 +26,7 @@ import PrayersScreen from 'screens/PrayersScreen'
 import FavouriteScreen from 'screens/FavouriteScreen'
 import IntentionsScreen from 'screens/IntentionsScreen'
 import Home from 'screens/HomeScreen'
+import firebase from 'utils/firebase'
 
 // Tabs
 const Tabs = createMaterialTopTabNavigator()
@@ -113,13 +114,8 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const [loadedOnce, setLoadedOnce] = useState(false)
 
   useEffect(() => {
-    loadData(dispatch, setProgress, setIsReady)
-    Storage.getDataAsync(Storage.Stored.TOKEN).then((data) => {
-      if (!data) {
-        setIsReady(true)
-        navigation.navigate('Welcome')
-      }
-    })
+    if (!firebase.auth().currentUser) navigation.navigate('Welcome')
+    else loadData(dispatch, setProgress, setIsReady)
     if (!loadedOnce) {
       Notifications.setNotificationHandler({
         handleNotification: async () => ({

@@ -17,12 +17,8 @@ import Page from 'components/layout/Page'
 import Device from 'components/Device/Block'
 import { RootState } from 'red/reducers/RootReducer'
 import { updateUser, userLogout } from 'red/actions/UserActions'
-import {
-  registerDevice,
-  removeDevice,
-  updateUserInfo
-} from 'utils/api/api_server'
 import { registerForNotificationsAsync } from 'utils/notification/NotificationManager'
+import VOFire from 'utils/api/api_firebase'
 
 const Settings = ({
   user,
@@ -33,6 +29,7 @@ const Settings = ({
 }): JSX.Element => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const api = new VOFire()
 
   const [i, si] = useState(false)
   const [edit, setEdition] = useState(false)
@@ -51,7 +48,7 @@ const Settings = ({
   }
   const toggleEdition = async () => {
     if (edit) {
-      await updateUserInfo(token, lastname, firstname, email)
+      await api.users.update(email, firstname, lastname)
       const tmpUser = user
       if (!tmpUser) return
       tmpUser.lastname = lastname
@@ -62,16 +59,16 @@ const Settings = ({
     setEdition(!edit)
   }
   const deleteDevice = async (id: string) => {
-    await removeDevice(token, id)
+    await api.devices.delete(id)
     const tmpUser = user
     if (!tmpUser) return
-    tmpUser.devices = tmpUser.devices.filter((d) => d._id !== id)
+    tmpUser.devices = tmpUser.devices.filter((d) => d.id !== id)
     dispatch(updateUser(tmpUser))
     forceReload()
   }
   const addThisDev = async () => {
     const expoPushToken = await registerForNotificationsAsync()
-    const dev = await registerDevice(token, expoPushToken)
+    const dev = await api.devices.add(expoPushToken)
     const tmpUser = user
     if (!dev || !tmpUser) return
     tmpUser.devices.push(dev)
@@ -148,7 +145,7 @@ const Settings = ({
         <View style={styles.devices}>
           {user?.devices &&
             user.devices.map((d) => (
-              <Device key={d._id} device={d} deleteDevice={deleteDevice} />
+              <Device key={d.id} device={d} deleteDevice={deleteDevice} />
             ))}
         </View>
         <View style={styles.addDevice}>

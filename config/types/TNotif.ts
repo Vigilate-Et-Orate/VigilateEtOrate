@@ -2,13 +2,14 @@ import { TTime } from 'utils/time/timeManager'
 import CONST from 'config/constants'
 import { TIntention } from './TIntention'
 import { TPrayer } from './TPrayer'
+import { firestore } from 'firebase'
 
 export type TNotif = {
-  _id: string
-  userId: string
-  notificationContent: string
+  id?: string
+  user: firestore.DocumentReference | string
+  notificationContent: firestore.DocumentReference | string
   type: 'intention' | 'prayer'
-  itemId: string | TIntention | TPrayer
+  item: string | TIntention | TPrayer | firestore.DocumentReference
   time: TTime | string
 }
 

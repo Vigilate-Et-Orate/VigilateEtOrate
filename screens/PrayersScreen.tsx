@@ -11,15 +11,11 @@ import { TNotif } from 'config/types/TNotif'
 import { isFavourite } from 'utils/favourites/favourites'
 import { TFavourite } from 'config/types/TFavourite'
 import { updateFavourite } from 'red/actions/FavouritesActions'
-import {
-  registerForNotification,
-  removeNotification,
-  toggleFavourite
-} from 'utils/api/api_server'
 import { stringToTime } from 'utils/time/timeManager'
 import { addNotif, removeNotif } from 'red/actions/NotifsActions'
 import TimePicker from 'components/TimePicker'
 import BottomSpace from 'elements/layout/BottomSpace'
+import VOFire from 'utils/api/api_firebase'
 
 type PrayersScreenProps = {
   prayers: TPrayer[]
@@ -37,6 +33,7 @@ const PrayersScreen = ({
   token
 }: PrayersScreenProps): JSX.Element => {
   const dispatch = useDispatch()
+  const api = new VOFire()
 
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState<TPrayer>()
@@ -44,7 +41,7 @@ const PrayersScreen = ({
 
   const forceReload = () => si(!i)
   const toggleFav = async (id: string, fav: boolean) => {
-    const res = await toggleFavourite(!fav, id, userId || '', token)
+    const res = await api.favourites.toggle(id, !fav)
     if (!res) return
     dispatch(updateFavourite(res))
     forceReload()
@@ -54,12 +51,11 @@ const PrayersScreen = ({
       setShow(false)
       return
     }
-    const n = await registerForNotification(
-      token,
-      currentPrayer?.notificationContent,
-      currentPrayer?._id,
+    const n = await api.notifications.create(
+      currentPrayer?.id,
       'prayer',
-      time
+      time,
+      currentPrayer?.notificationContent
     )
     if (!n) return
     dispatch(addNotif(n))
@@ -70,8 +66,8 @@ const PrayersScreen = ({
     setShow(true)
   }
   const removeN = async (id: string) => {
-    await removeNotification(token, id)
-    const n = notifs.find((n) => n._id === id)
+    await api.notifications.delete(id)
+    const n = notifs.find((n) => n.id === id)
     if (!n) return
     dispatch(removeNotif(n))
   }
@@ -86,11 +82,11 @@ const PrayersScreen = ({
         <TimePicker open={show} onClosePicker={addTheNotif} />
         {prayers.map((p) => (
           <PrayerBlock
-            key={p._id}
+            key={p.id}
             prayer={p}
-            fav={isFavourite(p._id, favs)}
+            fav={isFavourite(p.id, favs)}
             notifs={notifs
-              .filter((n) => n.itemId === p._id)
+              .filter((n) => n.item === p.id)
               .sort(
                 (a, b) =>
                   (stringToTime(a.time as string)?.hour || 0) -

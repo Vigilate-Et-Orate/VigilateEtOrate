@@ -1,5 +1,5 @@
 export type TDevice = {
-  _id: ''
+  id?: string
   name?: string
   token: string
 }
