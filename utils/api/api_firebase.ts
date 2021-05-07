@@ -1,7 +1,6 @@
 import firebase from 'utils/firebase'
 import { TIntention } from 'config/types/TIntention'
 import { TUser } from 'config/types/User'
-import { FirebaseError } from 'firebase'
 import { TDevice } from 'config/types/TDevices'
 import { TPrayer } from 'config/types/TPrayer'
 import { TFavourite } from 'config/types/TFavourite'
@@ -74,13 +73,10 @@ class IntentionController {
       .firestore()
       .collection(usersCollection)
       .doc(currentUser.uid)
-    const newIntRef = firebase
-      .firestore()
-      .collection(intentionsCollection)
-      .add({
-        intention: content,
-        user: userRef
-      })
+    await firebase.firestore().collection(intentionsCollection).add({
+      intention: content,
+      user: userRef
+    })
   }
   // UPDATE
   async update(intention: TIntention): Promise<void> {
@@ -94,11 +90,7 @@ class IntentionController {
   }
   // DELETE
   async delete(id: string): Promise<void> {
-    const intRef = firebase
-      .firestore()
-      .collection(intentionsCollection)
-      .doc(id)
-      .delete()
+    await firebase.firestore().collection(intentionsCollection).doc(id).delete()
   }
 }
 
@@ -107,7 +99,7 @@ class UsersController {
     const fireUser = await firebase
       .auth()
       .createUserWithEmailAndPassword(user.email, password)
-      .catch((error: FirebaseError) => {
+      .catch((error) => {
         const errCode = error.code
         if (errCode == 'auth/weak-password') console.error('Weak Password')
       })
@@ -145,7 +137,7 @@ class UsersController {
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password)
     } catch (e) {
-      console.log('error signing in: ', e.message)
+      console.error('error signing in: ', e.message)
       return false
     }
     return true
@@ -163,6 +155,7 @@ class UsersController {
       firstname: userSnap.get('firstName'),
       lastname: userSnap.get('lastName'),
       admin: userSnap.get('admin'),
+      email: currentUser.email,
       id: currentUser.uid
     } as TUser
   }
@@ -179,7 +172,7 @@ class DevicesController {
     // check if device already is registered
     const checkDev = await firebase
       .firestore()
-      .collection(devicesCollection)
+      .collectionGroup(devicesCollection)
       .where('token', '==', token)
       .get()
     if (!checkDev.empty) return
@@ -187,48 +180,52 @@ class DevicesController {
       name: Device.deviceName,
       token
     }
-    const newDev = await firebase
+    const newDev = await userRef.collection(devicesCollection).add(dev)
+    return { id: newDev.id, name: dev.name, token: dev.token } as TDevice
+  }
+
+  async check(token: string): Promise<boolean> {
+    const dev = await firebase
       .firestore()
-      .collection(devicesCollection)
-      .add(dev)
-    // add device to user
-    const userSnap = await userRef.get()
-    const userDevs: firebase.firestore.DocumentReference[] = userSnap.get(
-      'devices'
-    )
-    userDevs.push(newDev)
-    await userRef.update({
-      devices: userDevs
-    })
-    return { _id: newDev.id, ...dev } as TDevice
+      .collectionGroup(devicesCollection)
+      .where('token', '==', token)
+      .limit(1)
+      .get()
+    return !dev.empty
   }
 
   async update(name: string, id: string) {
-    await firebase.firestore().collection(devicesCollection).doc(id).update({
-      name
-    })
+    const currentUser = firebase.auth().currentUser
+    if (!currentUser) return
+    await firebase
+      .firestore()
+      .collection(usersCollection)
+      .doc(currentUser.uid)
+      .collection(devicesCollection)
+      .doc(id)
+      .update({
+        name
+      })
   }
 
   async get() {
     const currentUser = firebase.auth().currentUser
     if (!currentUser) return
-    const userSnap = await firebase
+    const devsSnap = await firebase
       .firestore()
       .collection(usersCollection)
       .doc(currentUser.uid)
+      .collection(devicesCollection)
       .get()
-    const devsRefs: firebase.firestore.DocumentReference[] = userSnap.get(
-      'devices'
-    )
-    const devices: TDevice[] = []
-    for (let i = 0; i < devsRefs.length; i++) {
-      const devSnap = await devsRefs[i].get()
-      devices.push({
-        name: devSnap.get('name'),
-        token: devSnap.get('token'),
-        id: devSnap.id
-      })
-    }
+    const devs: TDevice[] = devsSnap.docs.map((dev) => {
+      const data = dev.data()
+      return {
+        name: data.name,
+        token: data.token,
+        id: dev.id
+      } as TDevice
+    })
+    return devs
   }
 
   async delete(id: string) {
@@ -236,41 +233,7 @@ class DevicesController {
     if (!currentUser) return
     // get ref
     const devRef = firebase.firestore().collection(devicesCollection).doc(id)
-    // delete from user devices
-    const userRef = firebase
-      .firestore()
-      .collection(usersCollection)
-      .doc(currentUser.uid)
-    let userDevs: firebase.firestore.DocumentReference[] = await (
-      await userRef.get()
-    ).get('devices')
-    userDevs = userDevs.filter((doc) => doc.id != devRef.id)
-    userRef.update({
-      devices: userDevs
-    })
-    devRef.delete()
-  }
-}
-
-class PrayersController {
-  async get() {
-    const prayersSnap = await firebase
-      .firestore()
-      .collection(prayersCollection)
-      .get()
-    const prayers: TPrayer[] = prayersSnap.docs.map((doc) => {
-      const data = doc.data()
-      return {
-        id: doc.id,
-        displayName: data.displayName,
-        name: data.name,
-        notificationContent: (data.notificationContent as firebase.firestore.DocumentReference)
-          .id,
-        description: data.description,
-        content: data.content
-      } as TPrayer
-    })
-    return prayers
+    await devRef.delete()
   }
 }
 
@@ -286,16 +249,28 @@ class PrayerContentController {
       body: prayerContentSnap.get('body'),
       sound: prayerContentSnap.get('sound')
     }
+    return prayerContent
   }
+}
 
-  async getRefByPrayer(prayerId: string) {
-    const prayerSnap = await firebase
+class PrayersController {
+  async get() {
+    const prayersSnap = await firebase
       .firestore()
       .collection(prayersCollection)
-      .doc(prayerId)
       .get()
-    const prayerContentRef = prayerSnap.get('prayerContent')
-    return prayerContentRef
+    const prayers: TPrayer[] = prayersSnap.docs.map((doc) => {
+      const data = doc.data()
+      return {
+        id: doc.id,
+        displayName: data.displayName,
+        name: data.name,
+        notificationContent: data.notificationContentId,
+        description: data.description,
+        content: data.content
+      } as TPrayer
+    })
+    return prayers
   }
 }
 
@@ -303,22 +278,17 @@ class FavouriteController {
   async getFavs() {
     const currentUser = firebase.auth().currentUser
     if (!currentUser) return
-    const userRef = firebase
-      .firestore()
-      .collection(usersCollection)
-      .doc(currentUser.uid)
     const favsSnap = await firebase
       .firestore()
       .collection(favsCollection)
-      .where('user', '==', userRef)
+      .where('user', '==', currentUser.uid)
       .get()
     const favs: TFavourite[] = favsSnap.docs.map(
       (doc) =>
         ({
           id: doc.id,
-          prayer: (doc.get('prayer') as firebase.firestore.DocumentReference)
-            .id,
-          user: (doc.get('user') as firebase.firestore.DocumentReference).id,
+          prayer: doc.get('prayer'),
+          user: doc.get('user'),
           faved: doc.get('faved')
         } as TFavourite)
     )
@@ -331,19 +301,11 @@ class FavouriteController {
   ): Promise<TFavourite | undefined> {
     const currentUser = firebase.auth().currentUser
     if (!currentUser) return
-    const userRef = firebase
-      .firestore()
-      .collection(usersCollection)
-      .doc(currentUser.uid)
-    const prayerRef = firebase
-      .firestore()
-      .collection(prayersCollection)
-      .doc(prayerId)
     const favSnap = await firebase
       .firestore()
       .collection(favsCollection)
-      .where('user', '==', userRef)
-      .where('prayer', '==', prayerRef)
+      .where('user', '==', currentUser.uid)
+      .where('prayer', '==', prayerId)
       .limit(1)
       .get()
     if (!favSnap.empty) {
@@ -357,8 +319,8 @@ class FavouriteController {
       } as TFavourite
     } else {
       const favRef = await firebase.firestore().collection(favsCollection).add({
-        prayer: prayerRef,
-        user: userRef,
+        prayer: prayerId,
+        user: currentUser.uid,
         faved
       })
       const favSnap = await favRef.get()
@@ -381,27 +343,18 @@ class NotificationController {
   ) {
     const currentUser = firebase.auth().currentUser
     if (!currentUser) return
-    const userRef = firebase
-      .firestore()
-      .collection(usersCollection)
-      .doc(currentUser.uid)
-    const itemRef = firebase
-      .firestore()
-      .collection(type == 'prayer' ? prayersCollection : intentionsCollection)
-      .doc(itemId)
-    const notificationContentRef = firebase
-      .firestore()
-      .collection(prayerContentCollection)
-      .doc(notificationContentId)
-    const notif: TNotif = {
-      item: itemRef,
-      notificationContent: notificationContentRef,
+    const notif = {
+      item: itemId,
+      notificationContent: notificationContentId,
       type,
       time,
-      user: userRef
+      user: currentUser.uid
     }
-    await firebase.firestore().collection(notificationsCollection).add(notif)
-    return notif
+    const newNotif = await firebase
+      .firestore()
+      .collection(notificationsCollection)
+      .add(notif)
+    return { id: newNotif.id, ...notif } as TNotif
   }
 
   async delete(id: string) {
@@ -415,18 +368,20 @@ class NotificationController {
   async get() {
     const currentUser = firebase.auth().currentUser
     if (!currentUser) return
-    const userRef = firebase
-      .firestore()
-      .collection(usersCollection)
-      .doc(currentUser.uid)
     const notifsSnap = await firebase
       .firestore()
       .collection(notificationsCollection)
-      .where('user', '==', userRef)
+      .where('user', '==', currentUser.uid)
       .get()
     const notifs: TNotif[] = notifsSnap.docs.map((doc) => {
       const data = doc.data()
-      return { id: doc.id, ...data } as TNotif
+      return {
+        id: doc.id,
+        item: data.item,
+        type: data.type,
+        time: data.time,
+        notificationContent: data.notificationContent
+      } as TNotif
     })
     return notifs
   }

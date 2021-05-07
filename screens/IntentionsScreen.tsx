@@ -23,13 +23,12 @@ import {
 } from 'red/actions/IntentionsActions'
 import Page from 'components/layout/Page'
 import TimePicker from 'components/TimePicker'
-import { addNotif, updateNotifs } from 'red/actions/NotifsActions'
+import { addNotif, removeNotif } from 'red/actions/NotifsActions'
 import { TNotif } from 'config/types/TNotif'
 
 const IntentionsScreen = ({
   intentions,
   userId,
-  token,
   notifs
 }: {
   intentions: TIntention[]
@@ -100,14 +99,13 @@ const IntentionsScreen = ({
     dispatch(addNotif(n))
     setShow(false)
   }
-  const removeNotif = () => {
-    const tmpNotif = notifs.filter((n) => n.item !== id)
+  const removeNotifi = () => {
     const id = selectedIntention?.id
-    const notifId = notifs.find((n) => n.item === id)?.id
-    if (!notifId) return
-    const res = api.notifications.delete(notifId)
+    const notif = notifs.find((n) => n.item === id)
+    if (!notif) return
+    const res = api.notifications.delete(notif.id)
     if (!res) return
-    dispatch(updateNotifs(tmpNotif))
+    dispatch(removeNotif(notif))
     openModal(false)
   }
   const hasNotif = (id: string): boolean => {
@@ -162,7 +160,7 @@ const IntentionsScreen = ({
                 name="bell-off"
                 backgroundColor={theme.colors.blue}
                 size={20}
-                onPress={removeNotif}
+                onPress={removeNotifi}
               />
             )}
             {edit && (
@@ -196,7 +194,7 @@ const IntentionsScreen = ({
               size={20}
               color={theme.colors.white}
               onPress={() => {
-                removeNotif()
+                removeNotifi()
                 deleteIntention()
                 openPreDelete(false)
               }}

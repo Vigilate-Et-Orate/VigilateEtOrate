@@ -11,7 +11,6 @@ import {
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { connect, useDispatch } from 'react-redux'
-import firebase from 'firebase'
 
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
@@ -19,7 +18,7 @@ import { updateUser } from 'red/actions/UserActions'
 import { loadData } from 'utils/loadData/loadData'
 import VOFire from 'utils/api/api_firebase'
 
-export const formatEmail = (s: string) => {
+export const formatEmail = (s: string): string => {
   const char = s.charAt(s.length - 1)
   let final = s
   if (char === ' ') final = s.slice(0, -1)
@@ -46,11 +45,7 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
     if (res) {
       const user = await api.users.get()
       if (user) dispatch(updateUser(user, false))
-      loadData(
-        dispatch,
-        (_n: number) => {},
-        (_b: boolean) => {}
-      )
+      loadData(dispatch, () => {})
       setLoading(false)
       navigation.navigate('Home')
     }

@@ -25,7 +25,6 @@ type Route = {
 const PrayerScreen = ({
   route,
   userId,
-  token,
   favourites,
   prayers
 }: {
@@ -107,7 +106,6 @@ const styles = StyleSheet.create({
 
 const mapToProps = (state: RootState) => ({
   userId: state.user.user?.id,
-  token: state.user.token,
   favourites: state.favourites.favourites,
   prayers: state.prayers.prayers
 })

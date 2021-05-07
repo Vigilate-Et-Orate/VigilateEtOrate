@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import {
-  View,
-  TouchableOpacity,
-  Keyboard,
-  Text,
-  StyleSheet,
-  ImageBackground
-} from 'react-native'
+import { View, TouchableOpacity, Keyboard, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { FontAwesome5 } from '@expo/vector-icons'
 import * as Notifications from 'expo-notifications'
@@ -15,7 +8,6 @@ import * as Analytics from 'expo-firebase-analytics'
 import * as SplashScreen from 'expo-splash-screen'
 import { useDispatch, connect } from 'react-redux'
 
-import * as Storage from 'utils/storage/StorageManager'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
 import { updateKeyboard } from 'red/actions/KeyboardActions'
@@ -109,13 +101,17 @@ const MainTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
 const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
-  const [isReady, setIsReady] = useState(false)
-  const [progress, setProgress] = useState(0)
   const [loadedOnce, setLoadedOnce] = useState(false)
 
   useEffect(() => {
-    if (!firebase.auth().currentUser) navigation.navigate('Welcome')
-    else loadData(dispatch, setProgress, setIsReady)
+    firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        SplashScreen.hideAsync()
+        navigation.navigate('Welcome')
+      } else {
+        loadData(dispatch, () => SplashScreen.hideAsync())
+      }
+    })
     if (!loadedOnce) {
       Notifications.setNotificationHandler({
         handleNotification: async () => ({
@@ -151,30 +147,6 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
     }
   }, [])
 
-  if (!isReady) {
-    SplashScreen.hideAsync()
-    return (
-      <ImageBackground
-        source={require('../../assets/splashScreen.png')}
-        style={styles.image}
-      >
-        <View style={styles.loadingContainer}>
-          <View style={styles.loadingBar}>
-            <View
-              style={[
-                styles.loadingFill,
-                {
-                  width: `${progress}%`
-                }
-              ]}
-            ></View>
-          </View>
-          <Text style={styles.loadingText}>{progress}%</Text>
-        </View>
-      </ImageBackground>
-    )
-  }
-
   return (
     <Tabs.Navigator
       tabBar={(props) => (keyboard ? <View></View> : <MainTabBar {...props} />)}
@@ -204,34 +176,6 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
-  image: {
-    flex: 1,
-    justifyContent: 'center',
-    resizeMode: 'cover'
-  },
-  loadingBar: {
-    borderColor: theme.colors.white,
-    borderRadius: 20,
-    borderWidth: 1,
-    height: 10,
-    width: '100%'
-  },
-  loadingContainer: {
-    bottom: '20%',
-    paddingHorizontal: '15%',
-    position: 'absolute',
-    width: '100%',
-    zIndex: 40
-  },
-  loadingFill: {
-    backgroundColor: theme.colors.yellow,
-    borderRadius: 20,
-    height: '100%'
-  },
-  loadingText: {
-    color: theme.colors.white,
-    textAlign: 'center'
-  },
   navBackground: {
     borderRadius: 40,
     bottom: 20,

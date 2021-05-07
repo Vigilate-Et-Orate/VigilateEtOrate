@@ -14,18 +14,12 @@ import { RootState } from 'red/reducers/RootReducer'
 import { stringToTime } from 'utils/time/timeManager'
 import { updateFavourite } from 'red/actions/FavouritesActions'
 import { addNotif, removeNotif } from 'red/actions/NotifsActions'
-import {
-  registerForNotification,
-  removeNotification,
-  toggleFavourite
-} from 'utils/api/api_server'
+import VOFire from 'utils/api/api_firebase'
 
 const FavouriteScreen = ({
   favs,
   prayers,
-  notifs,
-  userId,
-  token
+  notifs
 }: {
   favs: TFavourite[]
   prayers: TPrayer[]
@@ -34,6 +28,7 @@ const FavouriteScreen = ({
   token: string
 }): JSX.Element => {
   const dispatch = useDispatch()
+  const api = new VOFire()
 
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState<TPrayer>()
@@ -41,7 +36,7 @@ const FavouriteScreen = ({
 
   const forceReload = () => si(!i)
   const toggleFav = async (id: string, fav: boolean) => {
-    const res = await toggleFavourite(!fav, id, userId || '', token)
+    const res = await api.favourites.toggle(id, !fav)
     if (!res) return
     dispatch(updateFavourite(res))
     forceReload()
@@ -51,8 +46,8 @@ const FavouriteScreen = ({
     setShow(true)
   }
   const removeN = async (id: string) => {
-    await removeNotification(token, id)
-    const n = notifs.find((n) => n._id === id)
+    await api.notifications.delete(id)
+    const n = notifs.find((n) => n.id === id)
     if (!n) return
     dispatch(removeNotif(n))
   }
@@ -61,12 +56,11 @@ const FavouriteScreen = ({
       setShow(false)
       return
     }
-    const n = await registerForNotification(
-      token,
-      currentPrayer?.notificationContent,
-      currentPrayer?._id,
+    const n = await api.notifications.create(
+      currentPrayer?.id,
       'prayer',
-      time
+      time,
+      currentPrayer?.notificationContent
     )
     if (!n) return
     dispatch(addNotif(n))
@@ -83,7 +77,7 @@ const FavouriteScreen = ({
         <TimePicker open={show} onClosePicker={addTheNotif} />
         {favs.length > 0 &&
           favs.map((f) => {
-            const p = prayers.find((p) => p._id === f.prayer)
+            const p = prayers.find((p) => p.id === f.prayer)
             if (!p) return
             return (
               <PrayerBlock
@@ -91,7 +85,7 @@ const FavouriteScreen = ({
                 prayer={p}
                 fav
                 notifs={notifs
-                  .filter((n) => n.itemId === p._id)
+                  .filter((n) => n.item === p.id)
                   .sort(
                     (a, b) =>
                       (stringToTime(a.time as string)?.hour || 0) -
@@ -133,9 +127,7 @@ const styles = StyleSheet.create({
 const mapToProps = (state: RootState) => ({
   favs: state.favourites.favourites.filter((f) => f.faved),
   prayers: state.prayers.prayers,
-  notifs: state.notifs.notifs,
-  userId: state.user.user?.id,
-  token: state.user.token
+  notifs: state.notifs.notifs
 })
 
 export default connect(mapToProps)(FavouriteScreen)

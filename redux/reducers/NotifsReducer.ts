@@ -25,8 +25,8 @@ const notifsReducer = (
       return { ...state, notifs: act.notifs }
     case CONST.NOTIF.NOTIFS_REMOVE: {
       act = action as INotifRemove
-      const id = act.notif._id
-      const index = state.notifs.findIndex((n) => n._id === id)
+      const id = act.notif.id
+      const index = state.notifs.findIndex((n) => n.id === id)
       if (index === state.notifs.length) return { ...state, notifs: [] }
       const newNotif = [
         ...state.notifs.slice(0, index),

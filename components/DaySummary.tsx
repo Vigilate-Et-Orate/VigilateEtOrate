@@ -18,7 +18,6 @@ import {
   timeToTimestamp
 } from 'utils/time/timeManager'
 import { useNavigation } from '@react-navigation/native'
-import { firestore } from 'firebase'
 
 type DayNotif = {
   time: number
@@ -90,7 +89,7 @@ const DaySummary = ({
         typeof n.time === 'string'
           ? stringToTimestamp(n.time)
           : timeToTimestamp(n.time)
-      const itemId = (n.item as firestore.DocumentReference).id
+      const itemId = n.item
       if (n.type === 'intention') {
         const int = intentions.find((i) => i.id === itemId)
         if (!int) return empty
@@ -118,18 +117,13 @@ const DaySummary = ({
     if (!populated) return
     populated.sort((a, b) => a?.time - b?.time)
     populated = populated.filter((p) => p.time !== 0)
-    // populated = populated.filter((p) => (Math.abs(p.time - now) / 36e5) > 2)
     setDay(populated)
-  }, [notifs])
+  }, [notifs, prayers, intentions])
 
   return (
     <View style={styles.container}>
       <View
-        style={[
-          styles.bar,
-          { height: Dimensions.get('window').height * 0.25 }
-          // day.length > 5 ? { height: 52 * day.length } : styles.containerHeight
-        ]}
+        style={[styles.bar, { height: Dimensions.get('window').height * 0.25 }]}
       ></View>
       <View
         style={[
@@ -167,9 +161,6 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'row'
-  },
-  containerHeight: {
-    height: 250
   },
   lignContainer: {
     display: 'flex',

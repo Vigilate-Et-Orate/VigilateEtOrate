@@ -24,7 +24,7 @@ const DeviceBlock = ({
     <View>
       <View style={styles.card}>
         <View style={styles.cardLeft}>
-          <Text style={styles.text}>{device.name || device._id}</Text>
+          <Text style={styles.text}>{device.name || device.id}</Text>
           {expoToken && expoToken.data === device.token && (
             <Text style={styles.thisText}>- This Device</Text>
           )}
@@ -34,7 +34,7 @@ const DeviceBlock = ({
           size={25}
           borderRadius={20}
           backgroundColor={theme.colors.blue}
-          onPress={() => deleteDevice(device._id)}
+          onPress={() => deleteDevice(device.id)}
         />
       </View>
     </View>

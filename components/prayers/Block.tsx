@@ -48,7 +48,7 @@ export const PrayerBlock = ({
 
   const removeAllNotif = () => {
     notifs.forEach((n) => {
-      removeNotif(n._id)
+      removeNotif(n.id)
     })
   }
   const slideOpen = () => {
@@ -99,7 +99,7 @@ export const PrayerBlock = ({
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => toggleFav(prayer._id, fav)}
+            onPress={() => toggleFav(prayer.id, fav)}
           >
             <MaterialCommunityIcons
               name="heart"
@@ -149,14 +149,14 @@ export const PrayerBlock = ({
       {open && (
         <View>
           {notifs.map((n) => (
-            <View key={n._id} style={styles.singleNotifLign}>
+            <View key={n.id} style={styles.singleNotifLign}>
               <Text style={{ color: theme.colors.white }}>
                 {stringTimeToReadable(n.time as string)}
               </Text>
               <MaterialIcons.Button
                 name="notifications-off"
                 backgroundColor={theme.colors.blue}
-                onPress={() => removeNotif(n._id)}
+                onPress={() => removeNotif(n.id)}
               >
                 <Text style={{ color: theme.colors.white }}>Supprimer</Text>
               </MaterialIcons.Button>

@@ -5,8 +5,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
-  ScrollView,
-  Dimensions
+  ScrollView
 } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { connect } from 'react-redux'
@@ -55,11 +54,7 @@ const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
             <Text style={styles.h1}>{user.firstname} !</Text>
           </View>
         )}
-        {evangile && (
-          <React.Fragment>
-            <WelcomeCard evangile={evangile.titre} />
-          </React.Fragment>
-        )}
+        {evangile && <WelcomeCard evangile={evangile.titre} />}
         <Text style={styles.h2}>Résumé de la journée</Text>
         <ScrollView>
           <DaySummary />

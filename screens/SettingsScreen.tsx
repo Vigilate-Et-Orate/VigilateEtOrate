@@ -19,13 +19,15 @@ import { RootState } from 'red/reducers/RootReducer'
 import { updateUser, userLogout } from 'red/actions/UserActions'
 import { registerForNotificationsAsync } from 'utils/notification/NotificationManager'
 import VOFire from 'utils/api/api_firebase'
+import { TDevice } from 'config/types/TDevices'
+import { addDevice, removeDevice } from 'red/actions/DevicesActions'
 
 const Settings = ({
   user,
-  token
+  devices
 }: {
   user: TUser | undefined
-  token: string
+  devices: TDevice[]
 }): JSX.Element => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
@@ -60,19 +62,14 @@ const Settings = ({
   }
   const deleteDevice = async (id: string) => {
     await api.devices.delete(id)
-    const tmpUser = user
-    if (!tmpUser) return
-    tmpUser.devices = tmpUser.devices.filter((d) => d.id !== id)
-    dispatch(updateUser(tmpUser))
+    const dev = devices.find((d) => d.id === id)
+    if (dev) dispatch(removeDevice(dev))
     forceReload()
   }
   const addThisDev = async () => {
     const expoPushToken = await registerForNotificationsAsync()
     const dev = await api.devices.add(expoPushToken)
-    const tmpUser = user
-    if (!dev || !tmpUser) return
-    tmpUser.devices.push(dev)
-    dispatch(updateUser(tmpUser))
+    if (dev) dispatch(addDevice(dev))
     forceReload()
   }
 
@@ -143,8 +140,8 @@ const Settings = ({
           </View>
         )}
         <View style={styles.devices}>
-          {user?.devices &&
-            user.devices.map((d) => (
+          {devices &&
+            devices.map((d) => (
               <Device key={d.id} device={d} deleteDevice={deleteDevice} />
             ))}
         </View>
@@ -235,7 +232,7 @@ const styles = StyleSheet.create({
 
 const mapToProps = (state: RootState) => ({
   user: state.user.user,
-  token: state.user.token
+  devices: state.devices.devices
 })
 
 export default connect(mapToProps)(Settings)

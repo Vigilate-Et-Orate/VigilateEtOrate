@@ -1,4 +1,5 @@
 import firebase from 'firebase/app'
+import { LogBox } from 'react-native'
 import 'firebase/auth'
 import 'firebase/firestore'
 
@@ -13,7 +14,11 @@ const firebaseConfig = {
   measurementId: 'G-LJS0EGZJG7'
 }
 
+// Init firebase + try to enable persistence
 firebase.initializeApp(firebaseConfig)
 firebase.firestore().enablePersistence()
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+// Disable timer warnings
+LogBox.ignoreLogs(['Setting a timer', 'Firebase Analytics'])
 
 export default firebase
