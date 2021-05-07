@@ -20,13 +20,12 @@ import { loadData } from 'utils/loadData/loadData'
 import VOFire from 'utils/api/api_firebase'
 
 export const formatEmail = (s: string) => {
-    const char = s.charAt(s.length - 1)
-    let final = s;
-    if (char === ' ')
-      final = s.slice(0, -1)
-    final = final.toLowerCase()
-    return final
-  }
+  const char = s.charAt(s.length - 1)
+  let final = s
+  if (char === ' ') final = s.slice(0, -1)
+  final = final.toLowerCase()
+  return final
+}
 
 const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
@@ -40,7 +39,7 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const signIn = async () => {
     const api = new VOFire()
     setLoading(true)
-    let _email = formatEmail(email)
+    const _email = formatEmail(email)
     setEmail(_email)
     const res = await api.users.signIn(_email, password)
     if (!res) setLoading(false)
@@ -60,12 +59,15 @@ const SignInScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
 
   return (
     <View style={styles.background}>
-      {!keyboard && 
+      {!keyboard && (
         <>
           <Image style={styles.image2} source={require('../assets/icon.png')} />
-          <Image style={styles.image} source={require('../assets/candle.png')} />
+          <Image
+            style={styles.image}
+            source={require('../assets/candle.png')}
+          />
         </>
-      }
+      )}
       <View style={[styles.card, keyboard ? styles.cardUp : styles.cardDown]}>
         <Text style={styles.title}>Se Connecter</Text>
         <View style={styles.inputs}>

@@ -73,7 +73,7 @@ const loadOnline = async (
   try {
     console.warn('LOADING DATA')
     const api = new VOFire()
-    let user: TUser | undefined | null = await api.users.get()
+    const user: TUser | undefined | null = await api.users.get()
     console.log('USER', user)
     if (user) dispatch(updateUser(user))
     setProgress(10)

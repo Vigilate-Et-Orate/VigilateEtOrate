@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Dimensions
+} from 'react-native'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
 import { TNotif } from 'config/types/TNotif'
@@ -125,10 +131,12 @@ const DaySummary = ({
           // day.length > 5 ? { height: 52 * day.length } : styles.containerHeight
         ]}
       ></View>
-      <View style={[
-        styles.summary,
-        { height: Dimensions.get('window').height * 0.25 }
-      ]}>
+      <View
+        style={[
+          styles.summary,
+          { height: Dimensions.get('window').height * 0.25 }
+        ]}
+      >
         {day &&
           day.map((d) => (
             <DayLign key={d.data?.key} time={d.time} data={d.data} />

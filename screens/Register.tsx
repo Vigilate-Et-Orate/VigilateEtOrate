@@ -33,7 +33,7 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
   const register = async () => {
     setLoading(true)
-    let _email = formatEmail(email)
+    const _email = formatEmail(email)
     setEmail(_email)
     const res = await registerCredentials(_email, firstname, lastname, password)
     if (!res) setLoading(false)
