@@ -3,6 +3,7 @@ import { LogBox } from 'react-native'
 import 'firebase/auth'
 import 'firebase/firestore'
 
+
 const firebaseConfig = {
   apiKey: 'AIzaSyA_fPwqQxGhMhWkhHJ5DW2TtoEKSRE8-18',
   authDomain: 'vigilate-et-orate.firebaseapp.com',
