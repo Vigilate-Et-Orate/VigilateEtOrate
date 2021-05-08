@@ -50,8 +50,8 @@ export const WelcomeCard = ({ evangile }: WelcomeCardProps): JSX.Element => {
 const styles = StyleSheet.create({
   Title: {
     color: theme.colors.blue,
-    fontSize: 20,
-    marginBottom: 5
+    fontSize: 18,
+    marginBottom: 3
   },
   button: {
     alignSelf: 'flex-end',
@@ -60,28 +60,24 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.white,
     borderRadius: 15,
-    elevation: 10,
-    margin: 10,
-    paddingBottom: 10,
+    elevation: 15,
+    margin: 5,
+    paddingBottom: 7,
     paddingHorizontal: 12,
-    paddingTop: 12,
-    shadowOffset: {
-      width: 50,
-      height: 50
-    }
+    paddingTop: 12
   },
   description: {
     color: theme.colors.blue,
-    fontSize: 15,
-    marginBottom: 12,
-    marginLeft: 10
+    fontSize: 13,
+    marginBottom: 6,
+    marginLeft: 8
   },
   see: {
     alignItems: 'flex-end',
     backgroundColor: theme.colors.blue,
     borderRadius: 20,
     color: theme.colors.yellow,
-    marginVertical: 5,
+    marginVertical: 2,
     paddingHorizontal: 20,
     paddingVertical: 10
   }

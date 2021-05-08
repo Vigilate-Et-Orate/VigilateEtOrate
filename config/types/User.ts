@@ -1,5 +1,4 @@
 import CONST from 'config/constants'
-import { TDevice } from './TDevices'
 
 export type TUser = {
   id: string
@@ -7,8 +6,7 @@ export type TUser = {
   lastname: string
   email: string
   admin: boolean
-  devices: TDevice[]
-  personnalPrayer: string
+  // personnalPrayer: string
 }
 
 // API Responses

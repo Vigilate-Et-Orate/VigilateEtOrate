@@ -15,10 +15,9 @@ import { updatedevices } from 'red/actions/DevicesActions'
 
 const loadOnline = async (dispatch: Dispatch<any>, setIsReady: () => void) => {
   try {
-    console.warn('LOADING DATA')
     const api = new VOFire()
     const user: TUser | undefined | null = await api.users.get()
-    if (user) dispatch(updateUser(user))
+    if (user) dispatch(updateUser(user, true))
     setIsReady()
     const notifs = await api.notifications.get()
     if (notifs) dispatch(updateNotifs(notifs))
