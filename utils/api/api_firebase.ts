@@ -16,7 +16,6 @@ const favsCollection = 'favs'
 const notificationsCollection = 'notifications'
 
 class VOFire {
-  // private dispatch: any
   public intentions: IntentionController
   public users: UsersController
   public devices: DevicesController
@@ -26,7 +25,6 @@ class VOFire {
   public notifications: NotificationController
 
   constructor() {
-    // this.dispatch
     this.intentions = new IntentionController()
     this.devices = new DevicesController()
     this.users = new UsersController()
@@ -40,11 +38,6 @@ class VOFire {
 export default VOFire
 
 class IntentionController {
-  // private dispatch: any
-
-  // constructor(dispatch: any) {
-  //   this.dispatch = dispatch
-  // }
   // GET
   async get(): Promise<TIntention[] | undefined> {
     const currentUser = firebase.auth().currentUser
@@ -120,8 +113,7 @@ class UsersController {
   async update(email: string, firstName: string, lastName: string) {
     const currentUser = firebase.auth().currentUser
     // Update Auth
-    if (!currentUser || currentUser.email == email) return
-    await currentUser.updateEmail(email)
+    if (!currentUser) return
     // Update Infos
     await firebase
       .firestore()
@@ -131,6 +123,8 @@ class UsersController {
         lastName,
         firstName
       })
+    // Update Email
+    if (currentUser.email != email) await currentUser.updateEmail(email)
   }
 
   async signIn(email: string, password: string) {
