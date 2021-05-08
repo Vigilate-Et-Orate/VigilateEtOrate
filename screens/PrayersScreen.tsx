@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, Animated, StyleSheet } from 'react-native'
+import * as Analytics from 'expo-firebase-analytics'
 
 import { TPrayer } from 'config/types/TPrayer'
 import { PrayerBlock } from 'components/prayers/Block'
@@ -42,12 +43,14 @@ const PrayersScreen = ({
 
   const forceReload = () => si(!i)
   const toggleFav = async (id: string, fav: boolean) => {
+    Analytics.logEvent('favPrayerScreen')
     const res = await api.favourites.toggle(id, !fav)
     if (!res) return
     dispatch(updateFavourite(res))
     forceReload()
   }
   const addTheNotif = async (time: string | undefined) => {
+    Analytics.logEvent('addNotifPrayer')
     if (!time || !currentPrayer) {
       setShow(false)
       return

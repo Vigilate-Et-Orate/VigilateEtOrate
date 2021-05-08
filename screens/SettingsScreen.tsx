@@ -10,6 +10,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { connect, useDispatch } from 'react-redux'
 import Constant from 'expo-constants'
+import * as Analytics from 'expo-firebase-analytics'
 
 import theme from 'config/theme'
 import { TUser } from 'config/types/User'
@@ -38,6 +39,7 @@ const Settings = ({
   const [lastname, setLastname] = useState(user?.lastname || '')
   const [firstname, setFirstname] = useState(user?.firstname || '')
   const [email, setEmail] = useState(user?.email || '')
+  const [password, setPassword] = useState('')
 
   const getInitials = () => {
     if (!user) return ''
@@ -48,8 +50,9 @@ const Settings = ({
     dispatch(userLogout())
     navigation.navigate('Welcome')
   }
-  const toggleEdition = async () => {
+  const save = async () => {
     if (edit) {
+      Analytics.logEvent('updateUserInfos')
       await api.users.update(email, firstname, lastname)
       const tmpUser = user
       if (!tmpUser) return
@@ -57,16 +60,22 @@ const Settings = ({
       tmpUser.firstname = firstname
       tmpUser.email = email
       dispatch(updateUser(tmpUser, false))
+      if (password) {
+        api.users.updatePwd(password)
+        Analytics.logEvent('updatePassword')
+      }
     }
     setEdition(!edit)
   }
   const deleteDevice = async (id: string) => {
+    Analytics.logEvent('deletedDevice')
     await api.devices.delete(id)
     const dev = devices.find((d) => d.id === id)
     if (dev) dispatch(removeDevice(dev))
     forceReload()
   }
   const addThisDev = async () => {
+    Analytics.logEvent('manualDeviceAdd')
     const expoPushToken = await registerForNotificationsAsync()
     const dev = await api.devices.add(expoPushToken)
     if (dev) dispatch(addDevice(dev))
@@ -80,15 +89,15 @@ const Settings = ({
       back
       rightComponent={
         <MaterialIcons.Button
-          name={edit ? 'save' : 'edit'}
+          name={'edit'}
           color={edit ? theme.colors.yellow : theme.colors.white}
           backgroundColor={theme.colors.blue}
-          onPress={() => toggleEdition()}
+          onPress={() => setEdition(!edit)}
         >
           <Text
             style={{ color: edit ? theme.colors.yellow : theme.colors.white }}
           >
-            {edit ? 'Enregistrer' : 'Editer'}
+            {edit ? 'Annuler' : 'Editer'}
           </Text>
         </MaterialIcons.Button>
       }
@@ -96,12 +105,14 @@ const Settings = ({
       <View>
         {user && (
           <View style={styles.userRow}>
-            <View style={styles.userRowLeft}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{getInitials()}</Text>
+            {!edit && (
+              <View style={styles.userRowLeft}>
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>{getInitials()}</Text>
+                </View>
               </View>
-            </View>
-            <View style={styles.userRowRight}>
+            )}
+            <View style={edit ? styles.userRowRightEdit : styles.userRowRight}>
               {!edit && (
                 <View>
                   <Text style={styles.userRowText}>
@@ -114,12 +125,12 @@ const Settings = ({
                 <View>
                   <View style={styles.editRowInfos}>
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, styles.editRowName]}
                       value={firstname}
                       onChangeText={setFirstname}
                     />
                     <TextInput
-                      style={styles.input}
+                      style={[styles.input, styles.editRowName]}
                       value={lastname}
                       onChangeText={setLastname}
                     />
@@ -129,11 +140,23 @@ const Settings = ({
                     value={email}
                     onChangeText={setEmail}
                   />
+                  <TextInput
+                    style={styles.input}
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    placeholder="Changer le mot de passe"
+                  />
                 </View>
               )}
               <View style={styles.userRowActions}>
-                <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-                  <Text>Se Deconnecter</Text>
+                <TouchableOpacity
+                  style={[styles.logoutButton, edit ? styles.logoutEdit : {}]}
+                  onPress={edit ? save : logout}
+                >
+                  <Text style={styles.logoutButtonTxt}>
+                    {edit ? 'Enregister' : 'Se Deconnecter'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -183,12 +206,18 @@ const styles = StyleSheet.create({
   },
   avatarText: { color: theme.colors.white, fontSize: 30 },
   devices: { marginBottom: 20 },
-  editRowInfos: { display: 'flex', flexDirection: 'row' },
+  editRowInfos: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+  editRowName: { width: '45%' },
   input: {
     borderBottomColor: theme.colors.yellow,
     borderBottomWidth: 1,
-    fontSize: 15,
+    fontSize: 18,
     marginHorizontal: 5,
+    marginVertical: 7,
     paddingHorizontal: 3,
     paddingVertical: 1
   },
@@ -198,6 +227,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingHorizontal: 15,
     paddingVertical: 10
+  },
+  logoutButtonTxt: {
+    color: theme.colors.blue
+  },
+  logoutEdit: {
+    backgroundColor: theme.colors.yellow
   },
   text: {
     color: theme.colors.blue
@@ -215,6 +250,7 @@ const styles = StyleSheet.create({
   },
   userRowLeft: { height: '100%', width: '30%' },
   userRowRight: { paddingLeft: 10, width: '70%' },
+  userRowRightEdit: { paddingLeft: 10, width: '100%' },
   userRowText: { fontSize: 26 },
   version: {
     bottom: 10,

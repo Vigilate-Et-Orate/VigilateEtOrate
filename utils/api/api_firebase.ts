@@ -137,6 +137,12 @@ class UsersController {
     if (currentUser.email != email) await currentUser.updateEmail(email)
   }
 
+  async updatePwd(password: string) {
+    const currentUser = firebase.auth().currentUser
+    if (!currentUser) return
+    await currentUser.updatePassword(password)
+  }
+
   async signIn(email: string, password: string): Promise<string | undefined> {
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password)

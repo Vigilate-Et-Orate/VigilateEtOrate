@@ -8,6 +8,7 @@ import {
   TextInput
 } from 'react-native'
 import { Feather } from '@expo/vector-icons'
+import * as Analytics from 'expo-firebase-analytics'
 
 import Modal from 'components/layout/Modal'
 import { TIntention } from 'config/types/TIntention'
@@ -46,10 +47,12 @@ const IntentionsScreen = ({
   const [intentionEdit, setIE] = useState('')
 
   const addIntention = async (intention: string) => {
+    Analytics.logEvent('addIntention')
     await api.intentions.create(intention)
     dispatch(addIntentions(intention, userId))
   }
   const deleteIntention = async () => {
+    Analytics.logEvent('deleteIntention')
     if (!selectedIntention) return
     api.intentions.delete(selectedIntention.id)
     dispatch(deleteIntentions(selectedIntention))
@@ -60,6 +63,7 @@ const IntentionsScreen = ({
     setEdit(!edit)
   }
   const updateInt = async () => {
+    Analytics.logEvent('updateIntention')
     if (!selectedIntention) return
     const intTmp = intentions
     const index = intTmp.findIndex((i) => i.id === selectedIntention.id)
@@ -71,7 +75,7 @@ const IntentionsScreen = ({
   const shareIntention = async () => {
     try {
       await Share.share({
-        message: `Ajouter à mes intentions: ${selectedIntention?.intention}`
+        message: `Voici une intention: ${selectedIntention?.intention}`
       })
       openModal(false)
     } catch (e) {
@@ -85,6 +89,7 @@ const IntentionsScreen = ({
     Vibration.vibrate(20)
   }
   const addTheNotif = async (time: string | undefined) => {
+    Analytics.logEvent('notifAddIntention')
     if (!time || !selectedIntention) {
       setShow(false)
       return
