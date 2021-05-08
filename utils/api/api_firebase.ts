@@ -88,26 +88,36 @@ class IntentionController {
 }
 
 class UsersController {
-  async create(user: TUser, password: string) {
-    const fireUser = await firebase
-      .auth()
-      .createUserWithEmailAndPassword(user.email, password)
-      .catch((error) => {
-        const errCode = error.code
-        if (errCode == 'auth/weak-password') console.error('Weak Password')
+  async create(user: TUser, password: string): Promise<TUser | string> {
+    try {
+      const fireUser = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(user.email, password)
+      if (!fireUser || !fireUser.user) return 'Une Erreur est survenue'
+      // create user in db
+      const userDoc = firebase
+        .firestore()
+        .collection(usersCollection)
+        .doc(fireUser.user.uid)
+      await userDoc.set({
+        firstName: user.firstname,
+        lastName: user.lastname,
+        admin: user.admin
       })
-    if (!fireUser || !fireUser.user) return
-    // create user in db
-    const userDoc = firebase
-      .firestore()
-      .collection(usersCollection)
-      .doc(fireUser.user.uid)
-    await userDoc.set({
-      firstName: user.firstname,
-      lastName: user.lastname,
-      admin: user.admin,
-      devices: []
-    })
+      return {
+        id: fireUser.user.uid,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        admin: user.admin
+      } as TUser
+    } catch (e) {
+      const errCode = e.code
+      if (errCode == 'auth/weak-password') return 'Mot de Passe trop faible'
+      if (errCode == 'auth/email-already-in-use')
+        return 'Un compte existe déjà avec cette adresse'
+      if (errCode == 'auth/invalid-email') return 'Email invalide'
+    }
+    return 'Une Erreur est survenue'
   }
 
   async update(email: string, firstName: string, lastName: string) {
@@ -127,14 +137,28 @@ class UsersController {
     if (currentUser.email != email) await currentUser.updateEmail(email)
   }
 
-  async signIn(email: string, password: string) {
+  async signIn(email: string, password: string): Promise<string | undefined> {
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password)
     } catch (e) {
-      console.error('error signing in: ', e.message)
-      return false
+      const errCode = e.code
+      if (errCode == 'auth/invalid-email') return 'Email invalide'
+      if (errCode == 'auth/user-disabled') return 'Utilisateur bloqué'
+      if (errCode == 'auth/user-not-found')
+        return 'Aucun compte avec cette adresse email'
+      if (errCode == 'auth/wrong-password') return 'Mauvais mot de passe'
     }
-    return true
+  }
+
+  async resetEmail(email: string): Promise<undefined | string> {
+    try {
+      await firebase.auth().sendPasswordResetEmail(email)
+    } catch (e) {
+      const errCode = e.code
+      if (errCode == 'auth/invalid-email') return 'Email Invalide'
+      if (errCode == 'auth/user-not-found')
+        return 'Aucun compte avec cette adresse mail'
+    }
   }
 
   async get(): Promise<TUser | undefined> {

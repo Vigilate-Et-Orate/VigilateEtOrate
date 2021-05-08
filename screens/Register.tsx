@@ -8,49 +8,73 @@ import {
   Image,
   TextInput
 } from 'react-native'
+import { Snackbar } from 'react-native-paper'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { connect, useDispatch } from 'react-redux'
-import firebase from 'firebase'
 
 import theme from 'config/theme'
-import { userLogin } from 'red/actions/UserActions'
+import { updateUser } from 'red/actions/UserActions'
 import { RootState } from 'red/reducers/RootReducer'
-import { registerCredentials } from 'utils/api/api_server'
 import { loadData } from 'utils/loadData/loadData'
 import { formatEmail } from 'screens/SignIn'
+import VOFire from 'utils/api/api_firebase'
 
 const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   const navigation = useNavigation()
+  const api = new VOFire()
   const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(false)
+  const [pwdError, setPwdError] = useState(false)
   const [firstname, setFirsname] = useState('')
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [snackTxt, setSnackTxt] = useState('')
+  const [show, dispSnack] = useState(false)
 
   /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
   const register = async () => {
     setLoading(true)
     const _email = formatEmail(email)
     setEmail(_email)
-    const res = await registerCredentials(_email, firstname, lastname, password)
+    if (password != passwordConfirmation) {
+      setLoading(false)
+      setPwdError(true)
+      setSnackTxt('Les mots de passes sont différents')
+      dispSnack(true)
+      return
+    }
+    const user = {
+      id: '',
+      email: _email,
+      firstname: firstname,
+      lastname: lastname,
+      admin: false
+    }
+    const res = await api.users.create(user, password)
     if (!res) setLoading(false)
-    await firebase.auth().signInWithEmailAndPassword(_email, password)
+    if (typeof res == 'string') {
+      setSnackTxt(res)
+      dispSnack(true)
+      setLoading(false)
+      return
+    }
     if (res) {
-      dispatch(userLogin(res.token, res.user, true))
+      dispatch(updateUser(res, true))
       setTimeout(() => {}, 500)
-      loadData(
-        dispatch,
-        (_n: number) => {},
-        (_b: boolean) => {}
-      )
+      loadData(dispatch, () => {})
       setLoading(false)
       navigation.navigate('Home')
     }
   }
   /* eslint-enable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
+  const validatePwd = () => {
+    if (password != passwordConfirmation) setPwdError(true)
+    else if (pwdError == true) setPwdError(false)
+  }
 
   return (
     <View style={styles.background}>
@@ -64,7 +88,14 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
         </>
       )}
       <View style={[styles.card, keyboard ? styles.cardUp : styles.cardDown]}>
-        <Text style={styles.title}>Créer un compte</Text>
+        <Text
+          style={[
+            styles.title,
+            keyboard ? styles.titleOpen : styles.titleClosed
+          ]}
+        >
+          Créer un compte
+        </Text>
         <View style={styles.inputs}>
           <TextInput
             value={email}
@@ -90,9 +121,29 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
           <TextInput
             secureTextEntry
             value={password}
-            onChangeText={setPassword}
-            style={styles.input}
+            onChangeText={(txt: string) => {
+              validatePwd()
+              setPassword(txt)
+            }}
+            style={[
+              styles.input,
+              pwdError ? { borderBottomColor: theme.colors.red } : {}
+            ]}
             placeholder="Mot de Passe"
+            placeholderTextColor={theme.colors.blue}
+          />
+          <TextInput
+            secureTextEntry
+            value={passwordConfirmation}
+            onChangeText={(txt: string) => {
+              validatePwd()
+              setPasswordConfirmation(txt)
+            }}
+            style={[
+              styles.input,
+              pwdError ? { borderBottomColor: theme.colors.red } : {}
+            ]}
+            placeholder="Confirmation du Mot de Passe"
             placeholderTextColor={theme.colors.blue}
           />
         </View>
@@ -117,6 +168,14 @@ const RegisterScreen = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
       >
         <Text style={{ color: theme.colors.white }}>Déjà un compte ?</Text>
       </TouchableOpacity>
+      <Snackbar
+        style={styles.snack}
+        visible={show}
+        onDismiss={() => dispSnack(false)}
+        duration={1000}
+      >
+        <Text style={styles.snackTxt}>{snackTxt}</Text>
+      </Snackbar>
     </View>
   )
 }
@@ -148,12 +207,12 @@ const styles = StyleSheet.create({
     zIndex: 30
   },
   cardDown: {
-    height: '60%',
-    marginTop: '65%'
+    height: '65%',
+    marginTop: '50%'
   },
   cardUp: {
-    height: '100%',
-    marginTop: '5%'
+    height: '110%',
+    marginTop: '0%'
   },
   hidden: {
     display: 'none'
@@ -162,7 +221,7 @@ const styles = StyleSheet.create({
     height: '25%',
     position: 'absolute',
     right: '10%',
-    top: '8%',
+    top: '2%',
     width: '15%',
     zIndex: 10
   },
@@ -170,7 +229,7 @@ const styles = StyleSheet.create({
     height: '25%',
     left: '10%',
     position: 'absolute',
-    top: '8%',
+    top: '2%',
     width: '30%',
     zIndex: 12
   },
@@ -179,14 +238,14 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.blue,
     borderBottomWidth: 2,
     borderRadius: 3,
-    marginVertical: 10,
+    marginVertical: 7,
     opacity: 5,
     paddingHorizontal: 10,
     paddingVertical: 5
   },
   inputs: {
-    marginBottom: '15%',
-    marginTop: '8%'
+    marginBottom: '10%',
+    marginTop: '2%'
   },
   register: {
     alignItems: 'center',
@@ -200,12 +259,19 @@ const styles = StyleSheet.create({
     width: '100%',
     zIndex: 40
   },
+  snack: {
+    backgroundColor: theme.colors.white
+  },
+  snackTxt: {
+    color: theme.colors.blue
+  },
   title: {
     color: theme.colors.blue,
     fontSize: 36,
-    marginVertical: '7%',
     textAlign: 'left'
-  }
+  },
+  titleClosed: { marginTop: '7%' },
+  titleOpen: { marginTop: '12%' }
 })
 
 const mapToProps = (state: RootState) => ({
