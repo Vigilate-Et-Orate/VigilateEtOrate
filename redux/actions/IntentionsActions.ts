@@ -8,7 +8,7 @@ export function addIntentions(
   if (!userId) throw new Error('Failed to dispatch new intentions')
   const intention: TIntention = {
     id: '',
-    userId,
+    user: userId,
     intention: content
   }
   return {

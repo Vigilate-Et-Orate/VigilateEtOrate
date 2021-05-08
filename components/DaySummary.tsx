@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Dimensions
+} from 'react-native'
 import theme from 'config/theme'
 import { RootState } from 'red/reducers/RootReducer'
 import { TNotif } from 'config/types/TNotif'
@@ -83,12 +89,13 @@ const DaySummary = ({
         typeof n.time === 'string'
           ? stringToTimestamp(n.time)
           : timeToTimestamp(n.time)
+      const itemId = n.item
       if (n.type === 'intention') {
-        const int = intentions.find((i) => i.id === n.itemId)
+        const int = intentions.find((i) => i.id === itemId)
         if (!int) return empty
         return {
           time,
-          data: { text: int.intention, key: n.itemId as string, prayer: false }
+          data: { text: int.intention, key: itemId as string, prayer: false }
         }
       } else if (n.type === 'prayer') {
         const prayer = prayers.find(
@@ -99,7 +106,7 @@ const DaySummary = ({
           time,
           data: {
             text: prayer.displayName,
-            key: (n.itemId as string) + time,
+            key: (itemId as string) + time,
             prayer: true,
             smug: prayer.name
           }
@@ -111,17 +118,19 @@ const DaySummary = ({
     populated.sort((a, b) => a?.time - b?.time)
     populated = populated.filter((p) => p.time !== 0)
     setDay(populated)
-  }, [notifs])
+  }, [notifs, prayers, intentions])
 
   return (
     <View style={styles.container}>
       <View
-        style={[
-          styles.bar,
-          day.length > 5 ? { height: 52 * day.length } : styles.containerHeight
-        ]}
+        style={[styles.bar, { height: Dimensions.get('window').height * 0.25 }]}
       ></View>
-      <View style={styles.summary}>
+      <View
+        style={[
+          styles.summary,
+          { height: Dimensions.get('window').height * 0.25 }
+        ]}
+      >
         {day &&
           day.map((d) => (
             <DayLign key={d.data?.key} time={d.time} data={d.data} />
@@ -152,9 +161,6 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flexDirection: 'row'
-  },
-  containerHeight: {
-    height: 250
   },
   lignContainer: {
     display: 'flex',

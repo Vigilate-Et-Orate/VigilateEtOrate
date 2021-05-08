@@ -9,6 +9,7 @@ import dailyInfosReducer from './DailyInformationsReducer'
 import favouriteReducer from './FavouritesReducer'
 import notifsReducer from './NotifsReducer'
 import keyboardReducer from './KeyboardReducer'
+import devicesReducer from './DevicesReducer'
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   dailyInfos: dailyInfosReducer,
   favourites: favouriteReducer,
   notifs: notifsReducer,
-  keyboard: keyboardReducer
+  keyboard: keyboardReducer,
+  devices: devicesReducer
 })
 
 export type RootState = ReturnType<typeof rootReducer>

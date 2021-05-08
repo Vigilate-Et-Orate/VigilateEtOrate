@@ -17,22 +17,21 @@ import Page from 'components/layout/Page'
 import Device from 'components/Device/Block'
 import { RootState } from 'red/reducers/RootReducer'
 import { updateUser, userLogout } from 'red/actions/UserActions'
-import {
-  registerDevice,
-  removeDevice,
-  updateUserInfo
-} from 'utils/api/api_server'
 import { registerForNotificationsAsync } from 'utils/notification/NotificationManager'
+import VOFire from 'utils/api/api_firebase'
+import { TDevice } from 'config/types/TDevices'
+import { addDevice, removeDevice } from 'red/actions/DevicesActions'
 
 const Settings = ({
   user,
-  token
+  devices
 }: {
   user: TUser | undefined
-  token: string
+  devices: TDevice[]
 }): JSX.Element => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const api = new VOFire()
 
   const [i, si] = useState(false)
   const [edit, setEdition] = useState(false)
@@ -51,7 +50,7 @@ const Settings = ({
   }
   const toggleEdition = async () => {
     if (edit) {
-      await updateUserInfo(token, lastname, firstname, email)
+      await api.users.update(email, firstname, lastname)
       const tmpUser = user
       if (!tmpUser) return
       tmpUser.lastname = lastname
@@ -62,20 +61,15 @@ const Settings = ({
     setEdition(!edit)
   }
   const deleteDevice = async (id: string) => {
-    await removeDevice(token, id)
-    const tmpUser = user
-    if (!tmpUser) return
-    tmpUser.devices = tmpUser.devices.filter((d) => d._id !== id)
-    dispatch(updateUser(tmpUser))
+    await api.devices.delete(id)
+    const dev = devices.find((d) => d.id === id)
+    if (dev) dispatch(removeDevice(dev))
     forceReload()
   }
   const addThisDev = async () => {
     const expoPushToken = await registerForNotificationsAsync()
-    const dev = await registerDevice(token, expoPushToken)
-    const tmpUser = user
-    if (!dev || !tmpUser) return
-    tmpUser.devices.push(dev)
-    dispatch(updateUser(tmpUser))
+    const dev = await api.devices.add(expoPushToken)
+    if (dev) dispatch(addDevice(dev))
     forceReload()
   }
 
@@ -146,9 +140,9 @@ const Settings = ({
           </View>
         )}
         <View style={styles.devices}>
-          {user?.devices &&
-            user.devices.map((d) => (
-              <Device key={d._id} device={d} deleteDevice={deleteDevice} />
+          {devices &&
+            devices.map((d) => (
+              <Device key={d.id} device={d} deleteDevice={deleteDevice} />
             ))}
         </View>
         <View style={styles.addDevice}>
@@ -238,7 +232,7 @@ const styles = StyleSheet.create({
 
 const mapToProps = (state: RootState) => ({
   user: state.user.user,
-  token: state.user.token
+  devices: state.devices.devices
 })
 
 export default connect(mapToProps)(Settings)

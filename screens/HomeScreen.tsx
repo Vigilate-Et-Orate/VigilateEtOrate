@@ -54,13 +54,9 @@ const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
             <Text style={styles.h1}>{user.firstname} !</Text>
           </View>
         )}
-        {evangile && (
-          <React.Fragment>
-            <WelcomeCard evangile={evangile.titre} />
-          </React.Fragment>
-        )}
+        {evangile && <WelcomeCard evangile={evangile.titre} />}
         <Text style={styles.h2}>Résumé de la journée</Text>
-        <ScrollView style={styles.container}>
+        <ScrollView>
           <DaySummary />
         </ScrollView>
       </View>
@@ -69,7 +65,6 @@ const HomeScreen = ({ user, evangile }: THomeScreenProps) => {
 }
 
 const styles = StyleSheet.create({
-  container: { height: 250 },
   h1: { color: theme.colors.white, fontSize: 24, marginRight: 10 },
   h2: {
     color: theme.colors.white,

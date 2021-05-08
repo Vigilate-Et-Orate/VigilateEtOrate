@@ -3,7 +3,7 @@ import CONST from 'config/constants'
 export type TIntention = {
   id: string
   intention: string
-  userId: string
+  user: string
 }
 
 // Redux

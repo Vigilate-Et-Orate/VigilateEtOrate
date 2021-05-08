@@ -1,5 +1,5 @@
 export type NotificationContent = {
-  _id: string
+  id?: string
   title: string
   subtitle?: string
   body: string

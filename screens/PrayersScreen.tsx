@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ScrollView, Animated, StyleSheet } from 'react-native'
 
 import { TPrayer } from 'config/types/TPrayer'
 import { PrayerBlock } from 'components/prayers/Block'
@@ -11,15 +11,11 @@ import { TNotif } from 'config/types/TNotif'
 import { isFavourite } from 'utils/favourites/favourites'
 import { TFavourite } from 'config/types/TFavourite'
 import { updateFavourite } from 'red/actions/FavouritesActions'
-import {
-  registerForNotification,
-  removeNotification,
-  toggleFavourite
-} from 'utils/api/api_server'
 import { stringToTime } from 'utils/time/timeManager'
 import { addNotif, removeNotif } from 'red/actions/NotifsActions'
 import TimePicker from 'components/TimePicker'
 import BottomSpace from 'elements/layout/BottomSpace'
+import VOFire from 'utils/api/api_firebase'
 
 type PrayersScreenProps = {
   prayers: TPrayer[]
@@ -32,19 +28,21 @@ type PrayersScreenProps = {
 const PrayersScreen = ({
   prayers,
   notifs,
-  favs,
-  userId,
-  token
+  favs
 }: PrayersScreenProps): JSX.Element => {
   const dispatch = useDispatch()
+  const animatedValue = new Animated.Value(0)
+  const api = new VOFire()
 
   const [show, setShow] = useState(false)
   const [currentPrayer, setCurrentPrayer] = useState<TPrayer>()
   const [i, si] = useState(false)
 
+  useEffect(() => circleAnimated(), [])
+
   const forceReload = () => si(!i)
   const toggleFav = async (id: string, fav: boolean) => {
-    const res = await toggleFavourite(!fav, id, userId || '', token)
+    const res = await api.favourites.toggle(id, !fav)
     if (!res) return
     dispatch(updateFavourite(res))
     forceReload()
@@ -54,27 +52,43 @@ const PrayersScreen = ({
       setShow(false)
       return
     }
-    const n = await registerForNotification(
-      token,
-      currentPrayer?.notificationContent,
-      currentPrayer?._id,
+
+    setShow(false)
+    const n = await api.notifications.create(
+      currentPrayer.id,
       'prayer',
-      time
+      time,
+      currentPrayer?.notificationContent
     )
     if (!n) return
     dispatch(addNotif(n))
-    setShow(false)
   }
   const addNotification = (prayer: TPrayer) => {
     setCurrentPrayer(prayer)
     setShow(true)
   }
   const removeN = async (id: string) => {
-    await removeNotification(token, id)
-    const n = notifs.find((n) => n._id === id)
+    await api.notifications.delete(id)
+    const n = notifs.find((n) => n.id === id)
     if (!n) return
     dispatch(removeNotif(n))
   }
+  const circleAnimated = () => {
+    animatedValue.setValue(0)
+    Animated.timing(animatedValue, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true
+    }).start(() =>
+      setTimeout(() => {
+        if (prayers.length == 0) circleAnimated()
+      }, 1000)
+    )
+  }
+  const translateX = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-10, 400]
+  })
 
   return (
     <Page
@@ -84,13 +98,20 @@ const PrayersScreen = ({
     >
       <ScrollView>
         <TimePicker open={show} onClosePicker={addTheNotif} />
+        {prayers.length == 0 && (
+          <Animated.View style={styles.card}>
+            <Animated.View
+              style={[styles.bar, { transform: [{ translateX: translateX }] }]}
+            ></Animated.View>
+          </Animated.View>
+        )}
         {prayers.map((p) => (
           <PrayerBlock
-            key={p._id}
+            key={p.id}
             prayer={p}
-            fav={isFavourite(p._id, favs)}
+            fav={isFavourite(p.id, favs)}
             notifs={notifs
-              .filter((n) => n.itemId === p._id)
+              .filter((n) => n.item === p.id)
               .sort(
                 (a, b) =>
                   (stringToTime(a.time as string)?.hour || 0) -
@@ -107,12 +128,25 @@ const PrayersScreen = ({
   )
 }
 
+const styles = StyleSheet.create({
+  bar: {
+    backgroundColor: theme.colors.blue,
+    height: '100%',
+    opacity: 0.4,
+    width: '2%'
+  },
+  card: {
+    backgroundColor: theme.colors.white,
+    borderRadius: 12,
+    elevation: 15,
+    height: 70
+  }
+})
+
 const mapToProps = (state: RootState) => ({
   prayers: state.prayers.prayers,
   notifs: state.notifs.notifs,
-  favs: state.favourites.favourites,
-  userId: state.user.user?.id,
-  token: state.user.token
+  favs: state.favourites.favourites
 })
 
 export default connect(mapToProps)(PrayersScreen)
