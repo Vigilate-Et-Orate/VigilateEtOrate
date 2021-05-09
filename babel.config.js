@@ -7,7 +7,9 @@ module.exports = function(api) {
       targets: {
         node: 'current'
       }
-    }]
+    }],
+    // ["@babel/plugin-proposal-private-methods",
+    // { "loose": true }]
   ];
   const plugins = [[
     require.resolve('babel-plugin-module-resolver'),

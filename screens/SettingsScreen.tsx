@@ -21,6 +21,7 @@ import { registerForNotificationsAsync } from 'utils/notification/NotificationMa
 import VOFire from 'utils/api/api_firebase'
 import { TDevice } from 'config/types/TDevices'
 import { addDevice, removeDevice } from 'red/actions/DevicesActions'
+import { Snackbar } from 'react-native-paper'
 
 const Settings = ({
   user,
@@ -38,6 +39,8 @@ const Settings = ({
   const [lastname, setLastname] = useState(user?.lastname || '')
   const [firstname, setFirstname] = useState(user?.firstname || '')
   const [email, setEmail] = useState(user?.email || '')
+  const [show, dispSnack] = useState(false)
+  const [snackTxt, setSnackTxt] = useState('')
 
   const getInitials = () => {
     if (!user) return ''
@@ -52,6 +55,8 @@ const Settings = ({
     if (edit) {
       await api.users.update(email, firstname, lastname)
       const tmpUser = user
+      setSnackTxt('Mis à jour avec succès !')
+      dispSnack(true)
       if (!tmpUser) return
       tmpUser.lastname = lastname
       tmpUser.firstname = firstname
@@ -63,13 +68,20 @@ const Settings = ({
   const deleteDevice = async (id: string) => {
     await api.devices.delete(id)
     const dev = devices.find((d) => d.id === id)
-    if (dev) dispatch(removeDevice(dev))
+    if (dev) {
+      setSnackTxt('Appareil supprimé')
+      dispSnack(true)
+      dispatch(removeDevice(dev))
+    }
     forceReload()
   }
   const addThisDev = async () => {
     const expoPushToken = await registerForNotificationsAsync()
     const dev = await api.devices.add(expoPushToken)
-    if (dev) dispatch(addDevice(dev))
+    if (typeof dev == 'string') {
+      setSnackTxt(dev)
+      dispSnack(true)
+    } else if (dev != null) dispatch(addDevice(dev))
     forceReload()
   }
 
@@ -164,6 +176,14 @@ const Settings = ({
           {Constant.nativeBuildVersion}{' '}
         </Text>
       </View>
+      <Snackbar
+        visible={show}
+        onDismiss={() => dispSnack(false)}
+        duration={2000}
+        style={styles.snack}
+      >
+        <Text style={styles.snackTxt}>{snackTxt}</Text>
+      </Snackbar>
     </Page>
   )
 }
@@ -198,6 +218,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingHorizontal: 15,
     paddingVertical: 10
+  },
+  snack: {
+    backgroundColor: theme.colors.blue
+  },
+  snackTxt: {
+    color: theme.colors.white
   },
   text: {
     color: theme.colors.blue

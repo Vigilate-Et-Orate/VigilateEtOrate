@@ -193,7 +193,7 @@ class DevicesController {
       .collectionGroup(devicesCollection)
       .where('token', '==', token)
       .get()
-    if (!checkDev.empty) return
+    if (!checkDev.empty) return "L'appareil est déjà utilisé"
     const dev = {
       name: Device.deviceName,
       token
@@ -250,8 +250,13 @@ class DevicesController {
     const currentUser = firebase.auth().currentUser
     if (!currentUser) return
     // get ref
-    const devRef = firebase.firestore().collection(devicesCollection).doc(id)
-    await devRef.delete()
+    await firebase
+      .firestore()
+      .collection(usersCollection)
+      .doc(currentUser.uid)
+      .collection(devicesCollection)
+      .doc(id)
+      .delete()
   }
 }
 
