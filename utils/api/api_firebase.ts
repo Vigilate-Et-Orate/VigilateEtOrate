@@ -42,12 +42,10 @@ class IntentionController {
   async get(): Promise<TIntention[] | undefined> {
     const currentUser = firebase.auth().currentUser
     if (!currentUser) return
-    const userRef = firebase
-      .firestore()
-      .collection(usersCollection)
-      .doc(currentUser.uid)
     const dbIntentions = firebase.firestore().collection('intentions')
-    const snapshot = await dbIntentions.where('user', '==', userRef).get()
+    const snapshot = await dbIntentions
+      .where('user', '==', currentUser.uid)
+      .get()
     const intentions: TIntention[] = snapshot.docs.map((doc) => {
       const data = doc.data()
       return {
@@ -62,13 +60,9 @@ class IntentionController {
   async create(content: string): Promise<void> {
     const currentUser = firebase.auth().currentUser
     if (!currentUser) return
-    const userRef = firebase
-      .firestore()
-      .collection(usersCollection)
-      .doc(currentUser.uid)
     await firebase.firestore().collection(intentionsCollection).add({
       intention: content,
-      user: userRef
+      user: currentUser.uid
     })
   }
   // UPDATE
@@ -281,6 +275,7 @@ class PrayersController {
     const prayersSnap = await firebase
       .firestore()
       .collection(prayersCollection)
+      .orderBy('name', 'asc')
       .get()
     const prayers: TPrayer[] = prayersSnap.docs.map((doc) => {
       const data = doc.data()
@@ -288,9 +283,10 @@ class PrayersController {
         id: doc.id,
         displayName: data.displayName,
         name: data.name,
-        notificationContent: data.notificationContentId,
+        notificationContentId: data.notificationContentId,
         description: data.description,
-        content: data.content
+        content: data.content,
+        tags: data.tags
       } as TPrayer
     })
     return prayers

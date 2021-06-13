@@ -251,12 +251,12 @@ const styles = StyleSheet.create({
     bottom: 20,
     display: 'flex',
     flexDirection: 'row',
-    height: '6%',
+    height: '5%',
     justifyContent: 'center',
     left: 0,
     position: 'absolute',
     width: '100%',
-    zIndex: 30
+    zIndex: 2
   },
   reset: {
     alignItems: 'center',

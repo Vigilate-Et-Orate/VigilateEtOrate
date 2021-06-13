@@ -5,7 +5,8 @@ import {
   StyleSheet,
   Text,
   Animated,
-  Easing
+  Easing,
+  Dimensions
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
@@ -52,8 +53,9 @@ export const PrayerBlock = ({
     })
   }
   const slideOpen = () => {
+    const val = Dimensions.get('screen').width - 120
     Animated.timing(slideAnim, {
-      toValue: -280,
+      toValue: -val,
       duration: 500,
       useNativeDriver: true,
       easing: Easing.ease

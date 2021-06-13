@@ -12,6 +12,19 @@ import { getNominisSaint } from 'utils/api/rss_nominis'
 import VOFire from 'utils/api/api_firebase'
 import { registerForNotificationsAsync } from 'utils/notification/NotificationManager'
 import { updatedevices } from 'red/actions/DevicesActions'
+import { updateTags } from 'red/actions/TagsActions'
+import { TPrayer } from 'config/types/TPrayer'
+import { TTags } from 'config/types/TTags'
+
+export function loadTags(prayers: TPrayer[]): string[] {
+  const tags: TTags = []
+  prayers.forEach((p) => {
+    p.tags.forEach((t) => {
+      if (!tags.includes(t)) tags.push(t)
+    })
+  })
+  return tags
+}
 
 const loadOnline = async (dispatch: Dispatch<any>, setIsReady: () => void) => {
   try {
@@ -23,6 +36,8 @@ const loadOnline = async (dispatch: Dispatch<any>, setIsReady: () => void) => {
     if (notifs) dispatch(updateNotifs(notifs))
     const prayers = await api.prayers.get()
     if (prayers) dispatch(updatePrayers(prayers))
+    const tags = loadTags(prayers)
+    if (tags) dispatch(updateTags(tags))
     const informations = await getNominisSaint()
     if (informations) dispatch(updateInformations(informations))
     const evangile = await getDailyGospel()
