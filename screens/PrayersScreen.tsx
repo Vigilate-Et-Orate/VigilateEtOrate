@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, View, Animated, StyleSheet } from 'react-native'
+import { ScrollView, View, Animated, StyleSheet, Text } from 'react-native'
 import { Chip } from 'react-native-paper'
 
 import { TPrayer } from 'config/types/TPrayer'
@@ -109,14 +109,11 @@ const PrayersScreen = ({
       }, 1000)
     )
   }
-  const translateX = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-10, 400]
-  })
-  const filterPrayers = (tag: string) => {
+
+  const filterPrayers = (tag: string, fav: boolean, update?: boolean) => {
     let tmpPrayers = prayers
-    if (fFav) tmpPrayers = tmpPrayers.filter((p) => isFavourite(p.id, favs))
-    if (tag == stag) {
+    if (fav) tmpPrayers = tmpPrayers.filter((p) => isFavourite(p.id, favs))
+    if ((tag == stag && !update) || (tag == '' && stag == '')) {
       setPrayers(tmpPrayers)
       setSelectedTag('')
     } else {
@@ -127,6 +124,7 @@ const PrayersScreen = ({
   }
   const filterFav = (fav: boolean) => {
     setFilterFav(fav)
+    filterPrayers(stag, fav, true)
   }
 
   return (
@@ -134,7 +132,7 @@ const PrayersScreen = ({
       title="Prières"
       backgroundColor={theme.colors.yellow}
       foregroundColor={theme.colors.blue}
-      rightComponent={<FavToggle filter={filterFav}></FavToggle>}
+      rightComponent={<FavToggle setFav={filterFav} fav={fFav}></FavToggle>}
     >
       <View>
         <ScrollView horizontal>
@@ -145,7 +143,7 @@ const PrayersScreen = ({
                   key={t}
                   selected={stag == t}
                   selectedColor={theme.colors.blue}
-                  onPress={() => filterPrayers(t)}
+                  onPress={() => filterPrayers(t, fFav)}
                   style={[
                     styles.chip,
                     stag == t ? styles.chipSelected : styles.chipDefault
@@ -159,30 +157,25 @@ const PrayersScreen = ({
       </View>
       <ScrollView>
         <TimePicker open={show} onClosePicker={addTheNotif} />
-        {p.length == 0 && (
-          <Animated.View style={styles.card}>
-            <Animated.View
-              style={[styles.bar, { transform: [{ translateX: translateX }] }]}
-            ></Animated.View>
-          </Animated.View>
-        )}
-        {p.map((p) => (
-          <PrayerBlock
-            key={p.id}
-            prayer={p}
-            fav={isFavourite(p.id, favs)}
-            notifs={notifs
-              .filter((n) => n.item === p.id)
-              .sort(
-                (a, b) =>
-                  (stringToTime(a.time as string)?.hour || 0) -
-                  (stringToTime(b.time as string)?.hour || 1)
-              )}
-            toggleFav={toggleFav}
-            addNotification={addNotification}
-            removeNotif={removeN}
-          />
-        ))}
+        {p.length == 0 && <Text style={styles.txt}>Pas de Prières</Text>}
+        {p.length > 0 &&
+          p.map((p) => (
+            <PrayerBlock
+              key={p.id}
+              prayer={p}
+              fav={isFavourite(p.id, favs)}
+              notifs={notifs
+                .filter((n) => n.item === p.id)
+                .sort(
+                  (a, b) =>
+                    (stringToTime(a.time as string)?.hour || 0) -
+                    (stringToTime(b.time as string)?.hour || 1)
+                )}
+              toggleFav={toggleFav}
+              addNotification={addNotification}
+              removeNotif={removeN}
+            />
+          ))}
         <BottomSpace />
       </ScrollView>
     </Page>
@@ -190,18 +183,6 @@ const PrayersScreen = ({
 }
 
 const styles = StyleSheet.create({
-  bar: {
-    backgroundColor: theme.colors.blue,
-    height: '100%',
-    opacity: 0.4,
-    width: '2%'
-  },
-  card: {
-    backgroundColor: theme.colors.white,
-    borderRadius: 12,
-    elevation: 15,
-    height: 70
-  },
   chip: {
     marginHorizontal: 2
   },
@@ -215,6 +196,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'flex-start'
+  },
+  txt: {
+    color: theme.colors.yellow,
+    fontSize: 22,
+    marginTop: 25,
+    textAlign: 'center'
   }
 })
 

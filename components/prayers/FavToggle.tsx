@@ -1,22 +1,16 @@
 import theme from 'config/theme'
-import React, { useState } from 'react'
+import React from 'react'
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 
 type FavToggleProps = {
-  filter: (fav: boolean) => void
+  setFav: (fav: boolean) => void
+  fav: boolean
 }
 
-const FavToggle = ({ filter }: FavToggleProps): JSX.Element => {
-  const [fav, setFav] = useState(false)
-
-  const handleToggle = () => {
-    setFav(!fav)
-    filter(fav)
-  }
-
+const FavToggle = ({ fav, setFav }: FavToggleProps): JSX.Element => {
   return (
     <TouchableOpacity
-      onPress={handleToggle}
+      onPress={() => setFav(!fav)}
       style={[
         styles.container,
         fav ? styles.containerFav : styles.containerNotFav
