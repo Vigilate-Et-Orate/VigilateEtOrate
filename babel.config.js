@@ -6,7 +6,9 @@ module.exports = function(api) {
     ['@babel/preset-env', {
       targets: {
         node: 'current'
-      }
+      },
+      loose: true,
+      shippedProposals: true
     }]
   ];
   const plugins = [[

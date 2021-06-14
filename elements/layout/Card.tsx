@@ -1,34 +1,12 @@
 import React from 'react'
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  GestureResponderEvent
-} from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import * as Analytics from 'expo-firebase-analytics'
 
 import theme from 'config/theme'
 import { useNavigation } from '@react-navigation/native'
 
-type CardProps = {
-  title?: string
-  body: string
-  onPress: (ev: GestureResponderEvent) => void | null
-}
-
 type WelcomeCardProps = {
   evangile: string
-}
-
-const Card = ({ title, body, onPress }: CardProps): JSX.Element => {
-  return (
-    <View>
-      <TouchableOpacity style={styles.card} onPress={onPress}>
-        {title && <Text style={styles.Title}>{title}</Text>}
-        <Text style={styles.description}>{body}</Text>
-      </TouchableOpacity>
-    </View>
-  )
 }
 
 export const WelcomeCard = ({ evangile }: WelcomeCardProps): JSX.Element => {
@@ -39,7 +17,10 @@ export const WelcomeCard = ({ evangile }: WelcomeCardProps): JSX.Element => {
       <Text style={styles.description}>{evangile}</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Evangile')}
+        onPress={() => {
+          Analytics.logEvent('homeReadGospel')
+          navigation.navigate('Evangile')
+        }}
       >
         <Text style={styles.see}>Voir l&apos;Evangile</Text>
       </TouchableOpacity>
@@ -83,4 +64,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Card
+export default WelcomeCard
