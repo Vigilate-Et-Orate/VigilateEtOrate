@@ -49,12 +49,13 @@ const PrayerScreen = ({
   useEffect(() => {
     if (!prayer) return
     setFaved(isFavourite(prayer.id, favourites))
-    Analytics.logEvent('ReadingPrayer', {
+    Analytics.logEvent('readingPrayer', {
       prayerName: prayer?.name
     })
   }, [])
 
   const toogleFav = async () => {
+    Analytics.logEvent('favedPrayerIndiv')
     if (!prayer || !prayer.id || !userId) return
     const api = new VOFire().favourites
     const res = await api.toggle(prayer.id, !faved)

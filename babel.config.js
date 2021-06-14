@@ -7,10 +7,8 @@ module.exports = function(api) {
       targets: {
         node: 'current'
       }
-    }],
-    // ["@babel/plugin-proposal-private-methods",
-    // { "loose": true }]
-  ];
+    }
+  ]];
   const plugins = [[
     require.resolve('babel-plugin-module-resolver'),
     {
@@ -25,7 +23,11 @@ module.exports = function(api) {
         'red': './redux'
       }
     }
-  ]];
+  ],
+  ["@babel/plugin-proposal-private-methods", { "loose": true }],
+  ["@babel/plugin-proposal-class-properties", { "loose": true }],
+  // ["@babel/plugin-proposal-private-property-in-class-object", { "loose": true }]
+  ];
 
   return {
     presets,
