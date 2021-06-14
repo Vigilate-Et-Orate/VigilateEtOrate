@@ -150,6 +150,8 @@ const HomeRoutes = ({ keyboard }: { keyboard: boolean }): JSX.Element => {
   return (
     <Tabs.Navigator
       tabBar={(props) => (keyboard ? <View></View> : <MainTabBar {...props} />)}
+      swipeEnabled={false}
+      lazy={true}
     >
       <Tabs.Screen
         name="Home"

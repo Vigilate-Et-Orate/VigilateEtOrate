@@ -194,7 +194,8 @@ const styles = StyleSheet.create({
     elevation: 7,
     height: 90,
     justifyContent: 'center',
-    width: 90
+    width: 90,
+    zIndex: 40
   },
   background: {
     backgroundColor: theme.colors.blue,
@@ -252,12 +253,12 @@ const styles = StyleSheet.create({
     bottom: 20,
     display: 'flex',
     flexDirection: 'row',
-    height: '6%',
+    height: '5%',
     justifyContent: 'center',
     left: 0,
     position: 'absolute',
     width: '100%',
-    zIndex: 40
+    zIndex: 2
   },
   snack: {
     backgroundColor: theme.colors.white

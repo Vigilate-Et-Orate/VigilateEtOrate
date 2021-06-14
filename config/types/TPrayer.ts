@@ -1,4 +1,5 @@
 import CONST from 'config/constants'
+import { TTags } from './TTags'
 
 export type TNotifTime = {
   hour: number
@@ -12,7 +13,8 @@ export type TPrayer = {
   name: string
   description: string
   content: string
-  notificationContent: string
+  notificationContentId: string
+  tags: TTags
 }
 
 export type TMyPrayer = {
